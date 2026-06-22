@@ -1,5 +1,6 @@
 #include <mysql/mysql.h>
 #include <string>
+#pragma once
 
 class Mysql {
 private:

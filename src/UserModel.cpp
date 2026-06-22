@@ -1,44 +1,53 @@
 #include <iostream>
 #include <string>
 #include <mysql/mysql.h>
-#include "UserModle.h"
+#include "UserModel.h"
 #include "Mysql.h"
 
-bool UserModle::insert(User user) {
+bool UserModel::insert(User user) {
     std::string sql = "insert into user (id, name, password, state) values (" + std::to_string(user.getId()) 
-        + ",'" + user.getName() + "','" + user.getPassword() + "','" + user.getSate() + "');";
+        + ",'" + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "');";
     Mysql mysql;
-    if (mysql.connect()) {
-        return mysql.update(sql);
+    if (!mysql.connect()) {
+        return false;
     }
+    return mysql.update(sql);
 }
 
-User UserModle::query(int userid) {
+User UserModel::query(int userid) {
     std::string sql = "select * from user where id=" + std::to_string(userid);
     Mysql mysql;
+    User user;
+    if (!mysql.connect()) {
+        return user;
+    }
+
     MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) {
+        return User();
+    }
     MYSQL_ROW row = mysql_fetch_row(res);
 
-    User user;
     if (row != nullptr) {
         user.setId(atoi(row[0]));
         user.setName(row[1]);
         user.setPassword(row[2]);
-        user.setSate(row[3]);
+        user.setState(row[3]);
     }
     mysql_free_result(res);
     return user;
 }
 
-bool UserModle::updateState(User user) {
-    std::string sql = "update user set state='" + user.getSate() + "' where id=" + std::to_string(user.getId()) + ";";
+bool UserModel::updateState(User user) {
+    std::string sql = "update user set state='" + user.getState() + "' where id=" + std::to_string(user.getId()) + ";";
     Mysql mysql;
-    if (mysql.connect()) {
-        return mysql.update(sql);
+    if (! mysql.connect()) {
+        return false;
     }
+    return mysql.update(sql);
 }
 
-bool UserModle::restState() {
+bool UserModel::restState() {
     Mysql mysql;
     if (!mysql.connect()) {
         return false;

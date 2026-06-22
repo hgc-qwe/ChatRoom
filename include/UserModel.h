@@ -1,6 +1,7 @@
 #include "User.h"
+#pragma once
 
-class UserModle {
+class UserModel {
 public:
     bool insert(User user);
 

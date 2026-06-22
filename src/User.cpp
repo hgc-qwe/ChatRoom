@@ -23,9 +23,9 @@ std::string User::getPassword() {
     return Password;
 }
 
-void User::setSate(bool state) {
+void User::setState(bool state) {
     State = state;
 }
-std::string User::getSate() {
+std::string User::getState() {
     return State;
 }

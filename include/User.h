@@ -1,4 +1,5 @@
 #include <string>
+#pragma once
 
 class User {
 private:
@@ -17,6 +18,6 @@ public:
     void setPassword(std::string password);
     std::string getPassword();
 
-    void setSate(bool state);
-    std::string getSate();
+    void setState(bool state);
+    std::string getState();
 };

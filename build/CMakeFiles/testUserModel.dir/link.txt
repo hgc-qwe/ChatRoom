@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/testUserModel.dir/test/testUserModel.cpp.o CMakeFiles/testUserModel.dir/src/User.cpp.o CMakeFiles/testUserModel.dir/src/UserModel.cpp.o CMakeFiles/testUserModel.dir/src/Mysql.cpp.o -o testUserModel  -lmysqlclient 
