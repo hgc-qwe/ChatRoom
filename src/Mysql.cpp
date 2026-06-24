@@ -18,6 +18,8 @@ bool Mysql::connect() {
 
 bool Mysql::update(const std::string& sql) {
     if (mysql_query(conn, sql.c_str())) {
+        std::cout << "sql: " << sql << std::endl;
+        std::cout << "mysql error" << mysql_error(conn) << std::endl;
         return false;
     }
     return true;
@@ -28,6 +30,10 @@ MYSQL_RES* Mysql::query(const std::string& sql) {
         return nullptr;
     }
     return mysql_store_result(conn);
+}
+
+MYSQL* Mysql::getcon() {
+    return conn;
 }
 
 Mysql::~Mysql() {

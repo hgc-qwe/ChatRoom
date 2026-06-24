@@ -11,7 +11,7 @@ private:
     std::vector<GroupUser> users;
 
 public:
-    Group(const int id, const std::string& name, const std::string desc);
+    Group(const std::string& name, const std::string desc);
 
     void setId(int id);
     int getId();

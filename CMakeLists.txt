@@ -1,9 +1,38 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(usermodel)
+project(test)
+
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(include)
 
-add_executable(testUserModel test/testUserModel.cpp src/User.cpp src/UserModel.cpp src/Mysql.cpp)
+find_library(MYSQLCLIENT mysqlclient)
 
-target_link_libraries(testUserModel mysqlclient)
+# FriendModel测试
+add_executable(
+    testFriendModel
+    test/testFriendModel.cpp
+    src/User.cpp
+    src/Mysql.cpp
+    src/FriendModel.cpp
+)
+
+target_link_libraries(
+    testFriendModel
+    ${MYSQLCLIENT}
+)
+
+# GroupModel测试
+add_executable(
+    testGroupModel
+    test/testGroupModel.cpp
+    src/Group.cpp
+    src/GroupUser.cpp
+    src/Mysql.cpp
+    src/GroupModel.cpp
+)
+
+target_link_libraries(
+    testGroupModel
+    ${MYSQLCLIENT}
+)

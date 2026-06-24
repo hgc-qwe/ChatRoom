@@ -5,13 +5,17 @@
 #include "Mysql.h"
 
 bool UserModel::insert(User user) {
-    std::string sql = "insert into user (id, name, password, state) values (" + std::to_string(user.getId()) 
-        + ",'" + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "');";
+    std::string sql = "insert into user (name, password, state) values (" 
+         + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "');";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;
     }
-    return mysql.update(sql);
+    if (mysql.update(sql)) {
+        user.setId(mysql_insert_id(mysql.getcon()));
+        return true;
+    }
+    return false;
 }
 
 User UserModel::query(int userid) {

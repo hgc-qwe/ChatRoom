@@ -15,5 +15,7 @@ public:
 
     MYSQL_RES* query(const std::string& sql);
 
+    MYSQL* getcon();
+
     ~Mysql();
 };

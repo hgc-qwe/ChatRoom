@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Group.h"
 
-Group::Group(const int id, const std::string& name, const std::string desc): Id(id), Name(name), Desc(desc) {};
+Group::Group(const std::string& name, const std::string desc): Name(name), Desc(desc) {};
 
 void Group::setId(int id) {
         Id = id;
