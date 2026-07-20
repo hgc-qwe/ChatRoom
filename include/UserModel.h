@@ -3,7 +3,7 @@
 
 class UserModel {
 public:
-    bool insert(User user);
+    bool insert(User& user);
 
     User query(int userid);
 

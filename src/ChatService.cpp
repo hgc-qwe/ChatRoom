@@ -54,7 +54,7 @@ void ChatService::reg(const chat::RegisterReq& req, chat::RegisterRes& res) {
         res.set_errmsg("register failed");
         return;
     }
-    User& user;
+    User user;
     user.setName(req.name());
     user.setPassword(req.password());
     user.setState("offline");

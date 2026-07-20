@@ -4,7 +4,7 @@
 #include "UserModel.h"
 #include "Mysql.h"
 
-bool UserModel::insert(User user) {
+bool UserModel::insert(User& user) {
     std::string sql = "insert into user (name, password, state) values (" 
          + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "');";
     Mysql mysql;
