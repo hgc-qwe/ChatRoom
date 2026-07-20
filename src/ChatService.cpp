@@ -1,91 +1,146 @@
 #include <iostream>
 #include "ChatService.h"
+#include "chat.pb.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
     return &service;
 }
 
-void ChatService::login(const int id, const std::string& pwd) {
-    User user = userModel.query(id);
-    if (user.getId() == id && user.getPassword() == pwd && user.getState() == "offline") {
+void ChatService::login(const chat::LoginReq& req, chat::LoginRes& res) {
+    User user = userModel.query(req.id());
+    if (user.getId() == req.id() && user.getPassword() == req.password() && user.getState() == "offline") {
         user.setState("online");
-        userModel.updateState(user);
-
-        std::vector<std::string> offmsgs = offlineMsg.query(id);
-        offlineMsg.remove(id);
-        std::vector<User> users = friendModel.query(id);
-        std::vector<Group> groups = groupModel.queryGroups(id);
-
-        std::cout << "login success" << std::endl;
-    } else {
-        std::cout << "login failed" << std::endl;
-    }
-}
-
-void ChatService::reg(const std::string& name, const std::string pwd) {
-    User user;
-    if (name != "" && pwd != "") {
-        user.setName(name);
-        user.setPassword(pwd);
-        user.setState("offline");
-        userModel.insert(user);
-        std::cout << "register success" << std::endl;
-    } else {
-        std::cout << "register failed" << std::endl;
-    }
-}
-
-void ChatService::addFriend(const int userid, const int friendid) {
-    if (friendModel.insert(userid, friendid)) {
-        std::cout << "addFriend success" << std::endl;
-    } else {
-        std::cout << "addFriend failed" << std::endl;
-    }
-}
-
-void ChatService::oneChat(const int fromid, const int toid, const std::string& msg) {
-    User user = userModel.query(toid);
-    if (user.getState() == "online") {
-//
-    } else {
-        offlineMsg.insert(toid, msg);
-    }
-}
-
-void ChatService::createGroup(const int userid, const std::string& name, const std::string& desc) {
-    if (name != "" && desc != "") {  
-        Group group(name, desc);
-        if (groupModel.createGroup(group)) {
-            groupModel.addGroup(userid, group.getId(), "craetor");
+        if (!userModel.updateState(user)) {
+            res.set_err(1);
+            res.set_errmsg("update state failed");
+            return;
         }
+
+        res.set_err(0);
+        res.set_errmsg("login success");
+
+        std::vector<std::string> offmsgs = offlineMsg.query(req.id());
+
+        for (auto& msg : offmsgs) {
+            res.add_offlinemsgs(msg);
+        }
+        offlineMsg.remove(req.id());
+        std::vector<User> users = friendModel.query(req.id());
+
+        for (auto& u : users) {
+            chat::User* user = res.add_friends();
+            user->set_id(u.getId());
+            user->set_name(u.getName());
+            user->set_state(u.getState());
+        }
+        std::vector<Group> groups = groupModel.queryGroups(req.id());
+
+        for (auto& g : groups) {
+            chat::Group* group = res.add_groups();
+            group->set_id(g.getId());
+            group->set_name(g.getName());
+            group->set_desc(g.getDesc());
+        }
+    } else {
+        res.set_err(1);
+        res.set_errmsg("login failed");
     }
 }
 
-void ChatService::addGroup(int userid, int groupid, std::string role) {
-    groupModel.addGroup(userid, groupid, role);
+void ChatService::reg(const chat::RegisterReq& req, chat::RegisterRes& res) {
+    if (req.name().empty() || req.password().empty()) {
+        res.set_err(1);
+        res.set_errmsg("register failed");
+        return;
+    }
+    User& user;
+    user.setName(req.name());
+    user.setPassword(req.password());
+    user.setState("offline");
+
+    if (userModel.insert(user)) {
+        res.set_err(0);
+        res.set_userid(user.getId());
+        res.set_errmsg("register success");
+    } else {
+        res.set_err(1);
+        res.set_errmsg("register failed");
+    }
 }
 
-void ChatService::groupChat(const int userid, const int groupid, const std::string& msg) {
-    auto users = groupModel.queryGroupUsers(userid, groupid);
+void ChatService::addFriend(const chat::AddFriendReq& req, chat::AddFriendRes& res) {
+    if (friendModel.insert(req.userid(), req.friendid())) {
+        res.set_err(0);
+        res.set_errmsg("addFriend success");
+    } else {
+        res.set_err(1);
+        res.set_errmsg("addFriend failed");
+    }
+}
+
+void ChatService::oneChat(const chat::OneChatReq& req, chat::OneChatRes& res) {
+    User user = userModel.query(req.toid());
+    if (user.getState() == "online") {
+        res.set_err(0);
+        res.set_errmsg("send success");
+        //
+    } else {
+        offlineMsg.insert(req.toid(), req.msg());
+    }
+}
+
+void ChatService::createGroup(const chat::CreateGroupReq& req, chat::CreateGroupRes& res) {
+    if (req.groupname().empty() || req.groupdesc().empty()) {
+        res.set_err(1);
+        res.set_errmsg("createGroup failed");
+        return;
+    } 
+    Group group(req.groupname(), req.groupdesc());
+    if (groupModel.createGroup(group)) {
+        groupModel.addGroup(req.userid(), group.getId(), "creator");
+        res.set_groupid(group.getId());
+        res.set_err(0);
+        res.set_errmsg("createGroup success");
+    } else {
+        res.set_err(1);
+        res.set_errmsg("createGroup failed");
+    }
+    
+}
+
+void ChatService::addGroup(const chat::AddGroupReq& req, chat::AddGroupRes& res) {
+    if (groupModel.addGroup(req.userid(), req.groupid(), "normal")) {
+        res.set_err(0);
+        res.set_errmsg("addGroup success");
+    } else {
+        res.set_err(1);
+        res.set_errmsg("addGroup failed");
+    }
+}
+
+void ChatService::groupChat(const chat::GroupChatReq& req, chat::GroupChatRes& res) {
+    auto users = groupModel.queryGroupUsers(req.userid(), req.groupid());
     for (int id : users) {
         User user = userModel.query(id);
         if (user.getState() == "online") {
             //
         } else {
-            offlineMsg.insert(id, msg);
+            offlineMsg.insert(id, req.msg());
         }
     }
 }
 
-void ChatService::loginout(const int id) {
-    User user = userModel.query(id);
-    if (user.getId() == id && user.getState() == "online") {
+void ChatService::loginout(const chat::LogoutReq& req, chat::LogoutRes& res) {
+    User user = userModel.query(req.userid());
+    if (user.getId() == req.userid() && user.getState() == "online") {
         user.setState("offline");
         userModel.updateState(user);
 
-        std::cout << "loginout success" << std::endl;
+        res.set_err(0);
+        res.set_errmsg("Logout success");
     } else {
-        std::cout << "loginout failed" << std::endl;
+        res.set_err(1);
+        res.set_errmsg("Logout failed");
     }
 }

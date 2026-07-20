@@ -10,19 +10,19 @@ class ChatService
 public:
     static ChatService* instance();
 
-    void login(const int id, const std::string& pwd);
-    void reg(const std::string& name, const std::string pwd);
+    void login(const chat::LoginReq& req, chat::LoginRes& res);
+    void reg(const chat::RegisterReq& req, chat::RegisterRes& res);
 
-    void addFriend(const int userid, const int friendid);
+    void addFriend(const chat::AddFriendReq& req, chat::AddFriendRes& res);
 
-    void oneChat(const int fromid, const int toid, const std::string& msg);
+    void oneChat(const chat::OneChatReq& req, chat::OneChatRes& res);
 
-    void createGroup(const int userid, const std::string& name, const std::string& desc);
-    void addGroup(int userid, int groupid, std::string role);
+    void createGroup(const chat::CreateGroupReq& req, chat::CreateGroupRes& res);
+    void addGroup(const chat::AddGroupReq& req, chat::AddGroupRes& res);
 
-    void groupChat(const int userid, const int groupid, const std::string& msg);
+    void groupChat(const chat::GroupChatReq& req, chat::GroupChatRes& res);
 
-    void loginout(const int id);
+    void loginout(const chat::LogoutReq& req, chat::LogoutRes& res);
 
 private:
     UserModel userModel;

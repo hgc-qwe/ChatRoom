@@ -5,32 +5,35 @@ enum MsgTyp {
     Login_msg = 0;
     Login_msg_ack = 1;
 
-    Reg_mag = 2;
+    Reg_msg = 2;
     Reg_msg_ack = 3;
 
-    Add_msg = 4;
+    AddFriend_msg = 4;
 
-    Onechat_msg = 5;
+    OneChat_msg = 5;
 
-    Creategroup_msg = 6;
+    CreateGroup_msg = 6;
 
-    Addgroup_msg = 7;
+    AddGroup_msg = 7;
 
-    Groupchat_msg = 8;
+    GroupChat_msg = 8;
 
     Logout_msg = 9;
 }
 
 message LoginReq {
     int32 msgid = 1;
-    int32 userid = 2;
+    int32 id = 2;
     string password = 3;
 }
 
 message LoginRes {
-    int32 msgid = 1;
-    int32 err = 2;
-    string errmsg = 3;
+    int32 err = 1;
+    string errmsg = 2;
+    User user = 3;
+    repeated User friends = 4;
+    repeated Group groups = 5;
+    repeated string offlineMsgs = 6;
 }
 
 message RegisterReq {
@@ -40,45 +43,102 @@ message RegisterReq {
 }
 
 message RegisterRes {
-    int32 msgid = 1;
-    int32 err = 2;
+    int32 err = 1;
+    string errmsg = 2;
     int32 userid = 3;
 }
 
 message AddFriendReq {
-    int32 msgid = 1;
+    MsgTyp msgid = 1;
     int32 userid = 2;
     int32 friendid = 3;
 }
 
+message AddFriendRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
+}
+
 message OneChatReq {
-    int32 msgid = 1;
+    MsgTyp msgid = 1;
     int32 fromid = 2;
     int32 toid = 3;
     string msg = 4;
 }
 
-message CreategroupReq {
-    int32 msgid = 1;
+message OneChatRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
+}
+
+message CreateGroupReq {
+    MsgTyp msgid = 1;
     int32 userid = 2;
     string groupname = 3;
     string groupdesc = 4;
 }
 
+message CreateGroupRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
+    int32 groupid = 4;
+}
+
 message AddGroupReq {
-    int32 msgid = 1;
+    MsgTyp msgid = 1;
     int32 userid = 2;
     int32 groupid = 3;
+    string role = 4;
+}
+
+message AddGroupRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
 }
 
 message GroupChatReq {
-    int32 msgid = 1;
+    MsgTyp msgid = 1;
     int32 userid = 2;
     int32 groupid = 3;
     string msg = 4;
 }
 
+message GroupChatRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
+}
+
 message LogoutReq {
-    int32 msgid = 1;
+    MsgTyp msgid = 1;
     int32 userid = 2;
+}
+
+message LogoutRes {
+    MsgTyp msgid = 1;
+    int32 err = 2;
+    string errmsg = 3;
+}
+
+message User {
+    int32 id = 1;
+    string name = 2;
+    string state = 3;
+}
+
+message GroupUser {
+    int32 id = 1;
+    string name = 2;
+    string state = 3;
+}
+
+message Group {
+    int32 id = 1;
+    string name = 2;
+    string desc = 3;
+    repeated GroupUser users = 4;
 }
