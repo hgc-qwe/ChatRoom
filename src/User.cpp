@@ -23,7 +23,7 @@ std::string User::getPassword() {
     return Password;
 }
 
-void User::setState(bool state) {
+void User::setState(std::string state) {
     State = state;
 }
 std::string User::getState() {

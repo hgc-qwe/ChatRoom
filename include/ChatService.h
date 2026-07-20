@@ -3,6 +3,7 @@
 #include "FriendModel.h"
 #include "OfflineMsg.h"
 #include "GroupModel.h"
+#include "chat.pb.h"
 #pragma once
 
 class ChatService

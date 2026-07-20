@@ -18,6 +18,6 @@ public:
     void setPassword(std::string password);
     std::string getPassword();
 
-    void setState(bool state);
+    void setState(std::string state);
     std::string getState();
 };

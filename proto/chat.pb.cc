@@ -582,16 +582,20 @@ const char descriptor_table_protodef_chat_2eproto[] PROTOBUF_SECTION_VARIABLE(pr
   "GroupUser\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005s"
   "tate\030\003 \001(\t\"O\n\005Group\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030"
   "\002 \001(\t\022\014\n\004desc\030\003 \001(\t\022\036\n\005users\030\004 \003(\0132\017.cha"
-  "t.GroupUser*\266\001\n\006MsgTyp\022\r\n\tLogin_msg\020\000\022\021\n"
-  "\rLogin_msg_ack\020\001\022\013\n\007Reg_msg\020\002\022\017\n\013Reg_msg"
-  "_ack\020\003\022\021\n\rAddFriend_msg\020\004\022\017\n\013OneChat_msg"
-  "\020\005\022\023\n\017CreateGroup_msg\020\006\022\020\n\014AddGroup_msg\020"
-  "\007\022\021\n\rGroupChat_msg\020\010\022\016\n\nLogout_msg\020\tb\006pr"
-  "oto3"
+  "t.GroupUser*\327\002\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022"
+  "\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG"
+  "_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MS"
+  "G\020\005\022\026\n\022ADD_FRIEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT_"
+  "MSG\020\007\022\024\n\020ONE_CHAT_MSG_ACK\020\010\022\024\n\020CREATE_GR"
+  "OUP_MSG\020\t\022\030\n\024CREATE_GROUP_MSG_ACK\020\n\022\021\n\rA"
+  "DD_GROUP_MSG\020\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n"
+  "\016GROUP_CHAT_MSG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK\020"
+  "\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020b\006p"
+  "roto3"
   ;
 static ::_pbi::once_flag descriptor_table_chat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_chat_2eproto = {
-    false, false, 1684, descriptor_table_protodef_chat_2eproto,
+    false, false, 1845, descriptor_table_protodef_chat_2eproto,
     "chat.proto",
     &descriptor_table_chat_2eproto_once, nullptr, 0, 19,
     schemas, file_default_instances, TableStruct_chat_2eproto::offsets,
@@ -621,6 +625,13 @@ bool MsgTyp_IsValid(int value) {
     case 7:
     case 8:
     case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
+    case 14:
+    case 15:
+    case 16:
       return true;
     default:
       return false;

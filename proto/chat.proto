@@ -2,23 +2,31 @@ syntax = "proto3";
 package chat;
 
 enum MsgTyp {
-    Login_msg = 0;
-    Login_msg_ack = 1;
+    UNKNOWN_MSG = 0;
 
-    Reg_msg = 2;
-    Reg_msg_ack = 3;
+    LOGIN_MSG = 1;
+    LOGIN_MSG_ACK = 2;
 
-    AddFriend_msg = 4;
+    REG_MSG = 3;
+    REG_MSG_ACK = 4;
 
-    OneChat_msg = 5;
+    ADD_FRIEND_MSG = 5;
+    ADD_FRIEND_MSG_ACK = 6;
 
-    CreateGroup_msg = 6;
+    ONE_CHAT_MSG = 7;
+    ONE_CHAT_MSG_ACK = 8;
 
-    AddGroup_msg = 7;
+    CREATE_GROUP_MSG = 9;
+    CREATE_GROUP_MSG_ACK = 10;
 
-    GroupChat_msg = 8;
+    ADD_GROUP_MSG = 11;
+    ADD_GROUP_MSG_ACK = 12;
 
-    Logout_msg = 9;
+    GROUP_CHAT_MSG = 13;
+    GROUP_CHAT_MSG_ACK = 14;
+
+    LOGOUT_MSG = 15;
+    LOGOUT_MSG_ACK = 16;
 }
 
 message LoginReq {

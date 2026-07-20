@@ -128,22 +128,29 @@ PROTOBUF_NAMESPACE_CLOSE
 namespace chat {
 
 enum MsgTyp : int {
-  Login_msg = 0,
-  Login_msg_ack = 1,
-  Reg_msg = 2,
-  Reg_msg_ack = 3,
-  AddFriend_msg = 4,
-  OneChat_msg = 5,
-  CreateGroup_msg = 6,
-  AddGroup_msg = 7,
-  GroupChat_msg = 8,
-  Logout_msg = 9,
+  UNKNOWN_MSG = 0,
+  LOGIN_MSG = 1,
+  LOGIN_MSG_ACK = 2,
+  REG_MSG = 3,
+  REG_MSG_ACK = 4,
+  ADD_FRIEND_MSG = 5,
+  ADD_FRIEND_MSG_ACK = 6,
+  ONE_CHAT_MSG = 7,
+  ONE_CHAT_MSG_ACK = 8,
+  CREATE_GROUP_MSG = 9,
+  CREATE_GROUP_MSG_ACK = 10,
+  ADD_GROUP_MSG = 11,
+  ADD_GROUP_MSG_ACK = 12,
+  GROUP_CHAT_MSG = 13,
+  GROUP_CHAT_MSG_ACK = 14,
+  LOGOUT_MSG = 15,
+  LOGOUT_MSG_ACK = 16,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
-constexpr MsgTyp MsgTyp_MIN = Login_msg;
-constexpr MsgTyp MsgTyp_MAX = Logout_msg;
+constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
+constexpr MsgTyp MsgTyp_MAX = LOGOUT_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
