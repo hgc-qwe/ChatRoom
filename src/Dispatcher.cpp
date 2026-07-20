@@ -2,95 +2,111 @@
 #include "ChatService.h"
 #include <iostream>
 
-void Dispatcher::dispatch(chat::MsgTyp msgid, const std::string& data) {
+std::string Dispatcher::dispatch(chat::MsgTyp msgid, const std::string& data) {
     switch (msgid) {
         case chat::LOGIN_MSG: {
             chat::LoginReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "LoginReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::LoginRes res;
             ChatService::instance()->login(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::REG_MSG: {
             chat::RegisterReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "RegisterReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::RegisterRes res;
             ChatService::instance()->reg(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::ADD_FRIEND_MSG: {
             chat::AddFriendReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "AddFriendReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::AddFriendRes res;
             ChatService::instance()->addFriend(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::ONE_CHAT_MSG: {
             chat::OneChatReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "OneChatReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::OneChatRes res;
             ChatService::instance()->oneChat(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::CREATE_GROUP_MSG: {
             chat::CreateGroupReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "CreateGroupReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::CreateGroupRes res;
             ChatService::instance()->createGroup(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::ADD_GROUP_MSG: {
             chat::AddGroupReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "AddGroupReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::AddGroupRes res;
             ChatService::instance()->addGroup(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::GROUP_CHAT_MSG: {
             chat::GroupChatReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "GroupChatReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::GroupChatRes res;
             ChatService::instance()->groupChat(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         case chat::LOGOUT_MSG: {
             chat::LogoutReq req;
             if (!req.ParseFromString(data)) {
                 std::cout << "LogoutReq parse failed" << std::endl;
-                return;
+                return "";
             }
 
             chat::LogoutRes res;
             ChatService::instance()->loginout(req, res);
-            break;
+            std::string response;
+            res.SerializeToString(&response);
+            return response;
         }
         default: {
             std::cout << "unknown message" << std::endl;
