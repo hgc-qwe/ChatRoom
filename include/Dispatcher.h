@@ -5,5 +5,5 @@
 
 class Dispatcher {
 public:
-    std::string dispatch(const chat::MsgTyp msgid, const std::string& data);
+    std::string dispatch(const int msgid, const std::string& data);
 };

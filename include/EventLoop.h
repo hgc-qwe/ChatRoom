@@ -1,4 +1,0 @@
-class EventLoop {
-public:
-
-};
