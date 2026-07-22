@@ -3,9 +3,10 @@
 
 std::string MessageCodec::encode(int msgid, const std::string& data) {
     std::string packet;
-    int len = data.size();
-    packet.append((char*)&msgid, sizeof(int));
-    packet.append((char*)&len, sizeof(int));
+    u_int32_t len = data.size();
+    u_int32_t id = msgid;
+    packet.append((char*)&id, sizeof(id));
+    packet.append((char*)&len, sizeof(len));
     packet.append(data);
     return packet;
 }

@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include "TcpServer.h"
 #include "MessageCodec.h"
+#include "Channel.h"
 
 TcpServer::TcpServer(int port) {
     this->port = port;
@@ -27,25 +28,20 @@ bool TcpServer::init() {
         return false;
     }
 
-    epoll.addFd(listenfd);
+    auto channel = std::make_shared<Channel>(listenfd);
+    channel->setEvents(EPOLLIN);
+
+    channel->setReadCallback([this]() {
+        acceptConnection();
+    });
+
+    loop.addChannel(channel);
 
     return true;
 }
 
 void TcpServer::start() {
-    while (true) {
-        auto events = epoll.poll();
-
-        for (auto& ev : events) {
-            int fd = ev.data.fd;
-            
-            if (fd == listenfd) {
-                acceptConnection();
-            } else {
-                handleRead(fd);
-            }
-        }
-    }
+    loop.loop();
 }
 
 bool TcpServer::createListenFd() {
@@ -74,40 +70,57 @@ bool TcpServer::listen() {
 }
 
 void TcpServer::acceptConnection() {
-    int clientfd = accept(listenfd, nullptr, nullptr);
-    if (clientfd == -1) {
-        perror("accept");
-        return;
-    }
-
-    if (epoll.addFd(clientfd)) {
-        std::cout << "add client fd success" << std::endl;
-    } else {
-        std::cout << "add client fd failed" << std::endl;
-    }
-}
-
-void TcpServer::handleRead(int fd) {
-    char buf[BUFSIZ];
-    ssize_t count = recv(fd, buf, sizeof(buf), 0);
-    if (count > 0) {
-        std::string buffer(buf, count);
-        int msgid;
-        std::string data;
-        if (MessageCodec::decode(buffer, msgid, data)) {
-            std::string response = dispatcher.dispatch(msgid, data);
-            send(fd, response.data(), response.size(), 0);
-        } else {
-            std::cerr << "decode failed" << std::endl;
+    while(true) {
+        int clientfd = accept(listenfd, nullptr, nullptr);
+        if (clientfd == -1) {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) break;
+            perror("accept");
+            return;
         }
-    } else if (count == 0) {
-        closeConnection(fd);
-    } else {
-        perror("recv");
-        closeConnection(fd);
+
+        auto conn = std::make_shared<TcpConnection>(clientfd, &loop);
+        
+        conn->setMessageCallback([this](auto conn, std::string& buffer) {
+            int msgid;
+            std::string data;
+
+            while (MessageCodec::decode(buffer, msgid, data)) {
+                auto response = dispatcher.dispatch(msgid, data);
+                conn->sendMessage(response);
+            }
+        });
+
+        conn->setCloseCallback([this](std::shared_ptr<TcpConnection> conn) {
+            removeConnection(conn);
+        });
+
+        connections[clientfd] = conn;
+        
+        conn->connectEstablished();
     }
 }
+
+/*void TcpServer::handleRead(int fd) {
+    auto conn = connections[fd];
+    
+    if (!conn->recvMessage()) {
+        closeConnection(fd);
+    }  
+}
+
+void TcpServer::handleWrite(int fd) {
+    auto conn = connections[fd];
+    conn->sendBuffer();
+}*/
 
 void TcpServer::closeConnection(int fd) {
-    epoll.delFd(fd);
+    auto conn = connections[fd];
+    connections.erase(fd);
+    loop.getEpoll()->delFd(fd);
+}
+
+void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
+    int fd = conn->getFd();
+    loop.getEpoll()->delFd(fd);
+    connections.erase(fd);
 }

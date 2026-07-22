@@ -7,17 +7,25 @@ Epoll::Epoll() {
     if (epfd == -1) perror("epoll_create1");
 }
 
-bool Epoll::addFd(int fd) {
+bool Epoll::modifyFd(int fd, uint32_t events) {
     struct epoll_event ev{};
-    ev.events = EPOLLIN;
+    ev.events = events;
     ev.data.fd = fd;
 
-    if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == -1) {
-        perror("epoll_ctl");
+    if (epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev) == -1) {
+        perror("epoll_ctl mod");
         return false;
     }
     
     return true;
+}
+
+bool Epoll::addFd(int fd, uint32_t events) {
+    struct epoll_event ev{};
+    ev.events = events;
+    ev.data.fd = fd;
+    
+    return epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev) == 0;
 }
 
 bool Epoll::delFd(int fd) {

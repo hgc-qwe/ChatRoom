@@ -1,4 +1,0 @@
-class TcpConnection {
-public:
-
-};
