@@ -1,10 +1,11 @@
 #pragma once
 #include <functional>
 #include <sys/epoll.h>
+#include <memory>
 
 class EventLoop;
 
-class Channel {
+class Channel : public std::enable_shared_from_this<Channel> {
 private:
     EventLoop* loop;
     int fd;
@@ -34,4 +35,9 @@ public:
     void handleEvent(uint32_t events);
 
     void setRevents(uint32_t ev);
+
+    void enableReading();
+    void enableWriting();
+
+    void disableWriting();
 };

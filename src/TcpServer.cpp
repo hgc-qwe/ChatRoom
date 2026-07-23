@@ -84,7 +84,7 @@ void TcpServer::acceptConnection() {
         auto conn = std::make_shared<TcpConnection>(clientfd, &loop);
         connections[clientfd] = conn;
 
-        conn->setMessageCallback([this](auto conn, std::string& buffer) {
+        conn->setMessageCallback([this](auto conn, Buffer& buffer) {
             int msgid;
             std::string data;
 
@@ -110,6 +110,6 @@ void TcpServer::closeConnection(int fd) {
 
 void TcpServer::removeConnection(std::shared_ptr<TcpConnection>& conn) {
     int fd = conn->getFd();
-    loop.getEpoll()->delFd(fd);
     connections.erase(fd);
+    conn->close();
 }

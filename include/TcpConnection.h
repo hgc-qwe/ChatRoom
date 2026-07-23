@@ -3,8 +3,9 @@
 #include <functional>
 #include <memory>
 #include "Channel.h"
+#include "Buffer.h"
 
-class Epoll;
+class EventLoop;
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>{
 public:
@@ -16,25 +17,26 @@ public:
     bool recvMessage();
 
     void sendBuffer();
-    std::string& getReadBuffer();
+    Buffer& getReadBuffer();
 
     void close();
 
     int getFd() const;
 
     using ConnectionCallback = std::function<void(std::shared_ptr<TcpConnection>)>;
-    using MessageCallback = std::function<void(std::shared_ptr<TcpConnection>, std::string&)>;
+    using MessageCallback = std::function<void(std::shared_ptr<TcpConnection>, Buffer&)>;
     using CloseCallback = std::function<void(std::shared_ptr<TcpConnection>)>;
 
     void setConnectionCallback(ConnectionCallback cb);
     void setMessageCallback(MessageCallback cb);
     void setCloseCallback(CloseCallback cb);
     void connectEstablished();
+    void removeChannel();
 private:
     int fd;
     EventLoop* loop;
-    std::string readBuffer;
-    std::string writeBuffer;
+    Buffer readBuffer;
+    Buffer writeBuffer;
     std::shared_ptr<Channel> channel;
 
     ConnectionCallback connectionCallback;

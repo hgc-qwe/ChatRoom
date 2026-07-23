@@ -11,16 +11,18 @@ std::string MessageCodec::encode(int msgid, const std::string& data) {
     return packet;
 }
 
-bool MessageCodec::decode(std::string& buffer, int& msgid, std::string& data) {
-    if (buffer.size() < 8) return false;
+bool MessageCodec::decode(Buffer& buffer, int& msgid, std::string& data) {
+    if (buffer.readableBytes() < 8) return false;
 
-    memcpy(&msgid, buffer.data(), sizeof(int));
+    char* readPtr = buffer.beginRead();
+    memcpy(&msgid, readPtr, sizeof(int));
     int len;
-    memcpy(&len, buffer.data() + 4, sizeof(int));
+    memcpy(&len, readPtr + 4, sizeof(int));
 
     if (buffer.size() < 8 + len) return false;
-    data = buffer.substr(8, len);
-    buffer.erase(0, 8 + len);
+    buffer.retrieve(8);
+    data.assign(buffer.beginRead(), len);
+    buffer.retrieve(len);
 
     return true;
 }

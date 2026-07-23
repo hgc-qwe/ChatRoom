@@ -24,10 +24,8 @@ TcpConnection::~TcpConnection() {
 }
 
 bool TcpConnection::sendMessage(const std::string& msg) {
-    writeBuffer += msg;
-    
-    channel->setEvents(EPOLLIN | EPOLLOUT);
-    loop->updateChannel(channel);
+    writeBuffer.append(msg);
+    channel->enableWriting();
     return true;
 }
 
@@ -37,6 +35,8 @@ bool TcpConnection::recvMessage() {
         int count = recv(fd, buf, sizeof(buf), 0);
 
         if (count > 0) {
+            //
+            std::cout << "recv bytes:" << count << std::endl;
             readBuffer.append(buf, count);
         } else if (count == 0) {
             if (closeCallback) closeCallback(shared_from_this());
@@ -57,6 +57,7 @@ bool TcpConnection::recvMessage() {
 
 void TcpConnection::close() {
     if (fd != -1) {
+        loop->removeChannel(fd);
         ::close(fd);
         fd = -1;
     }
@@ -67,10 +68,10 @@ int TcpConnection::getFd() const {
 }
 
 void TcpConnection::sendBuffer() {
-    while (!writeBuffer.empty()) {
-        int n = send(fd, writeBuffer.data(), writeBuffer.size(), 0);
+    while (writeBuffer.readableBytes() > 0) {
+        int n = send(fd, writeBuffer.beginRead(), writeBuffer.readableBytes(), 0);
         if (n > 0) {
-            writeBuffer.erase(0, n);
+            writeBuffer.retrieve(n);
         } else {
             if (errno == EAGAIN || errno == EWOULDBLOCK) return;
             perror("send");
@@ -78,10 +79,10 @@ void TcpConnection::sendBuffer() {
             return;
         }
     }
-    loop->getEpoll()->modifyFd(fd, EPOLLIN);
+    channel->disableWriting();
 }
 
-std::string& TcpConnection::getReadBuffer() {
+Buffer& TcpConnection::getReadBuffer() {
     return readBuffer;
 }
 
@@ -98,9 +99,11 @@ void TcpConnection::setCloseCallback(CloseCallback cb) {
 }
 
 void TcpConnection::connectEstablished() {
-    loop->addChannel(channel);
-
     if (connectionCallback) {
         connectionCallback(shared_from_this());
     }
+}
+
+void TcpConnection::removeChannel() {
+    loop->removeChannel(fd);
 }

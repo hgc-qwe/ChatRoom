@@ -1,7 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
-
+#include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
 
@@ -93,9 +93,11 @@ int main()
 
 
     // 接收服务器返回
+    Buffer recvBuffer;
     char buf[1024];
 
     while (true) {
+
         int len = recv(
             sockfd,
             buf,
@@ -106,7 +108,7 @@ int main()
 
         if(len > 0)
         {
-            std::string recvData(
+            recvBuffer.append(
                 buf,
                 len
             );
@@ -116,10 +118,13 @@ int main()
             std::string data;
 
 
-            if(MessageCodec::decode(
-                recvData,
-                msgid,
-                data))
+            while(
+                MessageCodec::decode(
+                    recvBuffer,
+                    msgid,
+                    data
+                )
+            )
             {
                 std::cout
                     <<"recv msgid:"
@@ -127,22 +132,36 @@ int main()
                     <<std::endl;
 
 
-                chat::LoginRes res;
-
-                if(res.ParseFromString(data))
+                if(msgid == chat::LOGIN_MSG_ACK)
                 {
-                    std::cout
-                        <<"err:"
-                        <<res.err()
-                        <<std::endl;
+                    chat::LoginRes res;
+
+                    if(res.ParseFromString(data))
+                    {
+                        std::cout
+                            <<"err:"
+                            <<res.err()
+                            <<std::endl;
 
 
-                    std::cout
-                        <<"msg:"
-                        <<res.errmsg()
-                        <<std::endl;
+                        std::cout
+                            <<"msg:"
+                            <<res.errmsg()
+                            <<std::endl;
+                    }
                 }
             }
+
+        }
+        else if(len == 0)
+        {
+            std::cout<<"server closed"<<std::endl;
+            break;
+        }
+        else
+        {
+            perror("recv");
+            break;
         }
     }
 

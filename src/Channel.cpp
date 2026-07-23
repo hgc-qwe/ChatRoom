@@ -1,4 +1,5 @@
 #include "Channel.h"
+#include "EventLoop.h"
 
 Channel::Channel(EventLoop* loop, int fd) {
     this->loop = loop;
@@ -47,10 +48,29 @@ void Channel::handleWrite() {
 }
 
 void Channel::handleEvent(uint32_t events) {
+    if (events & (EPOLLHUP | EPOLLERR)) {
+        if (closeCallback) closeCallback();
+        return;
+    }
     if (events & EPOLLIN) {
         handleRead();
     }
     if (events & EPOLLOUT) {
         handleWrite();
     }
+}
+
+void Channel::enableReading() {
+    events |= EPOLLIN;
+    loop->updateChannel(shared_from_this());
+}
+
+void Channel::enableWriting() {
+    events |= EPOLLIN;
+    loop->updateChannel(shared_from_this());
+}
+
+void Channel::disableWriting() {
+    events &= ~EPOLLOUT;
+    loop->updateChannel(shared_from_this());
 }
