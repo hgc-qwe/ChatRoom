@@ -31,6 +31,7 @@ public:
 
     void handleRead();
     void handleWrite();
+    void handleEvent(uint32_t events);
 
     void setRevents(uint32_t ev);
 };

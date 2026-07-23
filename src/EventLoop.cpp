@@ -13,10 +13,11 @@ void EventLoop::loop() {
         for (auto& ev : events) {
             int fd = ev.data.fd;
             
-            auto channel = channels[fd];
+            auto it = channels.find(fd);
+            if (it == channels.end()) continue;
+            auto channel = it->second;
             
-            if (ev.events & EPOLLIN) channel->handleRead();
-            if (ev.events & EPOLLOUT) channel->handleWrite();
+            channel->handleEvent(ev.events);
         }
     }
 }

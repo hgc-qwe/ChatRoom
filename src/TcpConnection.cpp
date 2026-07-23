@@ -8,7 +8,7 @@ TcpConnection::TcpConnection(int fd, EventLoop* loop) {
     this->fd = fd;
     this->loop = loop;
 
-    channel = std::make_shared<Channel>(fd);
+    channel = std::make_shared<Channel>(loop, fd);
     channel->setEvents(EPOLLIN);
     channel->setReadCallback([this]() {
         recvMessage();
@@ -16,10 +16,11 @@ TcpConnection::TcpConnection(int fd, EventLoop* loop) {
     channel->setWriteCallback([this]() {
         sendBuffer();
     });
+    loop->addChannel(channel);
 }
 
 TcpConnection::~TcpConnection() {
-    if (fd != -1) ::close(fd);
+    close();
 }
 
 bool TcpConnection::sendMessage(const std::string& msg) {
@@ -31,20 +32,20 @@ bool TcpConnection::sendMessage(const std::string& msg) {
 }
 
 bool TcpConnection::recvMessage() {
+    char buf[BUFSIZ];
     while (true) {
-        char buf[BUFSIZ];
         int count = recv(fd, buf, sizeof(buf), 0);
 
-        if (count == 0) {
+        if (count > 0) {
+            readBuffer.append(buf, count);
+        } else if (count == 0) {
             if (closeCallback) closeCallback(shared_from_this());
             return false;
-        }
-        if (count < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) return true;
-            perror("recv");
-            return false;
         } else {
-            readBuffer.append(buf, count);
+            if (errno == EAGAIN || errno == EWOULDBLOCK) break;
+            perror("recv");
+            if (closeCallback) closeCallback(shared_from_this());
+            return false;
         }
     }
 
@@ -55,7 +56,10 @@ bool TcpConnection::recvMessage() {
 }
 
 void TcpConnection::close() {
-    ::close(fd);
+    if (fd != -1) {
+        ::close(fd);
+        fd = -1;
+    }
 }
 
 int TcpConnection::getFd() const {
@@ -63,20 +67,18 @@ int TcpConnection::getFd() const {
 }
 
 void TcpConnection::sendBuffer() {
-    if (writeBuffer.empty()) return;
-
-    int n = send(fd, writeBuffer.data(), writeBuffer.size(), 0);
-    if (n > 0) {
-        writeBuffer.erase(0, n);
+    while (!writeBuffer.empty()) {
+        int n = send(fd, writeBuffer.data(), writeBuffer.size(), 0);
+        if (n > 0) {
+            writeBuffer.erase(0, n);
+        } else {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) return;
+            perror("send");
+            close();
+            return;
+        }
     }
-    if (n <= 0) {
-        if (errno == EAGAIN) return;
-        close();
-    }
-    if (writeBuffer.empty()) {
-        channel->setEvents(EPOLLIN);
-        loop->updateChannel(channel);
-    }
+    loop->getEpoll()->modifyFd(fd, EPOLLIN);
 }
 
 std::string& TcpConnection::getReadBuffer() {

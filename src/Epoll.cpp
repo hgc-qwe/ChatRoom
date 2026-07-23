@@ -33,7 +33,6 @@ bool Epoll::delFd(int fd) {
         perror("epoll_ctl del");
         return false;
     }
-    close(fd);
     return true;
 }
 

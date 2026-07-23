@@ -7,117 +7,77 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# ==========================
-# include路径
-# ==========================
+# =========================
+# include目录
+# =========================
 
 include_directories(
-    include
-    proto
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/proto
 )
 
 
-# ==========================
+# =========================
 # protobuf
-# ==========================
+# =========================
 
 find_package(Protobuf REQUIRED)
 
+include_directories(${Protobuf_INCLUDE_DIRS})
 
-# ==========================
-# Server
-# ==========================
+
+# =========================
+# mysql
+# =========================
+
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(MYSQL REQUIRED mysqlclient)
+
+
+
+# =========================
+# server源码
+# =========================
+
+file(GLOB SERVER_SRC
+
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
+
+    ${PROJECT_SOURCE_DIR}/proto/chat.pb.cc
+
+)
+
 
 add_executable(testServer
-
     test/testServer.cpp
-
-
-    # Reactor
-    src/Epoll.cpp
-    src/EventLoop.cpp
-    src/Channel.cpp
-
-
-    # Network
-    src/TcpServer.cpp
-    src/TcpConnection.cpp
-
-
-    # Codec
-    src/MessageCodec.cpp
-
-
-    # Dispatcher
-    src/Dispatcher.cpp
-
-
-    # Service
-    src/ChatService.cpp
-
-
-    # User
-    src/User.cpp
-    src/UserModel.cpp
-
-
-    # Friend
-    src/FriendModel.cpp
-
-
-    # Group
-    src/Group.cpp
-    src/GroupModel.cpp
-
-
-    # Offline
-    src/OfflineMsg.cpp
-
-
-    # Mysql
-    src/Mysql.cpp
-
-
-    # protobuf
+    ${SERVER_SRC}
     proto/chat.pb.cc
 )
 
 
 
 target_link_libraries(testServer
-
-    protobuf::libprotobuf
-
-    mysqlclient
-
+    protobuf
+    ${MYSQL_LIBRARIES}
     pthread
 )
 
 
 
-# ==========================
-# Client
-# ==========================
+# =========================
+# client
+# =========================
 
 add_executable(testClient
-
-
     test/testClient.cpp
-
-
     src/MessageCodec.cpp
-
-
     proto/chat.pb.cc
-
 )
 
 
 
 target_link_libraries(testClient
-
-    protobuf::libprotobuf
-
+    protobuf
     pthread
-
 )

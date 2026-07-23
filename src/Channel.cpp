@@ -45,3 +45,12 @@ void Channel::handleWrite() {
         writeCallback();
     }
 }
+
+void Channel::handleEvent(uint32_t events) {
+    if (events & EPOLLIN) {
+        handleRead();
+    }
+    if (events & EPOLLOUT) {
+        handleWrite();
+    }
+}

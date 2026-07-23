@@ -4,9 +4,12 @@
 #include "TcpServer.h"
 #include "MessageCodec.h"
 #include "Channel.h"
+#include "Util.h"
+#include <fcntl.h>
 
 TcpServer::TcpServer(int port) {
     this->port = port;
+    listenfd = -1;
 }
 
 TcpServer::~TcpServer() {
@@ -28,7 +31,7 @@ bool TcpServer::init() {
         return false;
     }
 
-    auto channel = std::make_shared<Channel>(listenfd);
+    auto channel = std::make_shared<Channel>(&loop, listenfd);
     channel->setEvents(EPOLLIN);
 
     channel->setReadCallback([this]() {
@@ -47,9 +50,9 @@ void TcpServer::start() {
 bool TcpServer::createListenFd() {
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (listenfd == -1) {
-        std::cerr << "listen_fd socket failed" << std::endl;
         return false;
     }
+    if (setNonBlock(listenfd) == -1) return false;
     return true;
 }
 
@@ -71,7 +74,7 @@ bool TcpServer::listen() {
 
 void TcpServer::acceptConnection() {
     while(true) {
-        int clientfd = accept(listenfd, nullptr, nullptr);
+        int clientfd = ::accept4(listenfd, nullptr, nullptr, SOCK_NONBLOCK);
         if (clientfd == -1) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) break;
             perror("accept");
@@ -79,7 +82,8 @@ void TcpServer::acceptConnection() {
         }
 
         auto conn = std::make_shared<TcpConnection>(clientfd, &loop);
-        
+        connections[clientfd] = conn;
+
         conn->setMessageCallback([this](auto conn, std::string& buffer) {
             int msgid;
             std::string data;
@@ -93,25 +97,10 @@ void TcpServer::acceptConnection() {
         conn->setCloseCallback([this](std::shared_ptr<TcpConnection> conn) {
             removeConnection(conn);
         });
-
-        connections[clientfd] = conn;
         
         conn->connectEstablished();
     }
 }
-
-/*void TcpServer::handleRead(int fd) {
-    auto conn = connections[fd];
-    
-    if (!conn->recvMessage()) {
-        closeConnection(fd);
-    }  
-}
-
-void TcpServer::handleWrite(int fd) {
-    auto conn = connections[fd];
-    conn->sendBuffer();
-}*/
 
 void TcpServer::closeConnection(int fd) {
     auto conn = connections[fd];
@@ -119,7 +108,7 @@ void TcpServer::closeConnection(int fd) {
     loop.getEpoll()->delFd(fd);
 }
 
-void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
+void TcpServer::removeConnection(std::shared_ptr<TcpConnection>& conn) {
     int fd = conn->getFd();
     loop.getEpoll()->delFd(fd);
     connections.erase(fd);
