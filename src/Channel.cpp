@@ -49,7 +49,7 @@ void Channel::handleWrite() {
 }
 
 void Channel::handleEvent(uint32_t events) {
-    if (events & (EPOLLHUP | EPOLLERR)) {
+    if (events & EPOLLERR) {
         if (closeCallback) closeCallback();
         return;
     }
@@ -58,6 +58,12 @@ void Channel::handleEvent(uint32_t events) {
     }
     if (events & EPOLLOUT) {
         handleWrite();
+    }
+    if (events & EPOLLHUP) {
+        std::cout
+        <<"epoll hup fd:"
+        <<fd
+        <<std::endl;
     }
 }
 

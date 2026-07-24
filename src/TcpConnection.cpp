@@ -16,6 +16,9 @@ TcpConnection::TcpConnection(int fd, EventLoop* loop) {
     channel->setWriteCallback([this]() {
         sendBuffer();
     });
+    channel->setCloseCallback([this]() {
+        if (closeCallback) closeCallback(shared_from_this());
+    });
     loop->addChannel(channel);
 }
 
@@ -24,8 +27,11 @@ TcpConnection::~TcpConnection() {
 }
 
 bool TcpConnection::sendMessage(const std::string& msg) {
-    writeBuffer.append(msg);
-    channel->enableWriting();
+    auto self = shared_from_this();
+    loop->runInLoop([self, msg]() {
+        self->writeBuffer.append(msg);
+        self->channel->enableWriting();
+    });
     return true;
 }
 
@@ -33,7 +39,6 @@ bool TcpConnection::recvMessage() {
     char buf[BUFSIZ];
     while (true) {
         int count = recv(fd, buf, sizeof(buf), 0);
-
         if (count > 0) {
             readBuffer.append(buf, count);
         } else if (count == 0) {
@@ -41,6 +46,7 @@ bool TcpConnection::recvMessage() {
             return false;
         } else {
             if (errno == EAGAIN || errno == EWOULDBLOCK) break;
+            if (errno == EINTR) continue;
             perror("recv");
             if (closeCallback) closeCallback(shared_from_this());
             return false;

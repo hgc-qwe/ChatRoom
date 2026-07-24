@@ -117,6 +117,9 @@ void TcpServer::closeConnection(int fd) {
 
 void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
     int fd = conn->getFd();
-    connections.erase(fd);
+    {
+        std::lock_guard<std::mutex> lock(connMutex);
+        connections.erase(fd);
+    }
     conn->close();
 }

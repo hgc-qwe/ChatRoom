@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Buffer.h"
 
 Buffer::Buffer(size_t size) {
@@ -46,8 +47,9 @@ std::string Buffer::retrieveAllAsString() {
 }
 
 void Buffer::append(const char* data, size_t len) {
-    if (writableBytes() >= len) std::copy(data, data + len, beginWrite());
-    hasWritten(len);
+    if (writableBytes() < len) buffer.resize(writeIndex + len);
+    memcpy(beginWrite(), data, len);
+    writeIndex += len;
 }
 
 void Buffer::append(const std::string& str) {

@@ -1,7 +1,5 @@
 #include <iostream>
-
 #include "TcpServer.h"
-
 
 int main()
 {
@@ -9,14 +7,16 @@ int main()
 
     if (!server.init())
     {
-        std::cout << "server init failed"
-                  << std::endl;
+        std::cout 
+            << "server init failed"
+            << std::endl;
         return -1;
     }
 
 
-    std::cout << "server start"
-              << std::endl;
+    std::cout 
+        << "server start"
+        << std::endl;
 
 
     server.start();

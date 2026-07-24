@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -7,14 +8,11 @@
 
 int main()
 {
-
-    int sockfd =
-        socket(
-            AF_INET,
-            SOCK_STREAM,
-            0
-        );
-
+    int sockfd = socket(
+        AF_INET,
+        SOCK_STREAM,
+        0
+    );
 
     if(sockfd < 0)
     {
@@ -23,22 +21,16 @@ int main()
     }
 
 
-
     sockaddr_in serverAddr{};
 
-
     serverAddr.sin_family = AF_INET;
-
-    serverAddr.sin_port =
-        htons(8888);
-
+    serverAddr.sin_port = htons(8888);
 
     inet_pton(
         AF_INET,
         "127.0.0.1",
         &serverAddr.sin_addr
     );
-
 
 
     if(connect(
@@ -52,16 +44,68 @@ int main()
     }
 
 
-
-    std::cout
+    std::cout 
         << "connect success"
         << std::endl;
 
 
+    /*
+        接收线程
+    */
+    std::thread recvThread(
+        [&]()
+        {
+            char buf[1024];
 
+            while(true)
+            {
+                int n = recv(
+                    sockfd,
+                    buf,
+                    sizeof(buf),
+                    0
+                );
+
+
+                if(n > 0)
+                {
+                    std::string msg(
+                        buf,
+                        n
+                    );
+
+                    std::cout
+                        << "\nserver:"
+                        << msg
+                        << std::endl;
+
+                    std::cout
+                        << "input:"
+                        << std::flush;
+                }
+                else if(n == 0)
+                {
+                    std::cout
+                        << "server close"
+                        << std::endl;
+                    break;
+                }
+                else
+                {
+                    perror("recv");
+                    break;
+                }
+            }
+        }
+    );
+
+
+
+    /*
+        发送线程
+    */
     while(true)
     {
-
         std::string msg;
 
 
@@ -76,10 +120,10 @@ int main()
         );
 
 
-
         if(msg == "quit")
+        {
             break;
-
+        }
 
 
         send(
@@ -88,35 +132,13 @@ int main()
             msg.size(),
             0
         );
-
-
-
-        char buf[1024];
-
-        int n =
-            recv(
-                sockfd,
-                buf,
-                sizeof(buf),
-                0
-            );
-
-
-        if(n > 0)
-        {
-            std::cout
-                << "server:"
-                << std::string(buf,n)
-                << std::endl;
-        }
-
-
-        
-
     }
 
 
     close(sockfd);
+
+
+    recvThread.join();
 
 
     return 0;
