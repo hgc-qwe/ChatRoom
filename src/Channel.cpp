@@ -67,7 +67,7 @@ void Channel::enableReading() {
 }
 
 void Channel::enableWriting() {
-    events |= EPOLLIN;
+    events |= EPOLLOUT;
     loop->updateChannel(shared_from_this());
 }
 

@@ -91,7 +91,24 @@ int main()
 
 
 
-        std::cout<<"send ok"<<std::endl;
+        char buf[1024];
+
+        int n =
+            recv(
+                sockfd,
+                buf,
+                sizeof(buf),
+                0
+            );
+
+
+        if(n > 0)
+        {
+            std::cout
+                << "server:"
+                << std::string(buf,n)
+                << std::endl;
+        }
 
 
         

@@ -97,8 +97,7 @@ void TcpServer::acceptConnection() {
                 while (MessageCodec::decode(buffer, msgid, data)) {
                     auto response = dispatcher.dispatch(msgid, data);
                     conn->sendMessage(response);
-                }
-               
+                } 
             });
 
             conn->setCloseCallback([this](std::shared_ptr<TcpConnection> conn) {
