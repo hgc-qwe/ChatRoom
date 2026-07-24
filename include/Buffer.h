@@ -13,7 +13,7 @@ public:
 
     char* beginWrite();
 
-    char* beginRead();
+    const char* beginRead() const;
 
     void hasWritten(size_t len);
 

@@ -14,12 +14,12 @@ std::string MessageCodec::encode(int msgid, const std::string& data) {
 bool MessageCodec::decode(Buffer& buffer, int& msgid, std::string& data) {
     if (buffer.readableBytes() < 8) return false;
 
-    char* readPtr = buffer.beginRead();
+    const char* readPtr = buffer.beginRead();
     memcpy(&msgid, readPtr, sizeof(int));
     int len;
     memcpy(&len, readPtr + 4, sizeof(int));
 
-    if (buffer.size() < 8 + len) return false;
+    if (buffer.readableBytes() < 8 + len) return false;
     buffer.retrieve(8);
     data.assign(buffer.beginRead(), len);
     buffer.retrieve(len);

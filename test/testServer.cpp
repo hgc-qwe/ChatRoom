@@ -9,12 +9,17 @@ int main()
 
     if(!server.init())
     {
-        std::cerr << "server init failed" << std::endl;
+        std::cout 
+            << "server init failed"
+            << std::endl;
+
         return -1;
     }
 
 
-    std::cout << "server start, port: 8888" << std::endl;
+    std::cout
+        << "server start"
+        << std::endl;
 
 
     server.start();

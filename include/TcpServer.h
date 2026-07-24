@@ -4,6 +4,7 @@
 #include <netinet/in.h>
 #include <unordered_map>
 #include <memory>
+#include <mutex>
 #include "TcpConnection.h"
 #include "Epoll.h"
 #include "EventLoop.h"
@@ -16,6 +17,7 @@ private:
     int listenfd{-1};
     int port;
     EventLoop loop;
+    std::mutex connMutex;
     EventLoopThreadPool threadPool;
     struct sockaddr_in listen_addr;
     Dispatcher dispatcher;
@@ -30,7 +32,7 @@ private:
     void handleWrite(int fd);
     void closeConnection(int fd);
 
-    void removeConnection(std::shared_ptr<TcpConnection>& conn);
+    void removeConnection(std::shared_ptr<TcpConnection> conn);
 public:
     TcpServer(int port);
     ~TcpServer();

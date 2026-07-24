@@ -22,7 +22,7 @@ char* Buffer::beginWrite() {
     return buffer.data() + writeIndex;
 }
 
-char* Buffer::beginRead() {
+const char* Buffer::beginRead() const {
     return buffer.data() + readIndex;
 }
 
@@ -46,11 +46,12 @@ std::string Buffer::retrieveAllAsString() {
 }
 
 void Buffer::append(const char* data, size_t len) {
-    buffer.append(data, len);
+    if (writableBytes() >= len) std::copy(data, data + len, beginWrite());
+    hasWritten(len);
 }
 
 void Buffer::append(const std::string& str) {
-    buffer += str;
+    append(str.data(), str.size());
 }
 
 bool Buffer::empty() const {
@@ -74,5 +75,7 @@ std::string& Buffer::getString() {
 }
 
 std::string Buffer::retrieveAll() {
-    return buffer;
+    std::string str(beginRead(), readableBytes());
+    retrieve(readableBytes());
+    return str;
 }

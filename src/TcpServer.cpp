@@ -83,25 +83,30 @@ void TcpServer::acceptConnection() {
         }
 
         EventLoop* ioLoop = threadPool.getNextLoop();
-
-        auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop);
-        connections[clientfd] = conn;
-
-        conn->setMessageCallback([this](auto conn, Buffer& buffer) {
-            int msgid;
-            std::string data;
-
-            while (MessageCodec::decode(buffer, msgid, data)) {
-                auto response = dispatcher.dispatch(msgid, data);
-                conn->sendMessage(response);
+        ioLoop->runInLoop([this, clientfd, ioLoop]() {
+            auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop);
+            {
+                std::lock_guard<std::mutex> lock(connMutex);
+                connections[clientfd] = conn;
             }
-        });
 
-        conn->setCloseCallback([this](std::shared_ptr<TcpConnection> conn) {
-            removeConnection(conn);
+            conn->setMessageCallback([this](auto conn, Buffer& buffer) {
+                int msgid;
+                std::string data;
+
+                while (MessageCodec::decode(buffer, msgid, data)) {
+                    auto response = dispatcher.dispatch(msgid, data);
+                    conn->sendMessage(response);
+                }
+               
+            });
+
+            conn->setCloseCallback([this](std::shared_ptr<TcpConnection> conn) {
+                removeConnection(conn);
+            });
+            
+            conn->connectEstablished();
         });
-        
-        conn->connectEstablished();
     }
 }
 
@@ -111,7 +116,7 @@ void TcpServer::closeConnection(int fd) {
     loop.getEpoll()->delFd(fd);
 }
 
-void TcpServer::removeConnection(std::shared_ptr<TcpConnection>& conn) {
+void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
     int fd = conn->getFd();
     connections.erase(fd);
     conn->close();

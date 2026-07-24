@@ -35,8 +35,6 @@ bool TcpConnection::recvMessage() {
         int count = recv(fd, buf, sizeof(buf), 0);
 
         if (count > 0) {
-            //
-            std::cout << "recv bytes:" << count << std::endl;
             readBuffer.append(buf, count);
         } else if (count == 0) {
             if (closeCallback) closeCallback(shared_from_this());

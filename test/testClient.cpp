@@ -1,171 +1,106 @@
 #include <iostream>
+#include <string>
+
 #include <unistd.h>
 #include <arpa/inet.h>
-#include "Buffer.h"
-#include "MessageCodec.h"
-#include "chat.pb.h"
 
 
 int main()
 {
-    int sockfd = socket(
-        AF_INET,
-        SOCK_STREAM,
-        0
-    );
 
-    if(sockfd == -1)
+    int sockfd =
+        socket(
+            AF_INET,
+            SOCK_STREAM,
+            0
+        );
+
+
+    if(sockfd < 0)
     {
         perror("socket");
         return -1;
     }
 
 
-    sockaddr_in server{};
-    server.sin_family = AF_INET;
-    server.sin_port = htons(8888);
-    server.sin_addr.s_addr =
-        inet_addr("127.0.0.1");
+
+    sockaddr_in serverAddr{};
+
+
+    serverAddr.sin_family = AF_INET;
+
+    serverAddr.sin_port =
+        htons(8888);
+
+
+    inet_pton(
+        AF_INET,
+        "127.0.0.1",
+        &serverAddr.sin_addr
+    );
+
 
 
     if(connect(
         sockfd,
-        (sockaddr*)&server,
-        sizeof(server)
-    ) == -1)
+        (sockaddr*)&serverAddr,
+        sizeof(serverAddr)
+    ) < 0)
     {
         perror("connect");
         return -1;
     }
 
 
+
     std::cout
-        <<"connect server success"
-        <<std::endl;
+        << "connect success"
+        << std::endl;
 
 
 
-    // 构造protobuf请求
-    chat::LoginReq req;
-
-    req.set_msgid(chat::LOGIN_MSG);
-    req.set_id(1);
-    req.set_password("123");
-
-
-    // protobuf序列化
-    std::string data;
-
-    if(!req.SerializeToString(&data))
+    while(true)
     {
+
+        std::string msg;
+
+
         std::cout
-            <<"serialize failed"
-            <<std::endl;
-
-        return -1;
-    }
+            << "input:"
+            << std::endl;
 
 
-
-    // MessageCodec编码
-    std::string msg =
-        MessageCodec::encode(
-            chat::LOGIN_MSG,
-            data
+        std::getline(
+            std::cin,
+            msg
         );
 
 
 
-    // 发送
-    int n = send(
-        sockfd,
-        msg.data(),
-        msg.size(),
-        0
-    );
-
-
-    std::cout
-        <<"send bytes:"
-        <<n
-        <<std::endl;
+        if(msg == "quit")
+            break;
 
 
 
-    // 接收服务器返回
-    Buffer recvBuffer;
-    char buf[1024];
-
-    while (true) {
-
-        int len = recv(
+        send(
             sockfd,
-            buf,
-            sizeof(buf),
+            msg.data(),
+            msg.size(),
             0
         );
 
 
-        if(len > 0)
-        {
-            recvBuffer.append(
-                buf,
-                len
-            );
+
+        std::cout<<"send ok"<<std::endl;
 
 
-            int msgid;
-            std::string data;
+        
 
-
-            while(
-                MessageCodec::decode(
-                    recvBuffer,
-                    msgid,
-                    data
-                )
-            )
-            {
-                std::cout
-                    <<"recv msgid:"
-                    <<msgid
-                    <<std::endl;
-
-
-                if(msgid == chat::LOGIN_MSG_ACK)
-                {
-                    chat::LoginRes res;
-
-                    if(res.ParseFromString(data))
-                    {
-                        std::cout
-                            <<"err:"
-                            <<res.err()
-                            <<std::endl;
-
-
-                        std::cout
-                            <<"msg:"
-                            <<res.errmsg()
-                            <<std::endl;
-                    }
-                }
-            }
-
-        }
-        else if(len == 0)
-        {
-            std::cout<<"server closed"<<std::endl;
-            break;
-        }
-        else
-        {
-            perror("recv");
-            break;
-        }
     }
 
+
     close(sockfd);
+
 
     return 0;
 }
