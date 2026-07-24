@@ -7,7 +7,7 @@
 #include "Util.h"
 #include <fcntl.h>
 
-TcpServer::TcpServer(int port) {
+TcpServer::TcpServer(int port) : threadPool(&loop, 3) {
     this->port = port;
     listenfd = -1;
 }
@@ -44,6 +44,7 @@ bool TcpServer::init() {
 }
 
 void TcpServer::start() {
+    threadPool.start();
     loop.loop();
 }
 
@@ -81,7 +82,9 @@ void TcpServer::acceptConnection() {
             return;
         }
 
-        auto conn = std::make_shared<TcpConnection>(clientfd, &loop);
+        EventLoop* ioLoop = threadPool.getNextLoop();
+
+        auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop);
         connections[clientfd] = conn;
 
         conn->setMessageCallback([this](auto conn, Buffer& buffer) {
