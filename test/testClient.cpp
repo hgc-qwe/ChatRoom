@@ -1,18 +1,23 @@
 #include <iostream>
 #include <string>
-#include <thread>
 
 #include <unistd.h>
 #include <arpa/inet.h>
 
 
+#include "chat.pb.h"
+#include "MessageCodec.h"
+
+
 int main()
 {
+
     int sockfd = socket(
         AF_INET,
         SOCK_STREAM,
         0
     );
+
 
     if(sockfd < 0)
     {
@@ -21,16 +26,17 @@ int main()
     }
 
 
+
     sockaddr_in serverAddr{};
 
+
     serverAddr.sin_family = AF_INET;
+
     serverAddr.sin_port = htons(8888);
 
-    inet_pton(
-        AF_INET,
-        "127.0.0.1",
-        &serverAddr.sin_addr
-    );
+    serverAddr.sin_addr.s_addr =
+        inet_addr("127.0.0.1");
+
 
 
     if(connect(
@@ -40,105 +46,213 @@ int main()
     ) < 0)
     {
         perror("connect");
+
         return -1;
     }
 
 
-    std::cout 
-        << "connect success"
+    std::cout
+        << "connect server success"
         << std::endl;
 
 
+
     /*
-        接收线程
+        构造登录请求
     */
-    std::thread recvThread(
-        [&]()
-        {
-            char buf[1024];
 
-            while(true)
-            {
-                int n = recv(
-                    sockfd,
-                    buf,
-                    sizeof(buf),
-                    0
-                );
+    chat::LoginReq req;
 
 
-                if(n > 0)
-                {
-                    std::string msg(
-                        buf,
-                        n
-                    );
+    req.set_id(1);
 
-                    std::cout
-                        << "\nserver:"
-                        << msg
-                        << std::endl;
+    req.set_password("123");
 
-                    std::cout
-                        << "input:"
-                        << std::flush;
-                }
-                else if(n == 0)
-                {
-                    std::cout
-                        << "server close"
-                        << std::endl;
-                    break;
-                }
-                else
-                {
-                    perror("recv");
-                    break;
-                }
-            }
-        }
+
+
+    std::string data;
+
+
+    req.SerializeToString(
+        &data
     );
 
 
 
     /*
-        发送线程
+        加协议头
+
+        msgid + length + data
     */
-    while(true)
+
+    std::string message =
+        MessageCodec::encode(
+            chat::LOGIN_MSG,
+            data
+        );
+
+
+
+    int n = send(
+        sockfd,
+        message.data(),
+        message.size(),
+        0
+    );
+
+
+    std::cout
+        << "send bytes:"
+        << n
+        << std::endl;
+
+
+
+    /*
+        接收服务器响应
+    */
+
+
+    char buffer[4096]={0};
+
+    int len = recv(
+        sockfd,
+        buffer,
+        sizeof(buffer),
+        0
+    );
+
+
+    if(len > 0)
     {
-        std::string msg;
-
-
-        std::cout
-            << "input:"
+        std::cout 
+            << "recv bytes:"
+            << len
             << std::endl;
 
 
-        std::getline(
-            std::cin,
-            msg
+        int msgid;
+        std::string data;
+
+
+        Buffer bufferRecv;
+
+        bufferRecv.append(
+            buffer,
+            len
         );
 
 
-        if(msg == "quit")
+        if(MessageCodec::decode(
+            bufferRecv,
+            msgid,
+            data))
         {
-            break;
+
+            std::cout
+                << "msgid:"
+                << msgid
+                << std::endl;
+
+
+            if(msgid == chat::LOGIN_MSG_ACK)
+            {
+                chat::LoginRes res;
+
+                res.ParseFromString(data);
+
+
+                std::cout
+                    << "err:"
+                    << res.err()
+                    << std::endl;
+
+
+                std::cout
+                    << "errmsg:"
+                    << res.errmsg()
+                    << std::endl;
+
+
+                if(res.err()==0)
+                {
+                    std::cout
+                        << "userid:"
+                        << res.user().id()
+                        << std::endl;
+
+
+                    std::cout
+                        << "username:"
+                        << res.user().name()
+                        << std::endl;
+
+                    std::cout 
+                        << "friends:"
+                        << res.friends_size()
+                        << std::endl;
+
+
+                    for(int i=0;i<res.friends_size();i++)
+                    {
+                        auto friendUser = res.friends(i);
+
+                        std::cout
+                            << "friend id:"
+                            << friendUser.id()
+                            << " name:"
+                            << friendUser.name()
+                            << " state:"
+                            << friendUser.state()
+                            << std::endl;
+                    }
+
+
+
+                    std::cout
+                        << "groups:"
+                        << res.groups_size()
+                        << std::endl;
+
+
+                    for(int i=0;i<res.groups_size();i++)
+                    {
+                        auto group = res.groups(i);
+
+                        std::cout
+                            << "group id:"
+                            << group.id()
+                            << " name:"
+                            << group.name()
+                            << " desc:"
+                            << group.desc()
+                            << std::endl;
+                    }
+
+
+
+                    std::cout
+                        << "offline msg:"
+                        << res.offlinemsgs_size()
+                        << std::endl;
+
+
+                    for(auto& msg:res.offlinemsgs())
+                    {
+                        std::cout
+                            << msg
+                            << std::endl;
+                    }
+                }
+            }
         }
-
-
-        send(
-            sockfd,
-            msg.data(),
-            msg.size(),
-            0
-        );
     }
 
 
+        
+
+
     close(sockfd);
-
-
-    recvThread.join();
 
 
     return 0;

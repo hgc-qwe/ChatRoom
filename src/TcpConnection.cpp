@@ -111,3 +111,11 @@ void TcpConnection::connectEstablished() {
 void TcpConnection::removeChannel() {
     loop->removeChannel(fd);
 }
+
+void TcpConnection::setUserId(int id) {
+    userid = id;
+}
+
+int TcpConnection::getUserId() {
+    return userid;
+}

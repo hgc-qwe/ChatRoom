@@ -32,9 +32,13 @@ public:
     void setCloseCallback(CloseCallback cb);
     void connectEstablished();
     void removeChannel();
+
+    void setUserId(int id);
+    int getUserId();
 private:
     int fd;
     EventLoop* loop;
+    int userid{-1};
     Buffer readBuffer;
     Buffer writeBuffer;
     std::shared_ptr<Channel> channel;

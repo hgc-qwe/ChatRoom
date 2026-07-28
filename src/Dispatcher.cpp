@@ -3,7 +3,7 @@
 #include "MessageCodec.h"
 #include <iostream>
 
-std::string Dispatcher::dispatch(int msgid, const std::string& data) {
+std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid, const std::string& data) {
     switch (msgid) {
         case chat::LOGIN_MSG: {
             chat::LoginReq req;
@@ -13,7 +13,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::LoginRes res;
-            ChatService::instance()->login(req, res);
+            ChatService::instance()->login(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::LOGIN_MSG_ACK, response);
@@ -26,7 +26,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::RegisterRes res;
-            ChatService::instance()->reg(req, res);
+            ChatService::instance()->reg(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::REG_MSG_ACK, response);
@@ -39,7 +39,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::AddFriendRes res;
-            ChatService::instance()->addFriend(req, res);
+            ChatService::instance()->addFriend(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::ADD_FRIEND_MSG_ACK, response);
@@ -52,7 +52,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::OneChatRes res;
-            ChatService::instance()->oneChat(req, res);
+            ChatService::instance()->oneChat(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::ONE_CHAT_MSG_ACK, response);
@@ -65,7 +65,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::CreateGroupRes res;
-            ChatService::instance()->createGroup(req, res);
+            ChatService::instance()->createGroup(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::CREATE_GROUP_MSG_ACK, response);
@@ -78,7 +78,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::AddGroupRes res;
-            ChatService::instance()->addGroup(req, res);
+            ChatService::instance()->addGroup(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::ADD_GROUP_MSG_ACK, response);
@@ -91,7 +91,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::GroupChatRes res;
-            ChatService::instance()->groupChat(req, res);
+            ChatService::instance()->groupChat(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::GROUP_CHAT_MSG_ACK, response);
@@ -104,7 +104,7 @@ std::string Dispatcher::dispatch(int msgid, const std::string& data) {
             }
 
             chat::LogoutRes res;
-            ChatService::instance()->loginout(req, res);
+            ChatService::instance()->logout(conn, req, res);
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::LOGOUT_MSG_ACK, response);

@@ -60,10 +60,8 @@ void Channel::handleEvent(uint32_t events) {
         handleWrite();
     }
     if (events & EPOLLHUP) {
-        std::cout
-        <<"epoll hup fd:"
-        <<fd
-        <<std::endl;
+        if (closeCallback) closeCallback();
+        return;
     }
 }
 

@@ -2,7 +2,7 @@
 #include "Mysql.h"
 #include "OfflineMsg.h"
 
-bool OfflineMsg::insert(int userid, std::string msg) {
+bool OfflineMsg::insert(int toid, int userid, std::string msg) {
     std::string sql = "insert into offlinemessage (userid, msg) values (" + std::to_string(userid) 
         + ",'" + msg + "');";
     Mysql mysql;

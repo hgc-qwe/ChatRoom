@@ -95,7 +95,7 @@ void TcpServer::acceptConnection() {
                 std::string data;
 
                 while (MessageCodec::decode(buffer, msgid, data)) {
-                    auto response = dispatcher.dispatch(msgid, data);
+                    auto response = dispatcher.dispatch(conn, msgid, data);
                     conn->sendMessage(response);
                 } 
             });
@@ -117,6 +117,8 @@ void TcpServer::closeConnection(int fd) {
 
 void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
     int fd = conn->getFd();
+    int userid = conn->getUserId();
+    if (userid != -1) ChatService::instance()->clientClose(userid);
     {
         std::lock_guard<std::mutex> lock(connMutex);
         connections.erase(fd);

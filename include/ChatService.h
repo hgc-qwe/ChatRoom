@@ -1,9 +1,11 @@
 #include <unordered_map>
+#include <mutex>
 #include "UserModel.h"
 #include "FriendModel.h"
 #include "OfflineMsg.h"
 #include "GroupModel.h"
 #include "chat.pb.h"
+#include "TcpConnection.h"
 #pragma once
 
 class ChatService
@@ -11,26 +13,34 @@ class ChatService
 public:
     static ChatService* instance();
 
-    void login(const chat::LoginReq& req, chat::LoginRes& res);
-    void reg(const chat::RegisterReq& req, chat::RegisterRes& res);
+    void login(std::shared_ptr<TcpConnection> conn, const chat::LoginReq& req, chat::LoginRes& res);
+    void reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterReq& req, chat::RegisterRes& res);
 
-    void addFriend(const chat::AddFriendReq& req, chat::AddFriendRes& res);
+    void addFriend(std::shared_ptr<TcpConnection> conn, const chat::AddFriendReq& req, chat::AddFriendRes& res);
 
-    void oneChat(const chat::OneChatReq& req, chat::OneChatRes& res);
+    void oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res);
 
-    void createGroup(const chat::CreateGroupReq& req, chat::CreateGroupRes& res);
-    void addGroup(const chat::AddGroupReq& req, chat::AddGroupRes& res);
+    void createGroup(std::shared_ptr<TcpConnection> conn, const chat::CreateGroupReq& req, chat::CreateGroupRes& res);
+    void addGroup(std::shared_ptr<TcpConnection> conn, const chat::AddGroupReq& req, chat::AddGroupRes& res);
 
-    void groupChat(const chat::GroupChatReq& req, chat::GroupChatRes& res);
+    void groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res);
 
-    void loginout(const chat::LogoutReq& req, chat::LogoutRes& res);
+    void logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res);
 
+    void addUserConn(int userid, std::shared_ptr<TcpConnection> conn);
+
+    std::shared_ptr<TcpConnection> getUserConn(int userid);
+
+    void removeUser(int userid);
+    void clientClose(int userid);
 private:
     UserModel userModel;
     FriendModel friendModel;
     OfflineMsg offlineMsg;
     GroupModel groupModel;
-    // std::unordered_map<int, TcpConnection> userConnMap;
-    // std::unordered_map<int, MsgHandel> msgHandelMap;
+
+    std::unordered_map<int, std::shared_ptr<TcpConnection>> userConnMap;
+    std::mutex connMutex;
+
     ChatService() = default;
 };

@@ -8,7 +8,7 @@ Mysql::Mysql() {
 }
 
 bool Mysql::connect() {
-    conn = mysql_real_connect(conn, "127.0.0.1", "root", "123456", "itcast", 3306, nullptr, 0);
+    conn = mysql_real_connect(conn, "127.0.0.1", "root", "123456", "chatroom", 3306, nullptr, 0);
     if (conn == nullptr) {
         std::cout << "connect failed" << std::endl;
         return false;

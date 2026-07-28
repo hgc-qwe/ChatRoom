@@ -4,7 +4,7 @@
 
 class OfflineMsg {
 public:
-    bool insert(int userid, std::string msg);
+    bool insert(int toid, int userid, std::string msg);
 
     bool remove(int userid);
 
