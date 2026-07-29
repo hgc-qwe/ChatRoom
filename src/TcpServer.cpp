@@ -1,11 +1,12 @@
 #include <iostream>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "TcpServer.h"
 #include "MessageCodec.h"
 #include "Channel.h"
 #include "Util.h"
-#include <fcntl.h>
+#include "Logger.h"
 
 TcpServer::TcpServer(int port) : threadPool(&loop, 3) {
     this->port = port;
@@ -59,7 +60,7 @@ bool TcpServer::createListenFd() {
 
 bool TcpServer::bind() {
     if (::bind(listenfd, (struct sockaddr*)&listen_addr, sizeof(listen_addr)) == -1) {
-        std::cerr << "listen_fd bind failed" << std::endl;
+        LOG_ERROR("bind failed");
         return false;
     }
     return true;
@@ -67,7 +68,7 @@ bool TcpServer::bind() {
 
 bool TcpServer::listen() {
     if (::listen(listenfd, 128) == -1) {
-        std::cerr << "listen failed" << std::endl;
+        LOG_ERROR("listen failed");
         return false;
     }
     return true;

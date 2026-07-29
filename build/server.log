@@ -1,0 +1,7 @@
+[2026-07-29 19:33:12.908] [ChatServer] [info] server start success
+[2026-07-29 19:34:15.679] [ChatServer] [info] user 1 login success
+[2026-07-29 19:34:25.743] [ChatServer] [info] user 2 login success
+[2026-07-29 19:34:39.277] [ChatServer] [info] user 1 add friend 2 success
+[2026-07-29 19:34:52.284] [ChatServer] [info] user 2 query friend requests
+[2026-07-29 19:35:28.694] [ChatServer] [info] user 1 disconnected
+[2026-07-29 19:35:32.984] [ChatServer] [info] user 2 disconnected

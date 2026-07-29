@@ -1,19 +1,24 @@
 #include <iostream>
 #include "TcpServer.h"
+#include "Logger.h"
 
 
 int main()
 {
-    TcpServer server(8888);
+    Logger::init();
+
+
+    TcpServer server(8080);
+
 
     if(!server.init())
     {
-        std::cout << "server init failed" << std::endl;
+        LOG_ERROR("server init failed");
         return -1;
     }
 
 
-    std::cout << "server start success" << std::endl;
+    LOG_INFO("server start success");
 
 
     server.start();

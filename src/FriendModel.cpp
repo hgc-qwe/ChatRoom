@@ -4,13 +4,17 @@
 #include "FriendModel.h"
 
 bool FriendModel::insert(int userid, int friendid) {
-    std::string sql = "insert into friend (userid, friendid) values (" + std::to_string(userid) 
+    std::string sql1 = "insert into friend (userid, friendid) values (" + std::to_string(userid) 
         + "," + std::to_string(friendid) + ");";
+    std::string sql2 = "insert into friend (userid, friendid) values (" + std::to_string(friendid) 
+        + "," + std::to_string(userid) + ");";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;
     }
-    return mysql.update(sql);
+    if (!mysql.update(sql1)) return false;
+    if (!mysql.update(sql2)) return false;
+    return true;
 }
 
 std::vector<User> FriendModel::query(int userid) {
@@ -37,4 +41,27 @@ std::vector<User> FriendModel::query(int userid) {
     }
     mysql_free_result(res);
     return friends;
+}
+
+bool FriendModel::isFriend(int fromid, int toid) {
+    std::string sql ="select friendid from friend where userid="+ std::to_string(fromid);
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) {
+        return false;
+    }
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(res)) != nullptr) {
+        if (toid == atoi(row[0])) {
+            mysql_free_result(res);
+            return true;
+        }
+    }
+    mysql_free_result(res);
+    return false;
 }

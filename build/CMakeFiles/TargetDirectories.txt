@@ -1,0 +1,4 @@
+/home/hgc/桌面/ChatRoom/build/CMakeFiles/testServer.dir
+/home/hgc/桌面/ChatRoom/build/CMakeFiles/testClient.dir
+/home/hgc/桌面/ChatRoom/build/CMakeFiles/edit_cache.dir
+/home/hgc/桌面/ChatRoom/build/CMakeFiles/rebuild_cache.dir

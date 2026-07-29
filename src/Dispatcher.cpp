@@ -1,6 +1,7 @@
 #include "Dispatcher.h"
 #include "ChatService.h"
 #include "MessageCodec.h"
+#include "Logger.h"
 #include <iostream>
 
 std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid, const std::string& data) {
@@ -8,7 +9,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::LOGIN_MSG: {
             chat::LoginReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "LoginReq parse failed" << std::endl;
+                LOG_ERROR("LoginReq parse failed");
                 return "";
             }
 
@@ -21,7 +22,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::REG_MSG: {
             chat::RegisterReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "RegisterReq parse failed" << std::endl;
+                LOG_ERROR("RegisterReq parse failed");
                 return "";
             }
 
@@ -34,7 +35,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::ADD_FRIEND_MSG: {
             chat::AddFriendReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "AddFriendReq parse failed" << std::endl;
+                LOG_ERROR("AddFriendReq parse failed");
                 return "";
             }
 
@@ -47,7 +48,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::ONE_CHAT_MSG: {
             chat::OneChatReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "OneChatReq parse failed" << std::endl;
+                LOG_ERROR("OneChatReq parse failed");
                 return "";
             }
 
@@ -60,7 +61,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::CREATE_GROUP_MSG: {
             chat::CreateGroupReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "CreateGroupReq parse failed" << std::endl;
+                LOG_ERROR("CreateGroupReq parse failed");
                 return "";
             }
 
@@ -73,7 +74,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::ADD_GROUP_MSG: {
             chat::AddGroupReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "AddGroupReq parse failed" << std::endl;
+                LOG_ERROR("AddGroupReq parse failed");
                 return "";
             }
 
@@ -86,7 +87,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::GROUP_CHAT_MSG: {
             chat::GroupChatReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "GroupChatReq parse failed" << std::endl;
+                LOG_ERROR("GroupChatReq parse failed");
                 return "";
             }
 
@@ -99,7 +100,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
         case chat::LOGOUT_MSG: {
             chat::LogoutReq req;
             if (!req.ParseFromString(data)) {
-                std::cout << "LogoutReq parse failed" << std::endl;
+                LOG_ERROR("LogoutReq parse failed");
                 return "";
             }
 
@@ -109,8 +110,32 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::LOGOUT_MSG_ACK, response);
         }
+        case chat::QUERY_FRIEND_REQ_MSG: {
+            chat::QueryFriendReqReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryFriendReqReq parse failed");
+                return "";
+            }
+            chat::QueryFriendReqRes res;
+            ChatService::instance()->queryFriendreq(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_FRIEND_REQ_MSG_ACK, response);
+        }
+        case chat::ACCEPT_FRIEND_MSG: {
+            chat::AcceptFriendReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("AcceptFriendReq parse failed");
+                return "";
+            }
+            chat::AcceptFriendRes res;
+            ChatService::instance()->acceptFriend(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::ACCEPT_FRIEND_MSG_ACK, response);
+        }
         default: {
-            std::cout << "unknown message" << std::endl;
+            LOG_ERROR("unknown message");
             return "";
         }
     }

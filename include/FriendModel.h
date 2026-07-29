@@ -12,4 +12,6 @@ public:
     bool insert(int userid, int friendid);
 
     std::vector<User> query(int userid);
+
+    bool isFriend(int fromid, int toid);
 };

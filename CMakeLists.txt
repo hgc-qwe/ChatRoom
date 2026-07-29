@@ -5,6 +5,7 @@ project(ChatRoom)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Protobuf REQUIRED)
+find_package(spdlog REQUIRED)
 
 # ============================================
 # 公共源文件（Server 和 Client 共享的部分）
@@ -13,10 +14,11 @@ set(COMMON_SRC
     # base
     src/Buffer.cpp
     src/Util.cpp
+    src/Logger.cpp
 
     # codec
     src/MessageCodec.cpp
-
+    src/Logger.cpp
     # protobuf
     proto/chat.pb.cc
 )
@@ -47,6 +49,9 @@ add_executable(
     src/FriendModel.cpp
     src/GroupModel.cpp
     src/OfflineMsg.cpp
+    src/FriendReqModel.cpp
+    src/Message.cpp
+    src/MessageModel.cpp
 
     # entity
     src/User.cpp
@@ -71,6 +76,7 @@ target_link_libraries(
     pthread
     mysqlclient
     protobuf::libprotobuf
+    spdlog::spdlog
 )
 
 # ============================================
@@ -104,4 +110,5 @@ target_link_libraries(
     testClient
     pthread
     protobuf::libprotobuf
+    spdlog::spdlog
 )

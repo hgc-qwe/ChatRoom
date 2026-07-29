@@ -27,6 +27,18 @@ enum MsgTyp {
 
     LOGOUT_MSG = 15;
     LOGOUT_MSG_ACK = 16;
+
+    HISTORY_MSG = 17;
+    HISTORY_MSG_ACK = 18;
+
+    FRIEND_NOTIFY_MSG = 19;
+    FRIEND_NOTIFY_MSG_ACK = 20;
+
+    QUERY_FRIEND_REQ_MSG = 21;
+    QUERY_FRIEND_REQ_MSG_ACK = 22;
+
+    ACCEPT_FRIEND_MSG = 23;
+    ACCEPT_FRIEND_MSG_ACK = 24;
 }
 
 message LoginReq {
@@ -58,8 +70,8 @@ message RegisterRes {
 
 message AddFriendReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
-    int32 friendid = 3;
+    int32 fromid = 2;
+    int32 toid = 3;
 }
 
 message AddFriendRes {
@@ -149,4 +161,42 @@ message Group {
     string name = 2;
     string desc = 3;
     repeated GroupUser users = 4;
+}
+
+message HistoryMsgReq {
+    int32 userid = 1;
+    int32 friendid = 2;
+}
+
+message HistoryMsgRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated string msgs = 3;
+}
+
+message AcceptFriendReq {
+    MsgTyp msgid = 1;
+    int32 userid = 2;
+    int32 friendid = 3;
+}
+
+message AcceptFriendRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message FriendRequest {
+    int32 userid = 1;
+    string username = 2;
+}
+
+message QueryFriendReqReq {
+    MsgTyp msgid = 1;
+    int32 userid = 2;
+}
+
+message QueryFriendReqRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated FriendRequest requests = 3;
 }

@@ -1,7 +1,10 @@
 #include <iostream>
 #include "ChatService.h"
+#include "Logger.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
+#include "MessageModel.h"
+#include "Message.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
@@ -15,9 +18,11 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
         if (!userModel.updateState(user)) {
             res.set_err(1);
             res.set_errmsg("update state failed");
+            LOG_ERROR("user {} update state failed", req.id());
         } else {
             res.set_err(0);
             res.set_errmsg("login success");
+            LOG_INFO("user {} login success", req.id());
             addUserConn(req.id(), conn);
             conn->setUserId(req.id());
 
@@ -26,12 +31,12 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
             loginUser->set_name(user.getName());
             loginUser->set_state(user.getState());
 
-            std::vector<std::string> offmsgs = offlineMsg.query(req.id());
+            std::vector<Message> offmsgs = messageModel.queryOffline(req.id());
 
             for (auto& msg : offmsgs) {
-                res.add_offlinemsgs(msg);
+                res.add_offlinemsgs(msg.getMsg());
             }
-            offlineMsg.remove(req.id());
+            messageModel.updateStatus(req.id());
             std::vector<User> users = friendModel.query(req.id());
 
             for (auto& u : users) {
@@ -52,6 +57,7 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
     } else {
         res.set_err(1);
         res.set_errmsg("login failed");
+        LOG_WARN("user {} login failed", req.id());
     }
 }
 
@@ -59,6 +65,7 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
     if (req.name().empty() || req.password().empty()) {
         res.set_err(1);
         res.set_errmsg("register failed");
+        LOG_WARN("register failed name={}", req.name());
     } else {
         User user;
         user.setName(req.name());
@@ -69,24 +76,75 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
             res.set_err(0);
             res.set_userid(user.getId());
             res.set_errmsg("register success");
+            LOG_INFO("register success userid={}", user.getId());
         } else {
             res.set_err(1);
             res.set_errmsg("register failed");
+            LOG_WARN("register failed name={}", req.name());
         }
     }
 }
 
 void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::AddFriendReq& req, chat::AddFriendRes& res) {
-    if (friendModel.insert(req.userid(), req.friendid())) {
+    if (req.fromid() == req.toid()) {
+        res.set_err(1);
+        res.set_errmsg("cannot add yourself");
+        return;
+    }
+
+    if (friendReqModel.insert(req.fromid(), req.toid())) {
         res.set_err(0);
-        res.set_errmsg("addFriend success");
+        res.set_errmsg("add friend request success");
+        
+        auto target = getUserConn(req.fromid());
+        if (target) {
+            User user = userModel.query(req.fromid());
+            chat::FriendRequest notify;
+            notify.set_userid(req.fromid());
+            notify.set_username(user.getName());
+
+            std::string data;
+            notify.SerializeToString(&data);
+            target->sendMessage(MessageCodec::encode(chat::FRIEND_NOTIFY_MSG, data));
+            LOG_INFO("user {} add friend {} success", req.fromid(), req.toid());
+        }
     } else {
         res.set_err(1);
-        res.set_errmsg("addFriend failed");
+        res.set_errmsg("add friend request failed");
+        LOG_WARN("user {} add friend {} failed", req.fromid(), req.toid());
     }
 }
 
+void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::AcceptFriendReq& req, chat::AcceptFriendRes& res) {
+    if (!friendReqModel.updateStatus(req.friendid(), req.userid(), 1)) {
+        res.set_err(1);
+        res.set_errmsg("accept failed");
+        return;
+    }
+    friendModel.insert(req.userid(), req.friendid());
+    res.set_err(0);
+    res.set_errmsg("accept success");
+}
+
+void ChatService::queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReqReq& req, chat::QueryFriendReqRes& res) {
+    auto requests = friendReqModel.query(req.userid());
+    for (auto& r : requests) {
+        User user = userModel.query(r.getUserid());
+        auto item = res.add_requests();
+        item->set_userid(user.getId());
+        item->set_username(user.getName());
+    }
+    res.set_err(0);
+    res.set_errmsg("query success");
+    LOG_INFO("user {} query friend requests", req.userid());
+}
+
 void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res) {
+    if (!friendModel.isFriend(req.fromid(), req.toid())) {
+        res.set_err(1);
+        res.set_errmsg("not friend");
+        return;
+    }
     auto targetConn = getUserConn(req.toid());
     if (targetConn) {
         std::string data;
@@ -94,10 +152,16 @@ void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneCh
         targetConn->sendMessage(MessageCodec::encode(chat::ONE_CHAT_MSG, data));
         res.set_err(0);
         res.set_errmsg("send success");
+        LOG_INFO("{} send message to {}", req.fromid(), req.toid());
     } else {
-        offlineMsg.insert(req.toid(), req.fromid(), req.msg());
-        res.set_err(1);
-        res.set_errmsg("user offline");
+        if (messageModel.insert(req.fromid(), req.toid(), req.msg())) {
+            res.set_err(0);
+            res.set_errmsg("message saved");
+            LOG_WARN("user {} offline, save message", req.toid());
+        } else {
+            res.set_err(1);
+            res.set_errmsg("send failed");
+        }
     }
 }
 
@@ -105,6 +169,7 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
     if (req.groupname().empty() || req.groupdesc().empty()) {
         res.set_err(1);
         res.set_errmsg("createGroup failed");
+        LOG_WARN("user {} create group failed", req.userid());
     } else {
         Group group(req.groupname(), req.groupdesc());
         if (groupModel.createGroup(group)) {
@@ -112,9 +177,11 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
             res.set_groupid(group.getId());
             res.set_err(0);
             res.set_errmsg("createGroup success");
+            LOG_INFO("user {} create group {} success", req.userid(), group.getId());
         } else {
             res.set_err(1);
             res.set_errmsg("createGroup failed");
+            LOG_WARN("user {} create group failed", req.userid());
         }
     }
 }
@@ -138,12 +205,15 @@ void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::Gro
             std::string data;
             req.SerializeToString(&data);
             userconn->sendMessage(MessageCodec::encode(chat::GROUP_CHAT_MSG, data));
+            LOG_INFO("user {} send group message {}", req.userid(), req.groupid());
         } else {
-            offlineMsg.insert(id, req.userid(), req.msg());
+            messageModel.insert(req.userid(), id, req.msg());
+            LOG_WARN("group memeber {} offline, save message", id);
         }
     }
     res.set_err(0);
     res.set_errmsg("groupChat success");
+    LOG_INFO("user {} send group message {}", req.userid(), req.groupid());
 }
 
 void ChatService::logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res) {
@@ -181,6 +251,10 @@ void ChatService::clientClose(int userid) {
     User user = userModel.query(userid);
     if (user.getId() == userid && user.getState() == "online") {
         user.setState("offline");
-        userModel.updateState(user);
+        if (userModel.updateState(user)) {
+            LOG_INFO("user {} disconnected", userid);
+        } else {
+            LOG_ERROR("user {} update offline failed", userid);
+        }
     }
 }

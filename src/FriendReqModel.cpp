@@ -1,0 +1,41 @@
+#include <vector>
+#include <string>
+#include "FriendReqModel.h"
+#include "FriendRequest.h"
+#include "Mysql.h"
+
+bool FriendReqModel::insert(int fromid, int toid) {
+    std::string sql = "insert into friend_request(fromid, toid) values(" + std::to_string(fromid) + "," + std::to_string(toid) + ");";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}
+
+std::vector<FriendRequest> FriendReqModel::query(int userid) {
+    std::string sql = "select fromid from friend_request where toid=" + std::to_string(userid) + " and status=0;";
+    Mysql mysql;
+    std::vector<FriendRequest> requests;
+    if (!mysql.connect()) return requests;
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) return requests;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res)) != nullptr) {
+        int fromid = atoi(row[0]);
+        int toid = atoi(row[1]);
+        requests.emplace_back(fromid, toid);
+    }
+    mysql_free_result(res);
+    return requests;
+}
+
+bool FriendReqModel::updateStatus(int fromid, int toid, int status) {
+    std::string sql = "update friend_request set status=" + std::to_string(status) + " where fromid=" + std::to_string(fromid) + " and toid=" + std::to_string(toid) + ";";
+    Mysql mysql;
+    if (! mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}

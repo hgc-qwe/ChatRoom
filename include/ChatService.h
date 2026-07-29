@@ -2,10 +2,11 @@
 #include <mutex>
 #include "UserModel.h"
 #include "FriendModel.h"
-#include "OfflineMsg.h"
 #include "GroupModel.h"
 #include "chat.pb.h"
+#include "MessageModel.h"
 #include "TcpConnection.h"
+#include "FriendReqModel.h"
 #pragma once
 
 class ChatService
@@ -27,6 +28,10 @@ public:
 
     void logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res);
 
+    void acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::AcceptFriendReq& req, chat::AcceptFriendRes& res);
+
+    void queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReqReq& req, chat::QueryFriendReqRes& res);
+    
     void addUserConn(int userid, std::shared_ptr<TcpConnection> conn);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);
@@ -36,8 +41,9 @@ public:
 private:
     UserModel userModel;
     FriendModel friendModel;
-    OfflineMsg offlineMsg;
     GroupModel groupModel;
+    MessageModel messageModel;
+    FriendReqModel friendReqModel;
 
     std::unordered_map<int, std::shared_ptr<TcpConnection>> userConnMap;
     std::mutex connMutex;
