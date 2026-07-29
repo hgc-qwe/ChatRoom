@@ -1,7 +1,8 @@
 #include <iostream>
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <cstring>
+#include <thread>
+
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
@@ -9,8 +10,177 @@
 using namespace std;
 
 
+// 接收服务器消息线程
+void recvMessage(int sockfd)
+{
+    while(true)
+    {
+        char buffer[4096] = {0};
+
+
+        int n = recv(
+            sockfd,
+            buffer,
+            sizeof(buffer),
+            0
+        );
+
+
+        if(n <= 0)
+        {
+            cout<<"server close"<<endl;
+            break;
+        }
+
+
+        Buffer buf;
+
+        buf.append(
+            buffer,
+            n
+        );
+
+
+        int msgid;
+        string body;
+
+
+        while(
+            MessageCodec::decode(
+                buf,
+                msgid,
+                body
+            )
+        )
+        {
+
+            cout<<"\nrecv msgid:"
+                <<msgid
+                <<endl;
+
+
+
+            // 登录响应
+            if(msgid == chat::LOGIN_MSG_ACK)
+            {
+                chat::LoginRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"login:"
+                <<res.errmsg()
+                <<endl;
+            }
+
+
+            // 添加好友响应
+            else if(msgid == chat::ADD_FRIEND_MSG_ACK)
+            {
+                chat::AddFriendRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"add friend:"
+                <<res.errmsg()
+                <<endl;
+            }
+
+
+            // 查询好友申请响应
+            else if(msgid == chat::QUERY_FRIEND_REQ_MSG_ACK)
+            {
+                chat::QueryFriendReqRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"err:"
+                <<res.err()
+                <<" "
+                <<res.errmsg()
+                <<endl;
+
+
+                for(auto& r : res.requests())
+                {
+                    cout
+                    <<"request userid:"
+                    <<r.userid()
+                    <<" username:"
+                    <<r.username()
+                    <<endl;
+                }
+            }
+
+
+            // 同意好友响应
+            else if(msgid == chat::ACCEPT_FRIEND_MSG_ACK)
+            {
+                chat::AcceptFriendRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"accept:"
+                <<res.errmsg()
+                <<endl;
+            }
+
+
+
+            // 好友申请实时通知
+            else if(msgid == chat::FRIEND_NOTIFY_MSG)
+            {
+                chat::FriendRequest req;
+
+
+                req.ParseFromString(body);
+
+
+                cout
+                <<"收到好友申请:"
+                <<" userid="
+                <<req.userid()
+                <<" username="
+                <<req.username()
+                <<endl;
+            }
+
+            else if(msgid == chat::FRIEND_ACCEPT_NOTIFY_MSG)
+            {
+                chat::FriendAcceptNotify req;
+
+
+                req.ParseFromString(body);
+
+
+                cout
+                <<"好友申请通过:"
+                <<" userid="
+                <<req.userid()
+                <<" username="
+                <<req.username()
+                <<endl;
+            }
+
+
+            cout<<"\n";
+        }
+
+    }
+}
+
+
+
 int main()
 {
+
     int sockfd = socket(
         AF_INET,
         SOCK_STREAM,
@@ -20,10 +190,12 @@ int main()
 
     sockaddr_in server;
 
+
     server.sin_family = AF_INET;
     server.sin_port = htons(8080);
     server.sin_addr.s_addr =
         inet_addr("127.0.0.1");
+
 
 
     if(connect(
@@ -41,8 +213,20 @@ int main()
 
 
 
+    // 开启接收线程
+    thread recvThread(
+        recvMessage,
+        sockfd
+    );
+
+
+    recvThread.detach();
+
+
+
     while(true)
     {
+
         cout<<"\n====== menu ======\n";
         cout<<"1 login\n";
         cout<<"2 add friend\n";
@@ -50,7 +234,9 @@ int main()
         cout<<"4 accept friend\n";
         cout<<"0 exit\n";
 
+
         int op;
+
         cin>>op;
 
 
@@ -60,8 +246,10 @@ int main()
 
 
 
-        if(op==1)
+        // 登录
+        if(op == 1)
         {
+
             chat::LoginReq req;
 
 
@@ -83,20 +271,25 @@ int main()
 
 
 
-            req.SerializeToString(&data);
+            req.SerializeToString(
+                &data
+            );
 
 
             packet =
-                MessageCodec::encode(
-                    chat::LOGIN_MSG,
-                    data
-                );
+            MessageCodec::encode(
+                chat::LOGIN_MSG,
+                data
+            );
+
         }
 
 
 
-        else if(op==2)
+        // 添加好友
+        else if(op == 2)
         {
+
             chat::AddFriendReq req;
 
 
@@ -114,25 +307,31 @@ int main()
 
 
             req.set_fromid(fromid);
+
             req.set_toid(toid);
 
 
-            req.SerializeToString(&data);
+
+            req.SerializeToString(
+                &data
+            );
 
 
 
             packet =
-                MessageCodec::encode(
-                    chat::ADD_FRIEND_MSG,
-                    data
-                );
+            MessageCodec::encode(
+                chat::ADD_FRIEND_MSG,
+                data
+            );
+
         }
 
 
 
-
-        else if(op==3)
+        // 查询好友申请
+        else if(op == 3)
         {
+
             chat::QueryFriendReqReq req;
 
 
@@ -143,31 +342,36 @@ int main()
             cin>>userid;
 
 
+
             req.set_userid(userid);
 
 
 
-            req.SerializeToString(&data);
+            req.SerializeToString(
+                &data
+            );
 
 
             packet =
-                MessageCodec::encode(
-                    chat::QUERY_FRIEND_REQ_MSG,
-                    data
-                );
+            MessageCodec::encode(
+                chat::QUERY_FRIEND_REQ_MSG,
+                data
+            );
 
         }
 
 
 
-
-        else if(op==4)
+        // 同意好友
+        else if(op == 4)
         {
+
             chat::AcceptFriendReq req;
 
 
             int userid;
             int friendid;
+
 
 
             cout<<"userid:";
@@ -180,23 +384,28 @@ int main()
 
 
             req.set_userid(userid);
+
             req.set_friendid(friendid);
 
 
-            req.SerializeToString(&data);
+
+            req.SerializeToString(
+                &data
+            );
 
 
 
             packet =
-                MessageCodec::encode(
-                    chat::ACCEPT_FRIEND_MSG,
-                    data
-                );
+            MessageCodec::encode(
+                chat::ACCEPT_FRIEND_MSG,
+                data
+            );
+
         }
 
 
 
-        else if(op==0)
+        else if(op == 0)
         {
             close(sockfd);
             break;
@@ -218,136 +427,13 @@ int main()
         );
 
 
-
-        cout<<"send bytes:"
-            <<packet.size()
-            <<endl;
-
-
-
-        char buffer[4096]={0};
-
-
-        int n =
-            recv(
-                sockfd,
-                buffer,
-                sizeof(buffer),
-                0
-            );
-
-
-        if(n<=0)
-        {
-            cout<<"server close"<<endl;
-            break;
-        }
-
-        Buffer buf;
-        buf.append(buffer, n);
-
-
-
-        int msgid;
-        string body;
-
-
-        MessageCodec::decode(
-            buf,
-            msgid,
-            body
-        );
-
-
-
-        cout<<"recv msgid:"
-            <<msgid
-            <<endl;
-
-
-
-        if(msgid==chat::LOGIN_MSG_ACK)
-        {
-            chat::LoginRes res;
-
-            res.ParseFromString(body);
-
-
-            cout
-            <<"err:"
-            <<res.err()
-            <<" "
-            <<res.errmsg()
-            <<endl;
-        }
-
-
-        else if(msgid==chat::ADD_FRIEND_MSG_ACK)
-        {
-            chat::AddFriendRes res;
-
-            res.ParseFromString(body);
-
-
-            cout
-            <<"err:"
-            <<res.err()
-            <<" "
-            <<res.errmsg()
-            <<endl;
-        }
-
-
-
-        else if(msgid==chat::QUERY_FRIEND_REQ_MSG_ACK)
-        {
-            chat::QueryFriendReqRes res;
-
-
-            res.ParseFromString(body);
-
-
-
-            cout
-            <<"err:"
-            <<res.err()
-            <<" "
-            <<res.errmsg()
-            <<endl;
-
-
-
-            for(auto& r:res.requests())
-            {
-                cout
-                <<"request userid:"
-                <<r.userid()
-                <<" name:"
-                <<r.username()
-                <<endl;
-            }
-        }
-
-
-
-        else if(msgid==chat::ACCEPT_FRIEND_MSG_ACK)
-        {
-            chat::AcceptFriendRes res;
-
-
-            res.ParseFromString(body);
-
-
-
-            cout
-            <<"err:"
-            <<res.err()
-            <<" "
-            <<res.errmsg()
-            <<endl;
-        }
+        cout
+        <<"send bytes:"
+        <<packet.size()
+        <<endl;
 
     }
+
 
 
     return 0;

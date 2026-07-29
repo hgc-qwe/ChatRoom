@@ -96,7 +96,7 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
         res.set_err(0);
         res.set_errmsg("add friend request success");
         
-        auto target = getUserConn(req.fromid());
+        auto target = getUserConn(req.toid());
         if (target) {
             User user = userModel.query(req.fromid());
             chat::FriendRequest notify;
@@ -124,6 +124,18 @@ void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::
     friendModel.insert(req.userid(), req.friendid());
     res.set_err(0);
     res.set_errmsg("accept success");
+    auto target = getUserConn(req.friendid());
+    if (target) {
+        User user = userModel.query(req.userid());
+        chat::FriendAcceptNotify notify;
+        notify.set_userid(req.userid());
+        notify.set_username(user.getName());
+
+        std::string data;
+        notify.SerializeToString(&data);
+        target->sendMessage(MessageCodec::encode(chat::FRIEND_ACCEPT_NOTIFY_MSG, data));
+        LOG_INFO("user {} accept friend request success", req.userid());
+    }
 }
 
 void ChatService::queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReqReq& req, chat::QueryFriendReqRes& res) {

@@ -70,6 +70,9 @@ extern CreateGroupReqDefaultTypeInternal _CreateGroupReq_default_instance_;
 class CreateGroupRes;
 struct CreateGroupResDefaultTypeInternal;
 extern CreateGroupResDefaultTypeInternal _CreateGroupRes_default_instance_;
+class FriendAcceptNotify;
+struct FriendAcceptNotifyDefaultTypeInternal;
+extern FriendAcceptNotifyDefaultTypeInternal _FriendAcceptNotify_default_instance_;
 class FriendRequest;
 struct FriendRequestDefaultTypeInternal;
 extern FriendRequestDefaultTypeInternal _FriendRequest_default_instance_;
@@ -134,6 +137,7 @@ template<> ::chat::AddGroupReq* Arena::CreateMaybeMessage<::chat::AddGroupReq>(A
 template<> ::chat::AddGroupRes* Arena::CreateMaybeMessage<::chat::AddGroupRes>(Arena*);
 template<> ::chat::CreateGroupReq* Arena::CreateMaybeMessage<::chat::CreateGroupReq>(Arena*);
 template<> ::chat::CreateGroupRes* Arena::CreateMaybeMessage<::chat::CreateGroupRes>(Arena*);
+template<> ::chat::FriendAcceptNotify* Arena::CreateMaybeMessage<::chat::FriendAcceptNotify>(Arena*);
 template<> ::chat::FriendRequest* Arena::CreateMaybeMessage<::chat::FriendRequest>(Arena*);
 template<> ::chat::Group* Arena::CreateMaybeMessage<::chat::Group>(Arena*);
 template<> ::chat::GroupChatReq* Arena::CreateMaybeMessage<::chat::GroupChatReq>(Arena*);
@@ -181,12 +185,14 @@ enum MsgTyp : int {
   QUERY_FRIEND_REQ_MSG_ACK = 22,
   ACCEPT_FRIEND_MSG = 23,
   ACCEPT_FRIEND_MSG_ACK = 24,
+  FRIEND_ACCEPT_NOTIFY_MSG = 25,
+  FRIEND_ACCEPT_NOTIFY_MSG_ACK = 26,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = ACCEPT_FRIEND_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = FRIEND_ACCEPT_NOTIFY_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -4872,6 +4878,170 @@ class QueryFriendReqRes final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class FriendAcceptNotify final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.FriendAcceptNotify) */ {
+ public:
+  inline FriendAcceptNotify() : FriendAcceptNotify(nullptr) {}
+  ~FriendAcceptNotify() override;
+  explicit PROTOBUF_CONSTEXPR FriendAcceptNotify(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  FriendAcceptNotify(const FriendAcceptNotify& from);
+  FriendAcceptNotify(FriendAcceptNotify&& from) noexcept
+    : FriendAcceptNotify() {
+    *this = ::std::move(from);
+  }
+
+  inline FriendAcceptNotify& operator=(const FriendAcceptNotify& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline FriendAcceptNotify& operator=(FriendAcceptNotify&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const FriendAcceptNotify& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const FriendAcceptNotify* internal_default_instance() {
+    return reinterpret_cast<const FriendAcceptNotify*>(
+               &_FriendAcceptNotify_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    26;
+
+  friend void swap(FriendAcceptNotify& a, FriendAcceptNotify& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(FriendAcceptNotify* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(FriendAcceptNotify* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  FriendAcceptNotify* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<FriendAcceptNotify>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const FriendAcceptNotify& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const FriendAcceptNotify& from) {
+    FriendAcceptNotify::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(FriendAcceptNotify* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.FriendAcceptNotify";
+  }
+  protected:
+  explicit FriendAcceptNotify(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUsernameFieldNumber = 2,
+    kUseridFieldNumber = 1,
+  };
+  // string username = 2;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
+  public:
+
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.FriendAcceptNotify)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    int32_t userid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -7663,9 +7833,85 @@ QueryFriendReqRes::requests() const {
   return _impl_.requests_;
 }
 
+// -------------------------------------------------------------------
+
+// FriendAcceptNotify
+
+// int32 userid = 1;
+inline void FriendAcceptNotify::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t FriendAcceptNotify::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t FriendAcceptNotify::userid() const {
+  // @@protoc_insertion_point(field_get:chat.FriendAcceptNotify.userid)
+  return _internal_userid();
+}
+inline void FriendAcceptNotify::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void FriendAcceptNotify::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.FriendAcceptNotify.userid)
+}
+
+// string username = 2;
+inline void FriendAcceptNotify::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& FriendAcceptNotify::username() const {
+  // @@protoc_insertion_point(field_get:chat.FriendAcceptNotify.username)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void FriendAcceptNotify::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.FriendAcceptNotify.username)
+}
+inline std::string* FriendAcceptNotify::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:chat.FriendAcceptNotify.username)
+  return _s;
+}
+inline const std::string& FriendAcceptNotify::_internal_username() const {
+  return _impl_.username_.Get();
+}
+inline void FriendAcceptNotify::_internal_set_username(const std::string& value) {
+  
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* FriendAcceptNotify::_internal_mutable_username() {
+  
+  return _impl_.username_.Mutable(GetArenaForAllocation());
+}
+inline std::string* FriendAcceptNotify::release_username() {
+  // @@protoc_insertion_point(field_release:chat.FriendAcceptNotify.username)
+  return _impl_.username_.Release();
+}
+inline void FriendAcceptNotify::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.username_.IsDefault()) {
+    _impl_.username_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.FriendAcceptNotify.username)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
