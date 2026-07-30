@@ -115,6 +115,19 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
     }
 }
 
+void ChatService::queryFriend(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReq& req, chat::QueryFriendRes& res) {
+    std::vector<User> friends = friendModel.query(req.userid());
+    for (auto& f : friends) {
+        chat::User* item = res.add_friends();
+        item->set_id(f.getId());
+        item->set_name(f.getName());
+        item->set_state(f.getState());
+    }
+    res.set_err(0);
+    res.set_errmsg("query friends success");
+    LOG_INFO("user {} query friends", req.userid());
+}
+
 void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::AcceptFriendReq& req, chat::AcceptFriendRes& res) {
     if (!friendReqModel.updateStatus(req.friendid(), req.userid(), 1)) {
         res.set_err(1);

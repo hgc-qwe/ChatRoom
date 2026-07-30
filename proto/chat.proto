@@ -42,6 +42,9 @@ enum MsgTyp {
 
     FRIEND_ACCEPT_NOTIFY_MSG = 25;
     FRIEND_ACCEPT_NOTIFY_MSG_ACK = 26;
+
+    QUERY_FRIEND_MSG = 27;
+    QUERY_FRIEND_MSG_ACK = 28;
 }
 
 message LoginReq {
@@ -207,4 +210,14 @@ message QueryFriendReqRes {
 message FriendAcceptNotify {
     int32 userid = 1;
     string username = 2;
+}
+
+message QueryFriendReq {
+    int32 userid = 1;
+}
+
+message QueryFriendRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated User friends = 3;
 }

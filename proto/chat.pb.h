@@ -112,12 +112,18 @@ extern OneChatReqDefaultTypeInternal _OneChatReq_default_instance_;
 class OneChatRes;
 struct OneChatResDefaultTypeInternal;
 extern OneChatResDefaultTypeInternal _OneChatRes_default_instance_;
+class QueryFriendReq;
+struct QueryFriendReqDefaultTypeInternal;
+extern QueryFriendReqDefaultTypeInternal _QueryFriendReq_default_instance_;
 class QueryFriendReqReq;
 struct QueryFriendReqReqDefaultTypeInternal;
 extern QueryFriendReqReqDefaultTypeInternal _QueryFriendReqReq_default_instance_;
 class QueryFriendReqRes;
 struct QueryFriendReqResDefaultTypeInternal;
 extern QueryFriendReqResDefaultTypeInternal _QueryFriendReqRes_default_instance_;
+class QueryFriendRes;
+struct QueryFriendResDefaultTypeInternal;
+extern QueryFriendResDefaultTypeInternal _QueryFriendRes_default_instance_;
 class RegisterReq;
 struct RegisterReqDefaultTypeInternal;
 extern RegisterReqDefaultTypeInternal _RegisterReq_default_instance_;
@@ -151,8 +157,10 @@ template<> ::chat::LogoutReq* Arena::CreateMaybeMessage<::chat::LogoutReq>(Arena
 template<> ::chat::LogoutRes* Arena::CreateMaybeMessage<::chat::LogoutRes>(Arena*);
 template<> ::chat::OneChatReq* Arena::CreateMaybeMessage<::chat::OneChatReq>(Arena*);
 template<> ::chat::OneChatRes* Arena::CreateMaybeMessage<::chat::OneChatRes>(Arena*);
+template<> ::chat::QueryFriendReq* Arena::CreateMaybeMessage<::chat::QueryFriendReq>(Arena*);
 template<> ::chat::QueryFriendReqReq* Arena::CreateMaybeMessage<::chat::QueryFriendReqReq>(Arena*);
 template<> ::chat::QueryFriendReqRes* Arena::CreateMaybeMessage<::chat::QueryFriendReqRes>(Arena*);
+template<> ::chat::QueryFriendRes* Arena::CreateMaybeMessage<::chat::QueryFriendRes>(Arena*);
 template<> ::chat::RegisterReq* Arena::CreateMaybeMessage<::chat::RegisterReq>(Arena*);
 template<> ::chat::RegisterRes* Arena::CreateMaybeMessage<::chat::RegisterRes>(Arena*);
 template<> ::chat::User* Arena::CreateMaybeMessage<::chat::User>(Arena*);
@@ -187,12 +195,14 @@ enum MsgTyp : int {
   ACCEPT_FRIEND_MSG_ACK = 24,
   FRIEND_ACCEPT_NOTIFY_MSG = 25,
   FRIEND_ACCEPT_NOTIFY_MSG_ACK = 26,
+  QUERY_FRIEND_MSG = 27,
+  QUERY_FRIEND_MSG_ACK = 28,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = FRIEND_ACCEPT_NOTIFY_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = QUERY_FRIEND_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -5042,6 +5052,338 @@ class FriendAcceptNotify final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class QueryFriendReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.QueryFriendReq) */ {
+ public:
+  inline QueryFriendReq() : QueryFriendReq(nullptr) {}
+  ~QueryFriendReq() override;
+  explicit PROTOBUF_CONSTEXPR QueryFriendReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QueryFriendReq(const QueryFriendReq& from);
+  QueryFriendReq(QueryFriendReq&& from) noexcept
+    : QueryFriendReq() {
+    *this = ::std::move(from);
+  }
+
+  inline QueryFriendReq& operator=(const QueryFriendReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QueryFriendReq& operator=(QueryFriendReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QueryFriendReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QueryFriendReq* internal_default_instance() {
+    return reinterpret_cast<const QueryFriendReq*>(
+               &_QueryFriendReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    27;
+
+  friend void swap(QueryFriendReq& a, QueryFriendReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QueryFriendReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QueryFriendReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QueryFriendReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QueryFriendReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QueryFriendReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QueryFriendReq& from) {
+    QueryFriendReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QueryFriendReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.QueryFriendReq";
+  }
+  protected:
+  explicit QueryFriendReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.QueryFriendReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class QueryFriendRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.QueryFriendRes) */ {
+ public:
+  inline QueryFriendRes() : QueryFriendRes(nullptr) {}
+  ~QueryFriendRes() override;
+  explicit PROTOBUF_CONSTEXPR QueryFriendRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QueryFriendRes(const QueryFriendRes& from);
+  QueryFriendRes(QueryFriendRes&& from) noexcept
+    : QueryFriendRes() {
+    *this = ::std::move(from);
+  }
+
+  inline QueryFriendRes& operator=(const QueryFriendRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QueryFriendRes& operator=(QueryFriendRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QueryFriendRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QueryFriendRes* internal_default_instance() {
+    return reinterpret_cast<const QueryFriendRes*>(
+               &_QueryFriendRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    28;
+
+  friend void swap(QueryFriendRes& a, QueryFriendRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QueryFriendRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QueryFriendRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QueryFriendRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QueryFriendRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QueryFriendRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QueryFriendRes& from) {
+    QueryFriendRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QueryFriendRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.QueryFriendRes";
+  }
+  protected:
+  explicit QueryFriendRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kFriendsFieldNumber = 3,
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // repeated .chat.User friends = 3;
+  int friends_size() const;
+  private:
+  int _internal_friends_size() const;
+  public:
+  void clear_friends();
+  ::chat::User* mutable_friends(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User >*
+      mutable_friends();
+  private:
+  const ::chat::User& _internal_friends(int index) const;
+  ::chat::User* _internal_add_friends();
+  public:
+  const ::chat::User& friends(int index) const;
+  ::chat::User* add_friends();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User >&
+      friends() const;
+
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.QueryFriendRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User > friends_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -7907,9 +8249,151 @@ inline void FriendAcceptNotify::set_allocated_username(std::string* username) {
   // @@protoc_insertion_point(field_set_allocated:chat.FriendAcceptNotify.username)
 }
 
+// -------------------------------------------------------------------
+
+// QueryFriendReq
+
+// int32 userid = 1;
+inline void QueryFriendReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t QueryFriendReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t QueryFriendReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.QueryFriendReq.userid)
+  return _internal_userid();
+}
+inline void QueryFriendReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void QueryFriendReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.QueryFriendReq.userid)
+}
+
+// -------------------------------------------------------------------
+
+// QueryFriendRes
+
+// int32 err = 1;
+inline void QueryFriendRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t QueryFriendRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t QueryFriendRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.QueryFriendRes.err)
+  return _internal_err();
+}
+inline void QueryFriendRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void QueryFriendRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.QueryFriendRes.err)
+}
+
+// string errmsg = 2;
+inline void QueryFriendRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& QueryFriendRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.QueryFriendRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void QueryFriendRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.QueryFriendRes.errmsg)
+}
+inline std::string* QueryFriendRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.QueryFriendRes.errmsg)
+  return _s;
+}
+inline const std::string& QueryFriendRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void QueryFriendRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* QueryFriendRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* QueryFriendRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.QueryFriendRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void QueryFriendRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.QueryFriendRes.errmsg)
+}
+
+// repeated .chat.User friends = 3;
+inline int QueryFriendRes::_internal_friends_size() const {
+  return _impl_.friends_.size();
+}
+inline int QueryFriendRes::friends_size() const {
+  return _internal_friends_size();
+}
+inline void QueryFriendRes::clear_friends() {
+  _impl_.friends_.Clear();
+}
+inline ::chat::User* QueryFriendRes::mutable_friends(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.QueryFriendRes.friends)
+  return _impl_.friends_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User >*
+QueryFriendRes::mutable_friends() {
+  // @@protoc_insertion_point(field_mutable_list:chat.QueryFriendRes.friends)
+  return &_impl_.friends_;
+}
+inline const ::chat::User& QueryFriendRes::_internal_friends(int index) const {
+  return _impl_.friends_.Get(index);
+}
+inline const ::chat::User& QueryFriendRes::friends(int index) const {
+  // @@protoc_insertion_point(field_get:chat.QueryFriendRes.friends)
+  return _internal_friends(index);
+}
+inline ::chat::User* QueryFriendRes::_internal_add_friends() {
+  return _impl_.friends_.Add();
+}
+inline ::chat::User* QueryFriendRes::add_friends() {
+  ::chat::User* _add = _internal_add_friends();
+  // @@protoc_insertion_point(field_add:chat.QueryFriendRes.friends)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User >&
+QueryFriendRes::friends() const {
+  // @@protoc_insertion_point(field_list:chat.QueryFriendRes.friends)
+  return _impl_.friends_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

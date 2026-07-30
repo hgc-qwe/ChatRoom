@@ -9,6 +9,35 @@
 
 using namespace std;
 
+int currentUserid = -1;
+
+void queryFriend(int sockfd, int userid)
+{
+    chat::QueryFriendReq req;
+
+    req.set_userid(userid);
+
+
+    string data;
+
+    req.SerializeToString(&data);
+
+
+    string packet =
+        MessageCodec::encode(
+            chat::QUERY_FRIEND_MSG,
+            data
+        );
+
+
+    send(
+        sockfd,
+        packet.data(),
+        packet.size(),
+        0
+    );
+}
+
 
 // 接收服务器消息线程
 void recvMessage(int sockfd)
@@ -167,7 +196,40 @@ void recvMessage(int sockfd)
                 <<" username="
                 <<req.username()
                 <<endl;
+
+                cout << endl;
+
+                queryFriend(sockfd, currentUserid);
             }
+
+            else if(msgid == chat::QUERY_FRIEND_MSG_ACK)
+            {
+                chat::QueryFriendRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"err:"
+                <<res.err()
+                <<" "
+                <<res.errmsg()
+                <<endl;
+
+
+                for(auto& user : res.friends())
+                {
+                    cout
+                    <<"friend id:"
+                    <<user.id()
+                    <<" name:"
+                    <<user.name()
+                    <<" state:"
+                    <<user.state()
+                    <<endl;
+                }
+            }
+            
 
 
             cout<<"\n";
@@ -259,7 +321,7 @@ int main()
 
             cout<<"id:";
             cin>>id;
-
+            currentUserid = id;
 
             cout<<"password:";
             cin>>pwd;

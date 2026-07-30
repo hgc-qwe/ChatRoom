@@ -134,6 +134,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::ACCEPT_FRIEND_MSG_ACK, response);
         }
+        case chat::QUERY_FRIEND_MSG: {
+            chat::QueryFriendReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryFriendReq parse failed");
+                return "";
+            }
+            chat::QueryFriendRes res;
+            ChatService::instance()->queryFriend(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_FRIEND_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";
