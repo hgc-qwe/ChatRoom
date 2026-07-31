@@ -457,8 +457,36 @@ struct QueryFriendResDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 QueryFriendResDefaultTypeInternal _QueryFriendRes_default_instance_;
+PROTOBUF_CONSTEXPR DeleteFriendReq::DeleteFriendReq(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.userid_)*/0
+  , /*decltype(_impl_.friendid_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct DeleteFriendReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR DeleteFriendReqDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~DeleteFriendReqDefaultTypeInternal() {}
+  union {
+    DeleteFriendReq _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeleteFriendReqDefaultTypeInternal _DeleteFriendReq_default_instance_;
+PROTOBUF_CONSTEXPR DeleteFriendRes::DeleteFriendRes(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.errmsg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.err_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct DeleteFriendResDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR DeleteFriendResDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~DeleteFriendResDefaultTypeInternal() {}
+  union {
+    DeleteFriendRes _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeleteFriendResDefaultTypeInternal _DeleteFriendRes_default_instance_;
 }  // namespace chat
-static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[29];
+static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[31];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_proto_2fchat_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_proto_2fchat_2eproto = nullptr;
 
@@ -725,6 +753,22 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::chat::QueryFriendRes, _impl_.err_),
   PROTOBUF_FIELD_OFFSET(::chat::QueryFriendRes, _impl_.errmsg_),
   PROTOBUF_FIELD_OFFSET(::chat::QueryFriendRes, _impl_.friends_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendReq, _impl_.userid_),
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendReq, _impl_.friendid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendRes, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendRes, _impl_.err_),
+  PROTOBUF_FIELD_OFFSET(::chat::DeleteFriendRes, _impl_.errmsg_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::chat::LoginReq)},
@@ -756,6 +800,8 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 238, -1, -1, sizeof(::chat::FriendAcceptNotify)},
   { 246, -1, -1, sizeof(::chat::QueryFriendReq)},
   { 253, -1, -1, sizeof(::chat::QueryFriendRes)},
+  { 262, -1, -1, sizeof(::chat::DeleteFriendReq)},
+  { 270, -1, -1, sizeof(::chat::DeleteFriendRes)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -788,6 +834,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chat::_FriendAcceptNotify_default_instance_._instance,
   &::chat::_QueryFriendReq_default_instance_._instance,
   &::chat::_QueryFriendRes_default_instance_._instance,
+  &::chat::_DeleteFriendReq_default_instance_._instance,
+  &::chat::_DeleteFriendRes_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -844,29 +892,33 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\" \n\016QueryFriendR"
   "eq\022\016\n\006userid\030\001 \001(\005\"J\n\016QueryFriendRes\022\013\n\003"
   "err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\007friends\030\003 \003"
-  "(\0132\n.chat.User*\211\005\n\006MsgTyp\022\017\n\013UNKNOWN_MSG"
-  "\020\000\022\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007"
-  "REG_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022\022\n\016ADD_FRIEND"
-  "_MSG\020\005\022\026\n\022ADD_FRIEND_MSG_ACK\020\006\022\020\n\014ONE_CH"
-  "AT_MSG\020\007\022\024\n\020ONE_CHAT_MSG_ACK\020\010\022\024\n\020CREATE"
-  "_GROUP_MSG\020\t\022\030\n\024CREATE_GROUP_MSG_ACK\020\n\022\021"
-  "\n\rADD_GROUP_MSG\020\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014"
-  "\022\022\n\016GROUP_CHAT_MSG\020\r\022\026\n\022GROUP_CHAT_MSG_A"
-  "CK\020\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020"
-  "\022\017\n\013HISTORY_MSG\020\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025"
-  "\n\021FRIEND_NOTIFY_MSG\020\023\022\031\n\025FRIEND_NOTIFY_M"
-  "SG_ACK\020\024\022\030\n\024QUERY_FRIEND_REQ_MSG\020\025\022\034\n\030QU"
-  "ERY_FRIEND_REQ_MSG_ACK\020\026\022\025\n\021ACCEPT_FRIEN"
-  "D_MSG\020\027\022\031\n\025ACCEPT_FRIEND_MSG_ACK\020\030\022\034\n\030FR"
-  "IEND_ACCEPT_NOTIFY_MSG\020\031\022 \n\034FRIEND_ACCEP"
-  "T_NOTIFY_MSG_ACK\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033"
-  "\022\030\n\024QUERY_FRIEND_MSG_ACK\020\034b\006proto3"
+  "(\0132\n.chat.User\"3\n\017DeleteFriendReq\022\016\n\006use"
+  "rid\030\001 \001(\005\022\020\n\010friendid\030\002 \001(\005\".\n\017DeleteFri"
+  "endRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\273\005\n\006"
+  "MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021"
+  "\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MS"
+  "G_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEN"
+  "D_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_CHA"
+  "T_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024CRE"
+  "ATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025"
+  "\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020"
+  "\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020"
+  "\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023"
+  "\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_MSG"
+  "\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUERY_F"
+  "RIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_MSG_"
+  "ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEPT_F"
+  "RIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTIFY_"
+  "MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_ACK\020\032\022"
+  "\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND_MS"
+  "G_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DELETE"
+  "_FRIEND_MSG_ACK\020\036b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 2794, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 2945, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
-    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 29,
+    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 31,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
     file_level_metadata_proto_2fchat_2eproto, file_level_enum_descriptors_proto_2fchat_2eproto,
     file_level_service_descriptors_proto_2fchat_2eproto,
@@ -913,6 +965,8 @@ bool MsgTyp_IsValid(int value) {
     case 26:
     case 27:
     case 28:
+    case 29:
+    case 30:
       return true;
     default:
       return false;
@@ -8575,6 +8629,447 @@ void QueryFriendRes::InternalSwap(QueryFriendRes* other) {
       file_level_metadata_proto_2fchat_2eproto[28]);
 }
 
+// ===================================================================
+
+class DeleteFriendReq::_Internal {
+ public:
+};
+
+DeleteFriendReq::DeleteFriendReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.DeleteFriendReq)
+}
+DeleteFriendReq::DeleteFriendReq(const DeleteFriendReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DeleteFriendReq* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.userid_){}
+    , decltype(_impl_.friendid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::memcpy(&_impl_.userid_, &from._impl_.userid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.friendid_) -
+    reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.friendid_));
+  // @@protoc_insertion_point(copy_constructor:chat.DeleteFriendReq)
+}
+
+inline void DeleteFriendReq::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.userid_){0}
+    , decltype(_impl_.friendid_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+DeleteFriendReq::~DeleteFriendReq() {
+  // @@protoc_insertion_point(destructor:chat.DeleteFriendReq)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void DeleteFriendReq::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void DeleteFriendReq::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void DeleteFriendReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.DeleteFriendReq)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  ::memset(&_impl_.userid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.friendid_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.friendid_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DeleteFriendReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 userid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.userid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 friendid = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.friendid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* DeleteFriendReq::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.DeleteFriendReq)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_userid(), target);
+  }
+
+  // int32 friendid = 2;
+  if (this->_internal_friendid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_friendid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.DeleteFriendReq)
+  return target;
+}
+
+size_t DeleteFriendReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.DeleteFriendReq)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_userid());
+  }
+
+  // int32 friendid = 2;
+  if (this->_internal_friendid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_friendid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeleteFriendReq::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    DeleteFriendReq::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteFriendReq::GetClassData() const { return &_class_data_; }
+
+
+void DeleteFriendReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DeleteFriendReq*>(&to_msg);
+  auto& from = static_cast<const DeleteFriendReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.DeleteFriendReq)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_userid() != 0) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  if (from._internal_friendid() != 0) {
+    _this->_internal_set_friendid(from._internal_friendid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DeleteFriendReq::CopyFrom(const DeleteFriendReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.DeleteFriendReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DeleteFriendReq::IsInitialized() const {
+  return true;
+}
+
+void DeleteFriendReq::InternalSwap(DeleteFriendReq* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(DeleteFriendReq, _impl_.friendid_)
+      + sizeof(DeleteFriendReq::_impl_.friendid_)
+      - PROTOBUF_FIELD_OFFSET(DeleteFriendReq, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DeleteFriendReq::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_proto_2fchat_2eproto_getter, &descriptor_table_proto_2fchat_2eproto_once,
+      file_level_metadata_proto_2fchat_2eproto[29]);
+}
+
+// ===================================================================
+
+class DeleteFriendRes::_Internal {
+ public:
+};
+
+DeleteFriendRes::DeleteFriendRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.DeleteFriendRes)
+}
+DeleteFriendRes::DeleteFriendRes(const DeleteFriendRes& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  DeleteFriendRes* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.errmsg_){}
+    , decltype(_impl_.err_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.errmsg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_errmsg().empty()) {
+    _this->_impl_.errmsg_.Set(from._internal_errmsg(), 
+      _this->GetArenaForAllocation());
+  }
+  _this->_impl_.err_ = from._impl_.err_;
+  // @@protoc_insertion_point(copy_constructor:chat.DeleteFriendRes)
+}
+
+inline void DeleteFriendRes::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.errmsg_){}
+    , decltype(_impl_.err_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.errmsg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+DeleteFriendRes::~DeleteFriendRes() {
+  // @@protoc_insertion_point(destructor:chat.DeleteFriendRes)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void DeleteFriendRes::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.errmsg_.Destroy();
+}
+
+void DeleteFriendRes::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void DeleteFriendRes::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.DeleteFriendRes)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.errmsg_.ClearToEmpty();
+  _impl_.err_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* DeleteFriendRes::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 err = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.err_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string errmsg = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_errmsg();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.DeleteFriendRes.errmsg"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* DeleteFriendRes::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.DeleteFriendRes)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 err = 1;
+  if (this->_internal_err() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_err(), target);
+  }
+
+  // string errmsg = 2;
+  if (!this->_internal_errmsg().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_errmsg().data(), static_cast<int>(this->_internal_errmsg().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.DeleteFriendRes.errmsg");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_errmsg(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.DeleteFriendRes)
+  return target;
+}
+
+size_t DeleteFriendRes::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.DeleteFriendRes)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string errmsg = 2;
+  if (!this->_internal_errmsg().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_errmsg());
+  }
+
+  // int32 err = 1;
+  if (this->_internal_err() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_err());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeleteFriendRes::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    DeleteFriendRes::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteFriendRes::GetClassData() const { return &_class_data_; }
+
+
+void DeleteFriendRes::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<DeleteFriendRes*>(&to_msg);
+  auto& from = static_cast<const DeleteFriendRes&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.DeleteFriendRes)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_errmsg().empty()) {
+    _this->_internal_set_errmsg(from._internal_errmsg());
+  }
+  if (from._internal_err() != 0) {
+    _this->_internal_set_err(from._internal_err());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DeleteFriendRes::CopyFrom(const DeleteFriendRes& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.DeleteFriendRes)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DeleteFriendRes::IsInitialized() const {
+  return true;
+}
+
+void DeleteFriendRes::InternalSwap(DeleteFriendRes* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.errmsg_, lhs_arena,
+      &other->_impl_.errmsg_, rhs_arena
+  );
+  swap(_impl_.err_, other->_impl_.err_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata DeleteFriendRes::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_proto_2fchat_2eproto_getter, &descriptor_table_proto_2fchat_2eproto_once,
+      file_level_metadata_proto_2fchat_2eproto[30]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace chat
 PROTOBUF_NAMESPACE_OPEN
@@ -8693,6 +9188,14 @@ Arena::CreateMaybeMessage< ::chat::QueryFriendReq >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chat::QueryFriendRes*
 Arena::CreateMaybeMessage< ::chat::QueryFriendRes >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chat::QueryFriendRes >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::DeleteFriendReq*
+Arena::CreateMaybeMessage< ::chat::DeleteFriendReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::DeleteFriendReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::DeleteFriendRes*
+Arena::CreateMaybeMessage< ::chat::DeleteFriendRes >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::DeleteFriendRes >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

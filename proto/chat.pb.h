@@ -70,6 +70,12 @@ extern CreateGroupReqDefaultTypeInternal _CreateGroupReq_default_instance_;
 class CreateGroupRes;
 struct CreateGroupResDefaultTypeInternal;
 extern CreateGroupResDefaultTypeInternal _CreateGroupRes_default_instance_;
+class DeleteFriendReq;
+struct DeleteFriendReqDefaultTypeInternal;
+extern DeleteFriendReqDefaultTypeInternal _DeleteFriendReq_default_instance_;
+class DeleteFriendRes;
+struct DeleteFriendResDefaultTypeInternal;
+extern DeleteFriendResDefaultTypeInternal _DeleteFriendRes_default_instance_;
 class FriendAcceptNotify;
 struct FriendAcceptNotifyDefaultTypeInternal;
 extern FriendAcceptNotifyDefaultTypeInternal _FriendAcceptNotify_default_instance_;
@@ -143,6 +149,8 @@ template<> ::chat::AddGroupReq* Arena::CreateMaybeMessage<::chat::AddGroupReq>(A
 template<> ::chat::AddGroupRes* Arena::CreateMaybeMessage<::chat::AddGroupRes>(Arena*);
 template<> ::chat::CreateGroupReq* Arena::CreateMaybeMessage<::chat::CreateGroupReq>(Arena*);
 template<> ::chat::CreateGroupRes* Arena::CreateMaybeMessage<::chat::CreateGroupRes>(Arena*);
+template<> ::chat::DeleteFriendReq* Arena::CreateMaybeMessage<::chat::DeleteFriendReq>(Arena*);
+template<> ::chat::DeleteFriendRes* Arena::CreateMaybeMessage<::chat::DeleteFriendRes>(Arena*);
 template<> ::chat::FriendAcceptNotify* Arena::CreateMaybeMessage<::chat::FriendAcceptNotify>(Arena*);
 template<> ::chat::FriendRequest* Arena::CreateMaybeMessage<::chat::FriendRequest>(Arena*);
 template<> ::chat::Group* Arena::CreateMaybeMessage<::chat::Group>(Arena*);
@@ -197,12 +205,14 @@ enum MsgTyp : int {
   FRIEND_ACCEPT_NOTIFY_MSG_ACK = 26,
   QUERY_FRIEND_MSG = 27,
   QUERY_FRIEND_MSG_ACK = 28,
+  DELETE_FRIEND_MSG = 29,
+  DELETE_FRIEND_MSG_ACK = 30,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = QUERY_FRIEND_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = DELETE_FRIEND_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -5384,6 +5394,329 @@ class QueryFriendRes final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class DeleteFriendReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.DeleteFriendReq) */ {
+ public:
+  inline DeleteFriendReq() : DeleteFriendReq(nullptr) {}
+  ~DeleteFriendReq() override;
+  explicit PROTOBUF_CONSTEXPR DeleteFriendReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  DeleteFriendReq(const DeleteFriendReq& from);
+  DeleteFriendReq(DeleteFriendReq&& from) noexcept
+    : DeleteFriendReq() {
+    *this = ::std::move(from);
+  }
+
+  inline DeleteFriendReq& operator=(const DeleteFriendReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DeleteFriendReq& operator=(DeleteFriendReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const DeleteFriendReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const DeleteFriendReq* internal_default_instance() {
+    return reinterpret_cast<const DeleteFriendReq*>(
+               &_DeleteFriendReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    29;
+
+  friend void swap(DeleteFriendReq& a, DeleteFriendReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DeleteFriendReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(DeleteFriendReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  DeleteFriendReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<DeleteFriendReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const DeleteFriendReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const DeleteFriendReq& from) {
+    DeleteFriendReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DeleteFriendReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.DeleteFriendReq";
+  }
+  protected:
+  explicit DeleteFriendReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+    kFriendidFieldNumber = 2,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // int32 friendid = 2;
+  void clear_friendid();
+  int32_t friendid() const;
+  void set_friendid(int32_t value);
+  private:
+  int32_t _internal_friendid() const;
+  void _internal_set_friendid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.DeleteFriendReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    int32_t friendid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class DeleteFriendRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.DeleteFriendRes) */ {
+ public:
+  inline DeleteFriendRes() : DeleteFriendRes(nullptr) {}
+  ~DeleteFriendRes() override;
+  explicit PROTOBUF_CONSTEXPR DeleteFriendRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  DeleteFriendRes(const DeleteFriendRes& from);
+  DeleteFriendRes(DeleteFriendRes&& from) noexcept
+    : DeleteFriendRes() {
+    *this = ::std::move(from);
+  }
+
+  inline DeleteFriendRes& operator=(const DeleteFriendRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline DeleteFriendRes& operator=(DeleteFriendRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const DeleteFriendRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const DeleteFriendRes* internal_default_instance() {
+    return reinterpret_cast<const DeleteFriendRes*>(
+               &_DeleteFriendRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    30;
+
+  friend void swap(DeleteFriendRes& a, DeleteFriendRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(DeleteFriendRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(DeleteFriendRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  DeleteFriendRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<DeleteFriendRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const DeleteFriendRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const DeleteFriendRes& from) {
+    DeleteFriendRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(DeleteFriendRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.DeleteFriendRes";
+  }
+  protected:
+  explicit DeleteFriendRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.DeleteFriendRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -8387,9 +8720,131 @@ QueryFriendRes::friends() const {
   return _impl_.friends_;
 }
 
+// -------------------------------------------------------------------
+
+// DeleteFriendReq
+
+// int32 userid = 1;
+inline void DeleteFriendReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t DeleteFriendReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t DeleteFriendReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteFriendReq.userid)
+  return _internal_userid();
+}
+inline void DeleteFriendReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void DeleteFriendReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.DeleteFriendReq.userid)
+}
+
+// int32 friendid = 2;
+inline void DeleteFriendReq::clear_friendid() {
+  _impl_.friendid_ = 0;
+}
+inline int32_t DeleteFriendReq::_internal_friendid() const {
+  return _impl_.friendid_;
+}
+inline int32_t DeleteFriendReq::friendid() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteFriendReq.friendid)
+  return _internal_friendid();
+}
+inline void DeleteFriendReq::_internal_set_friendid(int32_t value) {
+  
+  _impl_.friendid_ = value;
+}
+inline void DeleteFriendReq::set_friendid(int32_t value) {
+  _internal_set_friendid(value);
+  // @@protoc_insertion_point(field_set:chat.DeleteFriendReq.friendid)
+}
+
+// -------------------------------------------------------------------
+
+// DeleteFriendRes
+
+// int32 err = 1;
+inline void DeleteFriendRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t DeleteFriendRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t DeleteFriendRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteFriendRes.err)
+  return _internal_err();
+}
+inline void DeleteFriendRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void DeleteFriendRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.DeleteFriendRes.err)
+}
+
+// string errmsg = 2;
+inline void DeleteFriendRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& DeleteFriendRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.DeleteFriendRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void DeleteFriendRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.DeleteFriendRes.errmsg)
+}
+inline std::string* DeleteFriendRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.DeleteFriendRes.errmsg)
+  return _s;
+}
+inline const std::string& DeleteFriendRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void DeleteFriendRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* DeleteFriendRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* DeleteFriendRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.DeleteFriendRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void DeleteFriendRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.DeleteFriendRes.errmsg)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

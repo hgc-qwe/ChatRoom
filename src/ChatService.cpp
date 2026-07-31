@@ -164,6 +164,19 @@ void ChatService::queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat
     LOG_INFO("user {} query friend requests", req.userid());
 }
 
+void ChatService::deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::DeleteFriendReq& req, chat::DeleteFriendRes& res) {
+    bool ret1 = friendModel.remove(req.userid(), req.friendid());
+    bool ret2 = friendModel.remove(req.friendid(), req.userid());
+    if (ret1 && ret2) {
+        res.set_err(0);
+        res.set_errmsg("delete friend success");
+        LOG_INFO("user {} delete friend requests", req.userid());
+    } else {
+        res.set_err(1);
+        res.set_errmsg("delete friend failed");
+    }
+}
+
 void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res) {
     if (!friendModel.isFriend(req.fromid(), req.toid())) {
         res.set_err(1);

@@ -34,6 +34,8 @@ public:
 
     void queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReqReq& req, chat::QueryFriendReqRes& res);
     
+    void deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::DeleteFriendReq& req, chat::DeleteFriendRes& res);
+
     void addUserConn(int userid, std::shared_ptr<TcpConnection> conn);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);

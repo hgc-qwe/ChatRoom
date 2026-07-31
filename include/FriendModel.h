@@ -14,4 +14,6 @@ public:
     std::vector<User> query(int userid);
 
     bool isFriend(int fromid, int toid);
+
+    bool remove(int userid, int friendid);
 };

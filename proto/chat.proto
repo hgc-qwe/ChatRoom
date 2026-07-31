@@ -45,6 +45,9 @@ enum MsgTyp {
 
     QUERY_FRIEND_MSG = 27;
     QUERY_FRIEND_MSG_ACK = 28;
+
+    DELETE_FRIEND_MSG = 29;
+    DELETE_FRIEND_MSG_ACK = 30;
 }
 
 message LoginReq {
@@ -220,4 +223,14 @@ message QueryFriendRes {
     int32 err = 1;
     string errmsg = 2;
     repeated User friends = 3;
+}
+
+message DeleteFriendReq {
+    int32 userid = 1;
+    int32 friendid = 2;
+}
+
+message DeleteFriendRes {
+    int32 err = 1;
+    string errmsg = 2;
 }

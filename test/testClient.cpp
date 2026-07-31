@@ -229,6 +229,20 @@ void recvMessage(int sockfd)
                     <<endl;
                 }
             }
+
+
+            else if(msgid==chat::DELETE_FRIEND_MSG_ACK)
+            {
+                chat::DeleteFriendRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"delete:"
+                <<res.errmsg()
+                <<endl;
+            }
             
 
 
@@ -294,6 +308,7 @@ int main()
         cout<<"2 add friend\n";
         cout<<"3 query friend request\n";
         cout<<"4 accept friend\n";
+        cout<<"5 delete friend\n";
         cout<<"0 exit\n";
 
 
@@ -471,6 +486,37 @@ int main()
         {
             close(sockfd);
             break;
+        }
+
+        else if(op==5)
+        {
+            chat::DeleteFriendReq req;
+
+
+            int userid;
+            int friendid;
+
+
+            cout<<"userid:";
+            cin>>userid;
+
+
+            cout<<"friendid:";
+            cin>>friendid;
+
+
+            req.set_userid(userid);
+            req.set_friendid(friendid);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+                MessageCodec::encode(
+                    chat::DELETE_FRIEND_MSG,
+                    data
+                );
         }
 
 

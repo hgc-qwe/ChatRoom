@@ -146,6 +146,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::QUERY_FRIEND_MSG_ACK, response);
         }
+        case chat::DELETE_FRIEND_MSG: {
+            chat::DeleteFriendReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("DeleteFriendReq parse failed");
+                return "";
+            }
+            chat::DeleteFriendRes res;
+            ChatService::instance()->deleteFriend(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::DELETE_FRIEND_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

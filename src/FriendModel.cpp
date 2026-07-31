@@ -65,3 +65,13 @@ bool FriendModel::isFriend(int fromid, int toid) {
     mysql_free_result(res);
     return false;
 }
+
+bool FriendModel::remove(int userid, int friendid) {
+    std::string sql ="delete from friend where userid="+ std::to_string(userid) + " and friendid=" + std::to_string(friendid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    return mysql.update(sql);
+}
