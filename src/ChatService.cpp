@@ -177,10 +177,29 @@ void ChatService::deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::
     }
 }
 
+void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::HistoryMsgReq& req, chat::HistoryMsgRes& res) {
+    std::vector<Message> message  = messageModel.queryHistory(req.fromid(), req.toid());
+    for (auto& msg : message) {
+        auto item = res.add_msgs();
+        item->set_fromid(msg.getFromid());
+        item->set_toid(msg.getToid());
+        item->set_msg(msg.getMsg());
+        item->set_time(msg.getTime());
+    }
+    res.set_err(0);
+    res.set_errmsg("query history success");
+    LOG_INFO("query user {} and user {} history message", req.fromid(), req.toid());
+}
+
 void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res) {
     if (!friendModel.isFriend(req.fromid(), req.toid())) {
         res.set_err(1);
         res.set_errmsg("not friend");
+        return;
+    }
+    if (!messageModel.insert(req.fromid(), req.toid(), req.msg())) {
+        res.set_err(1);
+        res.set_errmsg("save message failed");
         return;
     }
     auto targetConn = getUserConn(req.toid());

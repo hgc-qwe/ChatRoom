@@ -243,7 +243,53 @@ void recvMessage(int sockfd)
                 <<res.errmsg()
                 <<endl;
             }
+
+
+            else if(msgid == chat::HISTORY_MSG_ACK)
+            {
+                chat::HistoryMsgRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"err:"
+                <<res.err()
+                <<" "
+                <<res.errmsg()
+                <<endl;
+
+
+                for(auto& msg : res.msgs())
+                {
+                    cout
+                    <<"from:"
+                    <<msg.fromid()
+                    <<" -> "
+                    <<"to:"
+                    <<msg.toid()
+                    <<" msg:"
+                    <<msg.msg()
+                    <<endl;
+                }
+            }
             
+
+            else if(msgid == chat::ONE_CHAT_MSG)
+            {
+                chat::OneChatReq req;
+
+                req.ParseFromString(body);
+
+
+                cout
+                <<"收到消息:"
+                <<"from="
+                <<req.fromid()
+                <<" msg="
+                <<req.msg()
+                <<endl;
+            }
 
 
             cout<<"\n";
@@ -309,6 +355,8 @@ int main()
         cout<<"3 query friend request\n";
         cout<<"4 accept friend\n";
         cout<<"5 delete friend\n";
+        cout<<"6 one chat\n";
+        cout<<"7 query history msg\n";
         cout<<"0 exit\n";
 
 
@@ -518,6 +566,80 @@ int main()
                     data
                 );
         }
+
+        else if(op == 6)
+        {
+            chat::OneChatReq req;
+
+            int fromid;
+            int toid;
+            string msg;
+
+
+            cout<<"fromid:";
+            cin>>fromid;
+
+
+            cout<<"toid:";
+            cin>>toid;
+
+
+            cout<<"msg:";
+            cin.ignore();
+            getline(cin, msg);
+
+
+            req.set_fromid(fromid);
+            req.set_toid(toid);
+            req.set_msg(msg);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+            MessageCodec::encode(
+                chat::ONE_CHAT_MSG,
+                data
+            );
+        }
+
+        else if(op == 7)
+        {
+
+            chat::HistoryMsgReq req;
+
+
+            int fromid;
+            int toid;
+
+
+            cout<<"fromid:";
+            cin>>fromid;
+
+            cout<<"toid:";
+            cin>>toid;
+
+
+
+            req.set_fromid(fromid);
+            req.set_toid(toid);
+
+
+
+            req.SerializeToString(
+                &data
+            );
+
+
+            packet =
+            MessageCodec::encode(
+                chat::HISTORY_MSG,
+                data
+            );
+
+        }
+
 
 
         else

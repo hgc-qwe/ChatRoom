@@ -316,8 +316,10 @@ struct GroupDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GroupDefaultTypeInternal _Group_default_instance_;
 PROTOBUF_CONSTEXPR HistoryMsgReq::HistoryMsgReq(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.userid_)*/0
-  , /*decltype(_impl_.friendid_)*/0
+    /*decltype(_impl_.msg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.time_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.fromid_)*/0
+  , /*decltype(_impl_.toid_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct HistoryMsgReqDefaultTypeInternal {
   PROTOBUF_CONSTEXPR HistoryMsgReqDefaultTypeInternal()
@@ -676,8 +678,10 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.userid_),
-  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.friendid_),
+  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.fromid_),
+  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.toid_),
+  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.msg_),
+  PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgReq, _impl_.time_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::HistoryMsgRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -791,17 +795,17 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 160, -1, -1, sizeof(::chat::GroupUser)},
   { 169, -1, -1, sizeof(::chat::Group)},
   { 179, -1, -1, sizeof(::chat::HistoryMsgReq)},
-  { 187, -1, -1, sizeof(::chat::HistoryMsgRes)},
-  { 196, -1, -1, sizeof(::chat::AcceptFriendReq)},
-  { 205, -1, -1, sizeof(::chat::AcceptFriendRes)},
-  { 213, -1, -1, sizeof(::chat::FriendRequest)},
-  { 221, -1, -1, sizeof(::chat::QueryFriendReqReq)},
-  { 229, -1, -1, sizeof(::chat::QueryFriendReqRes)},
-  { 238, -1, -1, sizeof(::chat::FriendAcceptNotify)},
-  { 246, -1, -1, sizeof(::chat::QueryFriendReq)},
-  { 253, -1, -1, sizeof(::chat::QueryFriendRes)},
-  { 262, -1, -1, sizeof(::chat::DeleteFriendReq)},
-  { 270, -1, -1, sizeof(::chat::DeleteFriendRes)},
+  { 189, -1, -1, sizeof(::chat::HistoryMsgRes)},
+  { 198, -1, -1, sizeof(::chat::AcceptFriendReq)},
+  { 207, -1, -1, sizeof(::chat::AcceptFriendRes)},
+  { 215, -1, -1, sizeof(::chat::FriendRequest)},
+  { 223, -1, -1, sizeof(::chat::QueryFriendReqReq)},
+  { 231, -1, -1, sizeof(::chat::QueryFriendReqRes)},
+  { 240, -1, -1, sizeof(::chat::FriendAcceptNotify)},
+  { 248, -1, -1, sizeof(::chat::QueryFriendReq)},
+  { 255, -1, -1, sizeof(::chat::QueryFriendRes)},
+  { 264, -1, -1, sizeof(::chat::DeleteFriendReq)},
+  { 272, -1, -1, sizeof(::chat::DeleteFriendRes)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -877,46 +881,47 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005state\030\003 \001(\t"
   "\"O\n\005Group\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\014\n\004d"
   "esc\030\003 \001(\t\022\036\n\005users\030\004 \003(\0132\017.chat.GroupUse"
-  "r\"1\n\rHistoryMsgReq\022\016\n\006userid\030\001 \001(\005\022\020\n\010fr"
-  "iendid\030\002 \001(\005\":\n\rHistoryMsgRes\022\013\n\003err\030\001 \001"
-  "(\005\022\016\n\006errmsg\030\002 \001(\t\022\014\n\004msgs\030\003 \003(\t\"P\n\017Acce"
-  "ptFriendReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp"
-  "\022\016\n\006userid\030\002 \001(\005\022\020\n\010friendid\030\003 \001(\005\".\n\017Ac"
-  "ceptFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001"
-  "(\t\"1\n\rFriendRequest\022\016\n\006userid\030\001 \001(\005\022\020\n\010u"
-  "sername\030\002 \001(\t\"@\n\021QueryFriendReqReq\022\033\n\005ms"
-  "gid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006userid\030\002 \001(\005\""
-  "W\n\021QueryFriendReqRes\022\013\n\003err\030\001 \001(\005\022\016\n\006err"
-  "msg\030\002 \001(\t\022%\n\010requests\030\003 \003(\0132\023.chat.Frien"
-  "dRequest\"6\n\022FriendAcceptNotify\022\016\n\006userid"
-  "\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\" \n\016QueryFriendR"
-  "eq\022\016\n\006userid\030\001 \001(\005\"J\n\016QueryFriendRes\022\013\n\003"
-  "err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\007friends\030\003 \003"
-  "(\0132\n.chat.User\"3\n\017DeleteFriendReq\022\016\n\006use"
-  "rid\030\001 \001(\005\022\020\n\010friendid\030\002 \001(\005\".\n\017DeleteFri"
-  "endRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\273\005\n\006"
-  "MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021"
-  "\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MS"
-  "G_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEN"
-  "D_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_CHA"
-  "T_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024CRE"
-  "ATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025"
-  "\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020"
-  "\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020"
-  "\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023"
-  "\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_MSG"
-  "\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUERY_F"
-  "RIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_MSG_"
-  "ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEPT_F"
-  "RIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTIFY_"
-  "MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_ACK\020\032\022"
-  "\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND_MS"
-  "G_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DELETE"
-  "_FRIEND_MSG_ACK\020\036b\006proto3"
+  "r\"H\n\rHistoryMsgReq\022\016\n\006fromid\030\001 \001(\005\022\014\n\004to"
+  "id\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 \001(\t\"O\n\rH"
+  "istoryMsgRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001("
+  "\t\022!\n\004msgs\030\003 \003(\0132\023.chat.HistoryMsgReq\"P\n\017"
+  "AcceptFriendReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.Ms"
+  "gTyp\022\016\n\006userid\030\002 \001(\005\022\020\n\010friendid\030\003 \001(\005\"."
+  "\n\017AcceptFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg"
+  "\030\002 \001(\t\"1\n\rFriendRequest\022\016\n\006userid\030\001 \001(\005\022"
+  "\020\n\010username\030\002 \001(\t\"@\n\021QueryFriendReqReq\022\033"
+  "\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006userid\030\002 "
+  "\001(\005\"W\n\021QueryFriendReqRes\022\013\n\003err\030\001 \001(\005\022\016\n"
+  "\006errmsg\030\002 \001(\t\022%\n\010requests\030\003 \003(\0132\023.chat.F"
+  "riendRequest\"6\n\022FriendAcceptNotify\022\016\n\006us"
+  "erid\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\" \n\016QueryFri"
+  "endReq\022\016\n\006userid\030\001 \001(\005\"J\n\016QueryFriendRes"
+  "\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\007friends"
+  "\030\003 \003(\0132\n.chat.User\"3\n\017DeleteFriendReq\022\016\n"
+  "\006userid\030\001 \001(\005\022\020\n\010friendid\030\002 \001(\005\".\n\017Delet"
+  "eFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*"
+  "\273\005\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG"
+  "\020\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013RE"
+  "G_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_F"
+  "RIEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE"
+  "_CHAT_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n"
+  "\024CREATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG"
+  "\020\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_"
+  "MSG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_"
+  "MSG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG"
+  "\020\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY"
+  "_MSG\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUE"
+  "RY_FRIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_"
+  "MSG_ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCE"
+  "PT_FRIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOT"
+  "IFY_MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_AC"
+  "K\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEN"
+  "D_MSG_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DE"
+  "LETE_FRIEND_MSG_ACK\020\036b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 2945, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 2989, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
     &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 31,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
@@ -6317,14 +6322,32 @@ HistoryMsgReq::HistoryMsgReq(const HistoryMsgReq& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   HistoryMsgReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.userid_){}
-    , decltype(_impl_.friendid_){}
+      decltype(_impl_.msg_){}
+    , decltype(_impl_.time_){}
+    , decltype(_impl_.fromid_){}
+    , decltype(_impl_.toid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.userid_, &from._impl_.userid_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.friendid_) -
-    reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.friendid_));
+  _impl_.msg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.msg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_msg().empty()) {
+    _this->_impl_.msg_.Set(from._internal_msg(), 
+      _this->GetArenaForAllocation());
+  }
+  _impl_.time_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.time_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_time().empty()) {
+    _this->_impl_.time_.Set(from._internal_time(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.fromid_, &from._impl_.fromid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.toid_) -
+    reinterpret_cast<char*>(&_impl_.fromid_)) + sizeof(_impl_.toid_));
   // @@protoc_insertion_point(copy_constructor:chat.HistoryMsgReq)
 }
 
@@ -6333,10 +6356,20 @@ inline void HistoryMsgReq::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.userid_){0}
-    , decltype(_impl_.friendid_){0}
+      decltype(_impl_.msg_){}
+    , decltype(_impl_.time_){}
+    , decltype(_impl_.fromid_){0}
+    , decltype(_impl_.toid_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.msg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.msg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.time_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.time_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 HistoryMsgReq::~HistoryMsgReq() {
@@ -6350,6 +6383,8 @@ HistoryMsgReq::~HistoryMsgReq() {
 
 inline void HistoryMsgReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.msg_.Destroy();
+  _impl_.time_.Destroy();
 }
 
 void HistoryMsgReq::SetCachedSize(int size) const {
@@ -6362,9 +6397,11 @@ void HistoryMsgReq::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&_impl_.userid_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.friendid_) -
-      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.friendid_));
+  _impl_.msg_.ClearToEmpty();
+  _impl_.time_.ClearToEmpty();
+  ::memset(&_impl_.fromid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.toid_) -
+      reinterpret_cast<char*>(&_impl_.fromid_)) + sizeof(_impl_.toid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -6374,19 +6411,39 @@ const char* HistoryMsgReq::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // int32 userid = 1;
+      // int32 fromid = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.userid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.fromid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
         continue;
-      // int32 friendid = 2;
+      // int32 toid = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.friendid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.toid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string msg = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_msg();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.HistoryMsgReq.msg"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string time = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 34)) {
+          auto str = _internal_mutable_time();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.HistoryMsgReq.time"));
         } else
           goto handle_unusual;
         continue;
@@ -6419,16 +6476,36 @@ uint8_t* HistoryMsgReq::_InternalSerialize(
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // int32 userid = 1;
-  if (this->_internal_userid() != 0) {
+  // int32 fromid = 1;
+  if (this->_internal_fromid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_userid(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_fromid(), target);
   }
 
-  // int32 friendid = 2;
-  if (this->_internal_friendid() != 0) {
+  // int32 toid = 2;
+  if (this->_internal_toid() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_friendid(), target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(2, this->_internal_toid(), target);
+  }
+
+  // string msg = 3;
+  if (!this->_internal_msg().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_msg().data(), static_cast<int>(this->_internal_msg().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.HistoryMsgReq.msg");
+    target = stream->WriteStringMaybeAliased(
+        3, this->_internal_msg(), target);
+  }
+
+  // string time = 4;
+  if (!this->_internal_time().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_time().data(), static_cast<int>(this->_internal_time().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.HistoryMsgReq.time");
+    target = stream->WriteStringMaybeAliased(
+        4, this->_internal_time(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -6447,14 +6524,28 @@ size_t HistoryMsgReq::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // int32 userid = 1;
-  if (this->_internal_userid() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_userid());
+  // string msg = 3;
+  if (!this->_internal_msg().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_msg());
   }
 
-  // int32 friendid = 2;
-  if (this->_internal_friendid() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_friendid());
+  // string time = 4;
+  if (!this->_internal_time().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_time());
+  }
+
+  // int32 fromid = 1;
+  if (this->_internal_fromid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_fromid());
+  }
+
+  // int32 toid = 2;
+  if (this->_internal_toid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_toid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -6475,11 +6566,17 @@ void HistoryMsgReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_userid() != 0) {
-    _this->_internal_set_userid(from._internal_userid());
+  if (!from._internal_msg().empty()) {
+    _this->_internal_set_msg(from._internal_msg());
   }
-  if (from._internal_friendid() != 0) {
-    _this->_internal_set_friendid(from._internal_friendid());
+  if (!from._internal_time().empty()) {
+    _this->_internal_set_time(from._internal_time());
+  }
+  if (from._internal_fromid() != 0) {
+    _this->_internal_set_fromid(from._internal_fromid());
+  }
+  if (from._internal_toid() != 0) {
+    _this->_internal_set_toid(from._internal_toid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -6497,13 +6594,23 @@ bool HistoryMsgReq::IsInitialized() const {
 
 void HistoryMsgReq::InternalSwap(HistoryMsgReq* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.msg_, lhs_arena,
+      &other->_impl_.msg_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.time_, lhs_arena,
+      &other->_impl_.time_, rhs_arena
+  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(HistoryMsgReq, _impl_.friendid_)
-      + sizeof(HistoryMsgReq::_impl_.friendid_)
-      - PROTOBUF_FIELD_OFFSET(HistoryMsgReq, _impl_.userid_)>(
-          reinterpret_cast<char*>(&_impl_.userid_),
-          reinterpret_cast<char*>(&other->_impl_.userid_));
+      PROTOBUF_FIELD_OFFSET(HistoryMsgReq, _impl_.toid_)
+      + sizeof(HistoryMsgReq::_impl_.toid_)
+      - PROTOBUF_FIELD_OFFSET(HistoryMsgReq, _impl_.fromid_)>(
+          reinterpret_cast<char*>(&_impl_.fromid_),
+          reinterpret_cast<char*>(&other->_impl_.fromid_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata HistoryMsgReq::GetMetadata() const {
@@ -6617,16 +6724,14 @@ const char* HistoryMsgRes::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
-      // repeated string msgs = 3;
+      // repeated .chat.HistoryMsgReq msgs = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
-            auto str = _internal_add_msgs();
-            ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+            ptr = ctx->ParseMessage(_internal_add_msgs(), ptr);
             CHK_(ptr);
-            CHK_(::_pbi::VerifyUTF8(str, "chat.HistoryMsgRes.msgs"));
             if (!ctx->DataAvailable(ptr)) break;
           } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
         } else
@@ -6677,14 +6782,12 @@ uint8_t* HistoryMsgRes::_InternalSerialize(
         2, this->_internal_errmsg(), target);
   }
 
-  // repeated string msgs = 3;
-  for (int i = 0, n = this->_internal_msgs_size(); i < n; i++) {
-    const auto& s = this->_internal_msgs(i);
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      s.data(), static_cast<int>(s.length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "chat.HistoryMsgRes.msgs");
-    target = stream->WriteString(3, s, target);
+  // repeated .chat.HistoryMsgReq msgs = 3;
+  for (unsigned i = 0,
+      n = static_cast<unsigned>(this->_internal_msgs_size()); i < n; i++) {
+    const auto& repfield = this->_internal_msgs(i);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+        InternalWriteMessage(3, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -6703,12 +6806,11 @@ size_t HistoryMsgRes::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated string msgs = 3;
-  total_size += 1 *
-      ::PROTOBUF_NAMESPACE_ID::internal::FromIntSize(_impl_.msgs_.size());
-  for (int i = 0, n = _impl_.msgs_.size(); i < n; i++) {
-    total_size += ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-      _impl_.msgs_.Get(i));
+  // repeated .chat.HistoryMsgReq msgs = 3;
+  total_size += 1UL * this->_internal_msgs_size();
+  for (const auto& msg : this->_impl_.msgs_) {
+    total_size +=
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
   // string errmsg = 2;

@@ -3831,25 +3831,55 @@ class HistoryMsgReq final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUseridFieldNumber = 1,
-    kFriendidFieldNumber = 2,
+    kMsgFieldNumber = 3,
+    kTimeFieldNumber = 4,
+    kFromidFieldNumber = 1,
+    kToidFieldNumber = 2,
   };
-  // int32 userid = 1;
-  void clear_userid();
-  int32_t userid() const;
-  void set_userid(int32_t value);
+  // string msg = 3;
+  void clear_msg();
+  const std::string& msg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_msg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_msg();
+  PROTOBUF_NODISCARD std::string* release_msg();
+  void set_allocated_msg(std::string* msg);
   private:
-  int32_t _internal_userid() const;
-  void _internal_set_userid(int32_t value);
+  const std::string& _internal_msg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_msg(const std::string& value);
+  std::string* _internal_mutable_msg();
   public:
 
-  // int32 friendid = 2;
-  void clear_friendid();
-  int32_t friendid() const;
-  void set_friendid(int32_t value);
+  // string time = 4;
+  void clear_time();
+  const std::string& time() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_time(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_time();
+  PROTOBUF_NODISCARD std::string* release_time();
+  void set_allocated_time(std::string* time);
   private:
-  int32_t _internal_friendid() const;
-  void _internal_set_friendid(int32_t value);
+  const std::string& _internal_time() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
+  std::string* _internal_mutable_time();
+  public:
+
+  // int32 fromid = 1;
+  void clear_fromid();
+  int32_t fromid() const;
+  void set_fromid(int32_t value);
+  private:
+  int32_t _internal_fromid() const;
+  void _internal_set_fromid(int32_t value);
+  public:
+
+  // int32 toid = 2;
+  void clear_toid();
+  int32_t toid() const;
+  void set_toid(int32_t value);
+  private:
+  int32_t _internal_toid() const;
+  void _internal_set_toid(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:chat.HistoryMsgReq)
@@ -3860,8 +3890,10 @@ class HistoryMsgReq final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    int32_t userid_;
-    int32_t friendid_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
+    int32_t fromid_;
+    int32_t toid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -3994,29 +4026,23 @@ class HistoryMsgRes final :
     kErrmsgFieldNumber = 2,
     kErrFieldNumber = 1,
   };
-  // repeated string msgs = 3;
+  // repeated .chat.HistoryMsgReq msgs = 3;
   int msgs_size() const;
   private:
   int _internal_msgs_size() const;
   public:
   void clear_msgs();
-  const std::string& msgs(int index) const;
-  std::string* mutable_msgs(int index);
-  void set_msgs(int index, const std::string& value);
-  void set_msgs(int index, std::string&& value);
-  void set_msgs(int index, const char* value);
-  void set_msgs(int index, const char* value, size_t size);
-  std::string* add_msgs();
-  void add_msgs(const std::string& value);
-  void add_msgs(std::string&& value);
-  void add_msgs(const char* value);
-  void add_msgs(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& msgs() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_msgs();
+  ::chat::HistoryMsgReq* mutable_msgs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::HistoryMsgReq >*
+      mutable_msgs();
   private:
-  const std::string& _internal_msgs(int index) const;
-  std::string* _internal_add_msgs();
+  const ::chat::HistoryMsgReq& _internal_msgs(int index) const;
+  ::chat::HistoryMsgReq* _internal_add_msgs();
   public:
+  const ::chat::HistoryMsgReq& msgs(int index) const;
+  ::chat::HistoryMsgReq* add_msgs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::HistoryMsgReq >&
+      msgs() const;
 
   // string errmsg = 2;
   void clear_errmsg();
@@ -4049,7 +4075,7 @@ class HistoryMsgRes final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> msgs_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::HistoryMsgReq > msgs_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
     int32_t err_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -7949,44 +7975,144 @@ Group::users() const {
 
 // HistoryMsgReq
 
-// int32 userid = 1;
-inline void HistoryMsgReq::clear_userid() {
-  _impl_.userid_ = 0;
+// int32 fromid = 1;
+inline void HistoryMsgReq::clear_fromid() {
+  _impl_.fromid_ = 0;
 }
-inline int32_t HistoryMsgReq::_internal_userid() const {
-  return _impl_.userid_;
+inline int32_t HistoryMsgReq::_internal_fromid() const {
+  return _impl_.fromid_;
 }
-inline int32_t HistoryMsgReq::userid() const {
-  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.userid)
-  return _internal_userid();
+inline int32_t HistoryMsgReq::fromid() const {
+  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.fromid)
+  return _internal_fromid();
 }
-inline void HistoryMsgReq::_internal_set_userid(int32_t value) {
+inline void HistoryMsgReq::_internal_set_fromid(int32_t value) {
   
-  _impl_.userid_ = value;
+  _impl_.fromid_ = value;
 }
-inline void HistoryMsgReq::set_userid(int32_t value) {
-  _internal_set_userid(value);
-  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.userid)
+inline void HistoryMsgReq::set_fromid(int32_t value) {
+  _internal_set_fromid(value);
+  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.fromid)
 }
 
-// int32 friendid = 2;
-inline void HistoryMsgReq::clear_friendid() {
-  _impl_.friendid_ = 0;
+// int32 toid = 2;
+inline void HistoryMsgReq::clear_toid() {
+  _impl_.toid_ = 0;
 }
-inline int32_t HistoryMsgReq::_internal_friendid() const {
-  return _impl_.friendid_;
+inline int32_t HistoryMsgReq::_internal_toid() const {
+  return _impl_.toid_;
 }
-inline int32_t HistoryMsgReq::friendid() const {
-  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.friendid)
-  return _internal_friendid();
+inline int32_t HistoryMsgReq::toid() const {
+  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.toid)
+  return _internal_toid();
 }
-inline void HistoryMsgReq::_internal_set_friendid(int32_t value) {
+inline void HistoryMsgReq::_internal_set_toid(int32_t value) {
   
-  _impl_.friendid_ = value;
+  _impl_.toid_ = value;
 }
-inline void HistoryMsgReq::set_friendid(int32_t value) {
-  _internal_set_friendid(value);
-  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.friendid)
+inline void HistoryMsgReq::set_toid(int32_t value) {
+  _internal_set_toid(value);
+  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.toid)
+}
+
+// string msg = 3;
+inline void HistoryMsgReq::clear_msg() {
+  _impl_.msg_.ClearToEmpty();
+}
+inline const std::string& HistoryMsgReq::msg() const {
+  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.msg)
+  return _internal_msg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void HistoryMsgReq::set_msg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.msg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.msg)
+}
+inline std::string* HistoryMsgReq::mutable_msg() {
+  std::string* _s = _internal_mutable_msg();
+  // @@protoc_insertion_point(field_mutable:chat.HistoryMsgReq.msg)
+  return _s;
+}
+inline const std::string& HistoryMsgReq::_internal_msg() const {
+  return _impl_.msg_.Get();
+}
+inline void HistoryMsgReq::_internal_set_msg(const std::string& value) {
+  
+  _impl_.msg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* HistoryMsgReq::_internal_mutable_msg() {
+  
+  return _impl_.msg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* HistoryMsgReq::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.HistoryMsgReq.msg)
+  return _impl_.msg_.Release();
+}
+inline void HistoryMsgReq::set_allocated_msg(std::string* msg) {
+  if (msg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.msg_.SetAllocated(msg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.msg_.IsDefault()) {
+    _impl_.msg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.HistoryMsgReq.msg)
+}
+
+// string time = 4;
+inline void HistoryMsgReq::clear_time() {
+  _impl_.time_.ClearToEmpty();
+}
+inline const std::string& HistoryMsgReq::time() const {
+  // @@protoc_insertion_point(field_get:chat.HistoryMsgReq.time)
+  return _internal_time();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void HistoryMsgReq::set_time(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.time_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.HistoryMsgReq.time)
+}
+inline std::string* HistoryMsgReq::mutable_time() {
+  std::string* _s = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:chat.HistoryMsgReq.time)
+  return _s;
+}
+inline const std::string& HistoryMsgReq::_internal_time() const {
+  return _impl_.time_.Get();
+}
+inline void HistoryMsgReq::_internal_set_time(const std::string& value) {
+  
+  _impl_.time_.Set(value, GetArenaForAllocation());
+}
+inline std::string* HistoryMsgReq::_internal_mutable_time() {
+  
+  return _impl_.time_.Mutable(GetArenaForAllocation());
+}
+inline std::string* HistoryMsgReq::release_time() {
+  // @@protoc_insertion_point(field_release:chat.HistoryMsgReq.time)
+  return _impl_.time_.Release();
+}
+inline void HistoryMsgReq::set_allocated_time(std::string* time) {
+  if (time != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.time_.SetAllocated(time, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.time_.IsDefault()) {
+    _impl_.time_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.HistoryMsgReq.time)
 }
 
 // -------------------------------------------------------------------
@@ -8063,7 +8189,7 @@ inline void HistoryMsgRes::set_allocated_errmsg(std::string* errmsg) {
   // @@protoc_insertion_point(field_set_allocated:chat.HistoryMsgRes.errmsg)
 }
 
-// repeated string msgs = 3;
+// repeated .chat.HistoryMsgReq msgs = 3;
 inline int HistoryMsgRes::_internal_msgs_size() const {
   return _impl_.msgs_.size();
 }
@@ -8073,69 +8199,34 @@ inline int HistoryMsgRes::msgs_size() const {
 inline void HistoryMsgRes::clear_msgs() {
   _impl_.msgs_.Clear();
 }
-inline std::string* HistoryMsgRes::add_msgs() {
-  std::string* _s = _internal_add_msgs();
-  // @@protoc_insertion_point(field_add_mutable:chat.HistoryMsgRes.msgs)
-  return _s;
-}
-inline const std::string& HistoryMsgRes::_internal_msgs(int index) const {
-  return _impl_.msgs_.Get(index);
-}
-inline const std::string& HistoryMsgRes::msgs(int index) const {
-  // @@protoc_insertion_point(field_get:chat.HistoryMsgRes.msgs)
-  return _internal_msgs(index);
-}
-inline std::string* HistoryMsgRes::mutable_msgs(int index) {
+inline ::chat::HistoryMsgReq* HistoryMsgRes::mutable_msgs(int index) {
   // @@protoc_insertion_point(field_mutable:chat.HistoryMsgRes.msgs)
   return _impl_.msgs_.Mutable(index);
 }
-inline void HistoryMsgRes::set_msgs(int index, const std::string& value) {
-  _impl_.msgs_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::set_msgs(int index, std::string&& value) {
-  _impl_.msgs_.Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::set_msgs(int index, const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  _impl_.msgs_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::set_msgs(int index, const char* value, size_t size) {
-  _impl_.msgs_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:chat.HistoryMsgRes.msgs)
-}
-inline std::string* HistoryMsgRes::_internal_add_msgs() {
-  return _impl_.msgs_.Add();
-}
-inline void HistoryMsgRes::add_msgs(const std::string& value) {
-  _impl_.msgs_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::add_msgs(std::string&& value) {
-  _impl_.msgs_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::add_msgs(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  _impl_.msgs_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:chat.HistoryMsgRes.msgs)
-}
-inline void HistoryMsgRes::add_msgs(const char* value, size_t size) {
-  _impl_.msgs_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:chat.HistoryMsgRes.msgs)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-HistoryMsgRes::msgs() const {
-  // @@protoc_insertion_point(field_list:chat.HistoryMsgRes.msgs)
-  return _impl_.msgs_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::HistoryMsgReq >*
 HistoryMsgRes::mutable_msgs() {
   // @@protoc_insertion_point(field_mutable_list:chat.HistoryMsgRes.msgs)
   return &_impl_.msgs_;
+}
+inline const ::chat::HistoryMsgReq& HistoryMsgRes::_internal_msgs(int index) const {
+  return _impl_.msgs_.Get(index);
+}
+inline const ::chat::HistoryMsgReq& HistoryMsgRes::msgs(int index) const {
+  // @@protoc_insertion_point(field_get:chat.HistoryMsgRes.msgs)
+  return _internal_msgs(index);
+}
+inline ::chat::HistoryMsgReq* HistoryMsgRes::_internal_add_msgs() {
+  return _impl_.msgs_.Add();
+}
+inline ::chat::HistoryMsgReq* HistoryMsgRes::add_msgs() {
+  ::chat::HistoryMsgReq* _add = _internal_add_msgs();
+  // @@protoc_insertion_point(field_add:chat.HistoryMsgRes.msgs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::HistoryMsgReq >&
+HistoryMsgRes::msgs() const {
+  // @@protoc_insertion_point(field_list:chat.HistoryMsgRes.msgs)
+  return _impl_.msgs_;
 }
 
 // -------------------------------------------------------------------

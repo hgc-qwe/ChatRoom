@@ -173,14 +173,16 @@ message Group {
 }
 
 message HistoryMsgReq {
-    int32 userid = 1;
-    int32 friendid = 2;
+    int32 fromid = 1;
+    int32 toid = 2;
+    string msg = 3;
+    string time = 4;
 }
 
 message HistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
-    repeated string msgs = 3;
+    repeated HistoryMsgReq msgs = 3;
 }
 
 message AcceptFriendReq {

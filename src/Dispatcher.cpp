@@ -158,6 +158,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::DELETE_FRIEND_MSG_ACK, response);
         }
+        case chat::HISTORY_MSG: {
+            chat::HistoryMsgReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("HistoryMsgReq parse failed");
+                return "";
+            }
+            chat::HistoryMsgRes res;
+            ChatService::instance()->queryHistoryMsg(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::HISTORY_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";
