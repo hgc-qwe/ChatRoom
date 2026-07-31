@@ -5,6 +5,7 @@
 #include "chat.pb.h"
 #include "MessageModel.h"
 #include "Message.h"
+#include "GroupMessageModel.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
@@ -254,23 +255,34 @@ void ChatService::addGroup(std::shared_ptr<TcpConnection> conn, const chat::AddG
 }
 
 void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res) {
+    groupMessageModel.insert(req.groupid(), req.userid(), req.msg());
     auto users = groupModel.queryGroupUsers(req.userid(), req.groupid());
-    for (int id : users) {
+    std::string data;
+    req.SerializeToString(&data);
+    for (auto id : users) {
         if (id == req.userid()) continue;
         auto userconn = getUserConn(id);
         if (userconn) {
-            std::string data;
-            req.SerializeToString(&data);
             userconn->sendMessage(MessageCodec::encode(chat::GROUP_CHAT_MSG, data));
-            LOG_INFO("user {} send group message {}", req.userid(), req.groupid());
-        } else {
-            messageModel.insert(req.userid(), id, req.msg());
-            LOG_WARN("group memeber {} offline, save message", id);
         }
     }
     res.set_err(0);
     res.set_errmsg("groupChat success");
     LOG_INFO("user {} send group message {}", req.userid(), req.groupid());
+}
+
+void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::GroupHistoryMsgReq& req, chat::GroupHistoryMsgRes& res) {
+    std::vector<GroupMessage> message  = groupMessageModel.query(req.groupid());
+    for (auto& msg : message) {
+        auto item = res.add_msgs();
+        item->set_groupid(msg.getGroupid());
+        item->set_userid(msg.getUserid());
+        item->set_msg(msg.getMsg());
+        item->set_time(msg.getTime());
+    }
+    res.set_err(0);
+    res.set_errmsg("query group history success");
+    LOG_INFO("query group {} history message", req.groupid());
 }
 
 void ChatService::logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res) {

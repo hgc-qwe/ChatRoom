@@ -48,6 +48,9 @@ enum MsgTyp {
 
     DELETE_FRIEND_MSG = 29;
     DELETE_FRIEND_MSG_ACK = 30;
+
+    GROUP_HISTORY_MSG = 31;
+    GROUP_HISTORY_MSG_ACK = 32;
 }
 
 message LoginReq {
@@ -131,9 +134,10 @@ message AddGroupRes {
 
 message GroupChatReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
-    int32 groupid = 3;
+    int32 groupid = 2;
+    int32 userid = 3;
     string msg = 4;
+    string time = 5;
 }
 
 message GroupChatRes {
@@ -235,4 +239,17 @@ message DeleteFriendReq {
 message DeleteFriendRes {
     int32 err = 1;
     string errmsg = 2;
+}
+
+message GroupHistoryMsgReq {
+    int32 groupid = 1;
+    int32 userid = 2;
+    string msg = 3;
+    string time = 4;
+}
+
+message GroupHistoryMsgRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated GroupHistoryMsgReq msgs = 3;
 }

@@ -48,6 +48,7 @@ add_executable(
     src/UserModel.cpp
     src/FriendModel.cpp
     src/GroupModel.cpp
+    src/GroupMessageModel.cpp
     src/OfflineMsg.cpp
     src/FriendReqModel.cpp
     src/Message.cpp

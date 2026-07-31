@@ -7,6 +7,7 @@
 #include "MessageModel.h"
 #include "TcpConnection.h"
 #include "FriendReqModel.h"
+#include "GroupMessageModel.h"
 #pragma once
 
 class ChatService
@@ -38,6 +39,8 @@ public:
 
     void queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::HistoryMsgReq& req, chat::HistoryMsgRes& res);
 
+    void queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::GroupHistoryMsgReq& req, chat::GroupHistoryMsgRes& res);
+
     void addUserConn(int userid, std::shared_ptr<TcpConnection> conn);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);
@@ -50,6 +53,7 @@ private:
     GroupModel groupModel;
     MessageModel messageModel;
     FriendReqModel friendReqModel;
+    GroupMessageModel groupMessageModel;
 
     std::unordered_map<int, std::shared_ptr<TcpConnection>> userConnMap;
     std::mutex connMutex;

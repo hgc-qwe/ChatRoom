@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <thread>
-
+#include <iomanip>
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
@@ -270,6 +270,10 @@ void recvMessage(int sockfd)
                     <<msg.toid()
                     <<" msg:"
                     <<msg.msg()
+                    <<right
+                    <<setw(10)
+                    <<"time:"
+                    <<msg.time()
                     <<endl;
                 }
             }
@@ -289,6 +293,59 @@ void recvMessage(int sockfd)
                 <<" msg="
                 <<req.msg()
                 <<endl;
+            }
+
+
+            else if(msgid == chat::GROUP_CHAT_MSG)
+            {
+                chat::GroupChatReq req;
+
+                req.ParseFromString(body);
+
+
+                cout
+                <<"group "
+                <<req.groupid()
+                <<" "
+                <<"收到消息:"
+                <<"from user="
+                <<req.userid()
+                <<" msg="
+                <<req.msg()
+                <<endl;
+            }
+
+            else if(msgid == chat::GROUP_HISTORY_MSG_ACK)
+            {
+                chat::GroupHistoryMsgRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"err:"
+                <<res.err()
+                <<" "
+                <<res.errmsg()
+                <<endl;
+
+
+                for(auto& msg : res.msgs())
+                {
+                    cout
+                    <<"group:"
+                    <<msg.groupid()
+                    <<"     "
+                    <<"user:"
+                    <<msg.userid()
+                    <<" msg:"
+                    <<msg.msg()
+                    <<right
+                    <<setw(10)
+                    <<"time:"
+                    <<msg.time()
+                    <<endl;
+                }
             }
 
 
@@ -357,6 +414,8 @@ int main()
         cout<<"5 delete friend\n";
         cout<<"6 one chat\n";
         cout<<"7 query history msg\n";
+        cout<<"8 group chat\n";
+        cout<<"9 query group history msg\n";
         cout<<"0 exit\n";
 
 
@@ -640,6 +699,77 @@ int main()
 
         }
 
+
+        else if(op == 8)
+        {
+            chat::GroupChatReq req;
+
+            int groupid;
+            int userid;
+            string msg;
+
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+
+            cout<<"userid:";
+            cin>>userid;
+
+
+            cout<<"msg:";
+            cin.ignore();
+            getline(cin, msg);
+
+
+            req.set_groupid(groupid);
+            req.set_userid(userid);
+            req.set_msg(msg);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+            MessageCodec::encode(
+                chat::GROUP_CHAT_MSG,
+                data
+            );
+        }
+
+        else if(op == 9)
+        {
+
+            chat::GroupHistoryMsgReq req;
+
+
+            int groupid;
+
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+            
+
+
+
+            req.set_groupid(groupid);
+
+
+
+
+            req.SerializeToString(
+                &data
+            );
+
+
+            packet =
+            MessageCodec::encode(
+                chat::GROUP_HISTORY_MSG,
+                data
+            );
+
+        }
 
 
         else

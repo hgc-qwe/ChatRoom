@@ -170,6 +170,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::HISTORY_MSG_ACK, response);
         }
+        case chat::GROUP_HISTORY_MSG: {
+            chat::GroupHistoryMsgReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("GroupHistoryMsgReq parse failed");
+                return "";
+            }
+            chat::GroupHistoryMsgRes res;
+            ChatService::instance()->queryGroupHistoryMsg(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::GROUP_HISTORY_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";
