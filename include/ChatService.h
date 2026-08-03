@@ -1,5 +1,6 @@
 #include <unordered_map>
 #include <mutex>
+#include "Redis.h"
 #include "UserModel.h"
 #include "FriendModel.h"
 #include "GroupModel.h"
@@ -54,9 +55,12 @@ private:
     MessageModel messageModel;
     FriendReqModel friendReqModel;
     GroupMessageModel groupMessageModel;
+    Redis redis;
 
     std::unordered_map<int, std::shared_ptr<TcpConnection>> userConnMap;
     std::mutex connMutex;
 
-    ChatService() = default;
+    ChatService() {
+        redis.connect();
+    }
 };

@@ -118,6 +118,12 @@ extern LogoutReqDefaultTypeInternal _LogoutReq_default_instance_;
 class LogoutRes;
 struct LogoutResDefaultTypeInternal;
 extern LogoutResDefaultTypeInternal _LogoutRes_default_instance_;
+class OfflineGroupMsg;
+struct OfflineGroupMsgDefaultTypeInternal;
+extern OfflineGroupMsgDefaultTypeInternal _OfflineGroupMsg_default_instance_;
+class OfflineMsg;
+struct OfflineMsgDefaultTypeInternal;
+extern OfflineMsgDefaultTypeInternal _OfflineMsg_default_instance_;
 class OneChatReq;
 struct OneChatReqDefaultTypeInternal;
 extern OneChatReqDefaultTypeInternal _OneChatReq_default_instance_;
@@ -171,6 +177,8 @@ template<> ::chat::LoginReq* Arena::CreateMaybeMessage<::chat::LoginReq>(Arena*)
 template<> ::chat::LoginRes* Arena::CreateMaybeMessage<::chat::LoginRes>(Arena*);
 template<> ::chat::LogoutReq* Arena::CreateMaybeMessage<::chat::LogoutReq>(Arena*);
 template<> ::chat::LogoutRes* Arena::CreateMaybeMessage<::chat::LogoutRes>(Arena*);
+template<> ::chat::OfflineGroupMsg* Arena::CreateMaybeMessage<::chat::OfflineGroupMsg>(Arena*);
+template<> ::chat::OfflineMsg* Arena::CreateMaybeMessage<::chat::OfflineMsg>(Arena*);
 template<> ::chat::OneChatReq* Arena::CreateMaybeMessage<::chat::OneChatReq>(Arena*);
 template<> ::chat::OneChatRes* Arena::CreateMaybeMessage<::chat::OneChatRes>(Arena*);
 template<> ::chat::QueryFriendReq* Arena::CreateMaybeMessage<::chat::QueryFriendReq>(Arena*);
@@ -241,6 +249,197 @@ inline bool MsgTyp_Parse(
 }
 // ===================================================================
 
+class OfflineMsg final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.OfflineMsg) */ {
+ public:
+  inline OfflineMsg() : OfflineMsg(nullptr) {}
+  ~OfflineMsg() override;
+  explicit PROTOBUF_CONSTEXPR OfflineMsg(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  OfflineMsg(const OfflineMsg& from);
+  OfflineMsg(OfflineMsg&& from) noexcept
+    : OfflineMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline OfflineMsg& operator=(const OfflineMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OfflineMsg& operator=(OfflineMsg&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const OfflineMsg& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const OfflineMsg* internal_default_instance() {
+    return reinterpret_cast<const OfflineMsg*>(
+               &_OfflineMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    0;
+
+  friend void swap(OfflineMsg& a, OfflineMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OfflineMsg* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(OfflineMsg* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  OfflineMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OfflineMsg>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const OfflineMsg& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const OfflineMsg& from) {
+    OfflineMsg::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OfflineMsg* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.OfflineMsg";
+  }
+  protected:
+  explicit OfflineMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMsgFieldNumber = 3,
+    kTimeFieldNumber = 4,
+    kFromidFieldNumber = 1,
+    kToidFieldNumber = 2,
+  };
+  // string msg = 3;
+  void clear_msg();
+  const std::string& msg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_msg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_msg();
+  PROTOBUF_NODISCARD std::string* release_msg();
+  void set_allocated_msg(std::string* msg);
+  private:
+  const std::string& _internal_msg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_msg(const std::string& value);
+  std::string* _internal_mutable_msg();
+  public:
+
+  // string time = 4;
+  void clear_time();
+  const std::string& time() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_time(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_time();
+  PROTOBUF_NODISCARD std::string* release_time();
+  void set_allocated_time(std::string* time);
+  private:
+  const std::string& _internal_time() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
+  std::string* _internal_mutable_time();
+  public:
+
+  // int32 fromid = 1;
+  void clear_fromid();
+  int32_t fromid() const;
+  void set_fromid(int32_t value);
+  private:
+  int32_t _internal_fromid() const;
+  void _internal_set_fromid(int32_t value);
+  public:
+
+  // int32 toid = 2;
+  void clear_toid();
+  int32_t toid() const;
+  void set_toid(int32_t value);
+  private:
+  int32_t _internal_toid() const;
+  void _internal_set_toid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.OfflineMsg)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
+    int32_t fromid_;
+    int32_t toid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
 class LoginReq final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.LoginReq) */ {
  public:
@@ -289,7 +488,7 @@ class LoginReq final :
                &_LoginReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    0;
+    1;
 
   friend void swap(LoginReq& a, LoginReq& b) {
     a.Swap(&b);
@@ -464,7 +663,7 @@ class LoginRes final :
                &_LoginRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    2;
 
   friend void swap(LoginRes& a, LoginRes& b) {
     a.Swap(&b);
@@ -537,14 +736,33 @@ class LoginRes final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kFriendsFieldNumber = 4,
-    kGroupsFieldNumber = 5,
-    kOfflineMsgsFieldNumber = 6,
+    kOfflinemsgsFieldNumber = 4,
+    kFriendsFieldNumber = 5,
+    kGroupsFieldNumber = 6,
+    kOfflinegroupmsgFieldNumber = 7,
     kErrmsgFieldNumber = 2,
     kUserFieldNumber = 3,
     kErrFieldNumber = 1,
   };
-  // repeated .chat.User friends = 4;
+  // repeated .chat.OfflineMsg offlinemsgs = 4;
+  int offlinemsgs_size() const;
+  private:
+  int _internal_offlinemsgs_size() const;
+  public:
+  void clear_offlinemsgs();
+  ::chat::OfflineMsg* mutable_offlinemsgs(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineMsg >*
+      mutable_offlinemsgs();
+  private:
+  const ::chat::OfflineMsg& _internal_offlinemsgs(int index) const;
+  ::chat::OfflineMsg* _internal_add_offlinemsgs();
+  public:
+  const ::chat::OfflineMsg& offlinemsgs(int index) const;
+  ::chat::OfflineMsg* add_offlinemsgs();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineMsg >&
+      offlinemsgs() const;
+
+  // repeated .chat.User friends = 5;
   int friends_size() const;
   private:
   int _internal_friends_size() const;
@@ -562,7 +780,7 @@ class LoginRes final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User >&
       friends() const;
 
-  // repeated .chat.Group groups = 5;
+  // repeated .chat.Group groups = 6;
   int groups_size() const;
   private:
   int _internal_groups_size() const;
@@ -580,29 +798,23 @@ class LoginRes final :
   const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::Group >&
       groups() const;
 
-  // repeated string offlineMsgs = 6;
-  int offlinemsgs_size() const;
+  // repeated .chat.OfflineGroupMsg offlinegroupmsg = 7;
+  int offlinegroupmsg_size() const;
   private:
-  int _internal_offlinemsgs_size() const;
+  int _internal_offlinegroupmsg_size() const;
   public:
-  void clear_offlinemsgs();
-  const std::string& offlinemsgs(int index) const;
-  std::string* mutable_offlinemsgs(int index);
-  void set_offlinemsgs(int index, const std::string& value);
-  void set_offlinemsgs(int index, std::string&& value);
-  void set_offlinemsgs(int index, const char* value);
-  void set_offlinemsgs(int index, const char* value, size_t size);
-  std::string* add_offlinemsgs();
-  void add_offlinemsgs(const std::string& value);
-  void add_offlinemsgs(std::string&& value);
-  void add_offlinemsgs(const char* value);
-  void add_offlinemsgs(const char* value, size_t size);
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>& offlinemsgs() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>* mutable_offlinemsgs();
+  void clear_offlinegroupmsg();
+  ::chat::OfflineGroupMsg* mutable_offlinegroupmsg(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineGroupMsg >*
+      mutable_offlinegroupmsg();
   private:
-  const std::string& _internal_offlinemsgs(int index) const;
-  std::string* _internal_add_offlinemsgs();
+  const ::chat::OfflineGroupMsg& _internal_offlinegroupmsg(int index) const;
+  ::chat::OfflineGroupMsg* _internal_add_offlinegroupmsg();
   public:
+  const ::chat::OfflineGroupMsg& offlinegroupmsg(int index) const;
+  ::chat::OfflineGroupMsg* add_offlinegroupmsg();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineGroupMsg >&
+      offlinegroupmsg() const;
 
   // string errmsg = 2;
   void clear_errmsg();
@@ -653,9 +865,10 @@ class LoginRes final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineMsg > offlinemsgs_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::User > friends_;
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::Group > groups_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string> offlinemsgs_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineGroupMsg > offlinegroupmsg_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
     ::chat::User* user_;
     int32_t err_;
@@ -714,7 +927,7 @@ class RegisterReq final :
                &_RegisterReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    3;
 
   friend void swap(RegisterReq& a, RegisterReq& b) {
     a.Swap(&b);
@@ -894,7 +1107,7 @@ class RegisterRes final :
                &_RegisterRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    4;
 
   friend void swap(RegisterRes& a, RegisterRes& b) {
     a.Swap(&b);
@@ -1069,7 +1282,7 @@ class AddFriendReq final :
                &_AddFriendReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    5;
 
   friend void swap(AddFriendReq& a, AddFriendReq& b) {
     a.Swap(&b);
@@ -1239,7 +1452,7 @@ class AddFriendRes final :
                &_AddFriendRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    6;
 
   friend void swap(AddFriendRes& a, AddFriendRes& b) {
     a.Swap(&b);
@@ -1414,7 +1627,7 @@ class OneChatReq final :
                &_OneChatReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    7;
 
   friend void swap(OneChatReq& a, OneChatReq& b) {
     a.Swap(&b);
@@ -1488,6 +1701,7 @@ class OneChatReq final :
 
   enum : int {
     kMsgFieldNumber = 4,
+    kTimeFieldNumber = 5,
     kMsgidFieldNumber = 1,
     kFromidFieldNumber = 2,
     kToidFieldNumber = 3,
@@ -1504,6 +1718,20 @@ class OneChatReq final :
   const std::string& _internal_msg() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_msg(const std::string& value);
   std::string* _internal_mutable_msg();
+  public:
+
+  // string time = 5;
+  void clear_time();
+  const std::string& time() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_time(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_time();
+  PROTOBUF_NODISCARD std::string* release_time();
+  void set_allocated_time(std::string* time);
+  private:
+  const std::string& _internal_time() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
+  std::string* _internal_mutable_time();
   public:
 
   // .chat.MsgTyp msgid = 1;
@@ -1542,6 +1770,7 @@ class OneChatReq final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
     int msgid_;
     int32_t fromid_;
     int32_t toid_;
@@ -1600,7 +1829,7 @@ class OneChatRes final :
                &_OneChatRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    8;
 
   friend void swap(OneChatRes& a, OneChatRes& b) {
     a.Swap(&b);
@@ -1775,7 +2004,7 @@ class CreateGroupReq final :
                &_CreateGroupReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    9;
 
   friend void swap(CreateGroupReq& a, CreateGroupReq& b) {
     a.Swap(&b);
@@ -1966,7 +2195,7 @@ class CreateGroupRes final :
                &_CreateGroupRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    10;
 
   friend void swap(CreateGroupRes& a, CreateGroupRes& b) {
     a.Swap(&b);
@@ -2152,7 +2381,7 @@ class AddGroupReq final :
                &_AddGroupReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(AddGroupReq& a, AddGroupReq& b) {
     a.Swap(&b);
@@ -2338,7 +2567,7 @@ class AddGroupRes final :
                &_AddGroupRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    12;
 
   friend void swap(AddGroupRes& a, AddGroupRes& b) {
     a.Swap(&b);
@@ -2513,7 +2742,7 @@ class GroupChatReq final :
                &_GroupChatReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    13;
 
   friend void swap(GroupChatReq& a, GroupChatReq& b) {
     a.Swap(&b);
@@ -2715,7 +2944,7 @@ class GroupChatRes final :
                &_GroupChatRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    14;
 
   friend void swap(GroupChatRes& a, GroupChatRes& b) {
     a.Swap(&b);
@@ -2890,7 +3119,7 @@ class LogoutReq final :
                &_LogoutReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    15;
 
   friend void swap(LogoutReq& a, LogoutReq& b) {
     a.Swap(&b);
@@ -3049,7 +3278,7 @@ class LogoutRes final :
                &_LogoutRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    16;
 
   friend void swap(LogoutRes& a, LogoutRes& b) {
     a.Swap(&b);
@@ -3224,7 +3453,7 @@ class User final :
                &_User_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    17;
 
   friend void swap(User& a, User& b) {
     a.Swap(&b);
@@ -3404,7 +3633,7 @@ class GroupUser final :
                &_GroupUser_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    18;
 
   friend void swap(GroupUser& a, GroupUser& b) {
     a.Swap(&b);
@@ -3584,7 +3813,7 @@ class Group final :
                &_Group_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    19;
 
   friend void swap(Group& a, Group& b) {
     a.Swap(&b);
@@ -3784,7 +4013,7 @@ class HistoryMsgReq final :
                &_HistoryMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    20;
 
   friend void swap(HistoryMsgReq& a, HistoryMsgReq& b) {
     a.Swap(&b);
@@ -3975,7 +4204,7 @@ class HistoryMsgRes final :
                &_HistoryMsgRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    21;
 
   friend void swap(HistoryMsgRes& a, HistoryMsgRes& b) {
     a.Swap(&b);
@@ -4159,7 +4388,7 @@ class AcceptFriendReq final :
                &_AcceptFriendReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    22;
 
   friend void swap(AcceptFriendReq& a, AcceptFriendReq& b) {
     a.Swap(&b);
@@ -4329,7 +4558,7 @@ class AcceptFriendRes final :
                &_AcceptFriendRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    23;
 
   friend void swap(AcceptFriendRes& a, AcceptFriendRes& b) {
     a.Swap(&b);
@@ -4493,7 +4722,7 @@ class FriendRequest final :
                &_FriendRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    24;
 
   friend void swap(FriendRequest& a, FriendRequest& b) {
     a.Swap(&b);
@@ -4657,7 +4886,7 @@ class QueryFriendReqReq final :
                &_QueryFriendReqReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    25;
 
   friend void swap(QueryFriendReqReq& a, QueryFriendReqReq& b) {
     a.Swap(&b);
@@ -4816,7 +5045,7 @@ class QueryFriendReqRes final :
                &_QueryFriendReqRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    26;
 
   friend void swap(QueryFriendReqRes& a, QueryFriendReqRes& b) {
     a.Swap(&b);
@@ -5000,7 +5229,7 @@ class FriendAcceptNotify final :
                &_FriendAcceptNotify_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    27;
 
   friend void swap(FriendAcceptNotify& a, FriendAcceptNotify& b) {
     a.Swap(&b);
@@ -5164,7 +5393,7 @@ class QueryFriendReq final :
                &_QueryFriendReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    28;
 
   friend void swap(QueryFriendReq& a, QueryFriendReq& b) {
     a.Swap(&b);
@@ -5312,7 +5541,7 @@ class QueryFriendRes final :
                &_QueryFriendRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    29;
 
   friend void swap(QueryFriendRes& a, QueryFriendRes& b) {
     a.Swap(&b);
@@ -5496,7 +5725,7 @@ class DeleteFriendReq final :
                &_DeleteFriendReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    30;
 
   friend void swap(DeleteFriendReq& a, DeleteFriendReq& b) {
     a.Swap(&b);
@@ -5655,7 +5884,7 @@ class DeleteFriendRes final :
                &_DeleteFriendRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    31;
 
   friend void swap(DeleteFriendRes& a, DeleteFriendRes& b) {
     a.Swap(&b);
@@ -5819,7 +6048,7 @@ class GroupHistoryMsgReq final :
                &_GroupHistoryMsgReq_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    32;
 
   friend void swap(GroupHistoryMsgReq& a, GroupHistoryMsgReq& b) {
     a.Swap(&b);
@@ -6010,7 +6239,7 @@ class GroupHistoryMsgRes final :
                &_GroupHistoryMsgRes_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    33;
 
   friend void swap(GroupHistoryMsgRes& a, GroupHistoryMsgRes& b) {
     a.Swap(&b);
@@ -6144,6 +6373,197 @@ class GroupHistoryMsgRes final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class OfflineGroupMsg final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.OfflineGroupMsg) */ {
+ public:
+  inline OfflineGroupMsg() : OfflineGroupMsg(nullptr) {}
+  ~OfflineGroupMsg() override;
+  explicit PROTOBUF_CONSTEXPR OfflineGroupMsg(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  OfflineGroupMsg(const OfflineGroupMsg& from);
+  OfflineGroupMsg(OfflineGroupMsg&& from) noexcept
+    : OfflineGroupMsg() {
+    *this = ::std::move(from);
+  }
+
+  inline OfflineGroupMsg& operator=(const OfflineGroupMsg& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OfflineGroupMsg& operator=(OfflineGroupMsg&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const OfflineGroupMsg& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const OfflineGroupMsg* internal_default_instance() {
+    return reinterpret_cast<const OfflineGroupMsg*>(
+               &_OfflineGroupMsg_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    34;
+
+  friend void swap(OfflineGroupMsg& a, OfflineGroupMsg& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OfflineGroupMsg* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(OfflineGroupMsg* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  OfflineGroupMsg* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OfflineGroupMsg>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const OfflineGroupMsg& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const OfflineGroupMsg& from) {
+    OfflineGroupMsg::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OfflineGroupMsg* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.OfflineGroupMsg";
+  }
+  protected:
+  explicit OfflineGroupMsg(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMsgFieldNumber = 3,
+    kTimeFieldNumber = 4,
+    kGroupidFieldNumber = 1,
+    kUseridFieldNumber = 2,
+  };
+  // string msg = 3;
+  void clear_msg();
+  const std::string& msg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_msg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_msg();
+  PROTOBUF_NODISCARD std::string* release_msg();
+  void set_allocated_msg(std::string* msg);
+  private:
+  const std::string& _internal_msg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_msg(const std::string& value);
+  std::string* _internal_mutable_msg();
+  public:
+
+  // string time = 4;
+  void clear_time();
+  const std::string& time() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_time(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_time();
+  PROTOBUF_NODISCARD std::string* release_time();
+  void set_allocated_time(std::string* time);
+  private:
+  const std::string& _internal_time() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
+  std::string* _internal_mutable_time();
+  public:
+
+  // int32 groupid = 1;
+  void clear_groupid();
+  int32_t groupid() const;
+  void set_groupid(int32_t value);
+  private:
+  int32_t _internal_groupid() const;
+  void _internal_set_groupid(int32_t value);
+  public:
+
+  // int32 userid = 2;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.OfflineGroupMsg)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
+    int32_t groupid_;
+    int32_t userid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -6153,6 +6573,150 @@ class GroupHistoryMsgRes final :
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif  // __GNUC__
+// OfflineMsg
+
+// int32 fromid = 1;
+inline void OfflineMsg::clear_fromid() {
+  _impl_.fromid_ = 0;
+}
+inline int32_t OfflineMsg::_internal_fromid() const {
+  return _impl_.fromid_;
+}
+inline int32_t OfflineMsg::fromid() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineMsg.fromid)
+  return _internal_fromid();
+}
+inline void OfflineMsg::_internal_set_fromid(int32_t value) {
+  
+  _impl_.fromid_ = value;
+}
+inline void OfflineMsg::set_fromid(int32_t value) {
+  _internal_set_fromid(value);
+  // @@protoc_insertion_point(field_set:chat.OfflineMsg.fromid)
+}
+
+// int32 toid = 2;
+inline void OfflineMsg::clear_toid() {
+  _impl_.toid_ = 0;
+}
+inline int32_t OfflineMsg::_internal_toid() const {
+  return _impl_.toid_;
+}
+inline int32_t OfflineMsg::toid() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineMsg.toid)
+  return _internal_toid();
+}
+inline void OfflineMsg::_internal_set_toid(int32_t value) {
+  
+  _impl_.toid_ = value;
+}
+inline void OfflineMsg::set_toid(int32_t value) {
+  _internal_set_toid(value);
+  // @@protoc_insertion_point(field_set:chat.OfflineMsg.toid)
+}
+
+// string msg = 3;
+inline void OfflineMsg::clear_msg() {
+  _impl_.msg_.ClearToEmpty();
+}
+inline const std::string& OfflineMsg::msg() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineMsg.msg)
+  return _internal_msg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OfflineMsg::set_msg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.msg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OfflineMsg.msg)
+}
+inline std::string* OfflineMsg::mutable_msg() {
+  std::string* _s = _internal_mutable_msg();
+  // @@protoc_insertion_point(field_mutable:chat.OfflineMsg.msg)
+  return _s;
+}
+inline const std::string& OfflineMsg::_internal_msg() const {
+  return _impl_.msg_.Get();
+}
+inline void OfflineMsg::_internal_set_msg(const std::string& value) {
+  
+  _impl_.msg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OfflineMsg::_internal_mutable_msg() {
+  
+  return _impl_.msg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OfflineMsg::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.OfflineMsg.msg)
+  return _impl_.msg_.Release();
+}
+inline void OfflineMsg::set_allocated_msg(std::string* msg) {
+  if (msg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.msg_.SetAllocated(msg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.msg_.IsDefault()) {
+    _impl_.msg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OfflineMsg.msg)
+}
+
+// string time = 4;
+inline void OfflineMsg::clear_time() {
+  _impl_.time_.ClearToEmpty();
+}
+inline const std::string& OfflineMsg::time() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineMsg.time)
+  return _internal_time();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OfflineMsg::set_time(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.time_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OfflineMsg.time)
+}
+inline std::string* OfflineMsg::mutable_time() {
+  std::string* _s = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:chat.OfflineMsg.time)
+  return _s;
+}
+inline const std::string& OfflineMsg::_internal_time() const {
+  return _impl_.time_.Get();
+}
+inline void OfflineMsg::_internal_set_time(const std::string& value) {
+  
+  _impl_.time_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OfflineMsg::_internal_mutable_time() {
+  
+  return _impl_.time_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OfflineMsg::release_time() {
+  // @@protoc_insertion_point(field_release:chat.OfflineMsg.time)
+  return _impl_.time_.Release();
+}
+inline void OfflineMsg::set_allocated_time(std::string* time) {
+  if (time != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.time_.SetAllocated(time, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.time_.IsDefault()) {
+    _impl_.time_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OfflineMsg.time)
+}
+
+// -------------------------------------------------------------------
+
 // LoginReq
 
 // .chat.MsgTyp msgid = 1;
@@ -6409,7 +6973,47 @@ inline void LoginRes::set_allocated_user(::chat::User* user) {
   // @@protoc_insertion_point(field_set_allocated:chat.LoginRes.user)
 }
 
-// repeated .chat.User friends = 4;
+// repeated .chat.OfflineMsg offlinemsgs = 4;
+inline int LoginRes::_internal_offlinemsgs_size() const {
+  return _impl_.offlinemsgs_.size();
+}
+inline int LoginRes::offlinemsgs_size() const {
+  return _internal_offlinemsgs_size();
+}
+inline void LoginRes::clear_offlinemsgs() {
+  _impl_.offlinemsgs_.Clear();
+}
+inline ::chat::OfflineMsg* LoginRes::mutable_offlinemsgs(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.LoginRes.offlinemsgs)
+  return _impl_.offlinemsgs_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineMsg >*
+LoginRes::mutable_offlinemsgs() {
+  // @@protoc_insertion_point(field_mutable_list:chat.LoginRes.offlinemsgs)
+  return &_impl_.offlinemsgs_;
+}
+inline const ::chat::OfflineMsg& LoginRes::_internal_offlinemsgs(int index) const {
+  return _impl_.offlinemsgs_.Get(index);
+}
+inline const ::chat::OfflineMsg& LoginRes::offlinemsgs(int index) const {
+  // @@protoc_insertion_point(field_get:chat.LoginRes.offlinemsgs)
+  return _internal_offlinemsgs(index);
+}
+inline ::chat::OfflineMsg* LoginRes::_internal_add_offlinemsgs() {
+  return _impl_.offlinemsgs_.Add();
+}
+inline ::chat::OfflineMsg* LoginRes::add_offlinemsgs() {
+  ::chat::OfflineMsg* _add = _internal_add_offlinemsgs();
+  // @@protoc_insertion_point(field_add:chat.LoginRes.offlinemsgs)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineMsg >&
+LoginRes::offlinemsgs() const {
+  // @@protoc_insertion_point(field_list:chat.LoginRes.offlinemsgs)
+  return _impl_.offlinemsgs_;
+}
+
+// repeated .chat.User friends = 5;
 inline int LoginRes::_internal_friends_size() const {
   return _impl_.friends_.size();
 }
@@ -6449,7 +7053,7 @@ LoginRes::friends() const {
   return _impl_.friends_;
 }
 
-// repeated .chat.Group groups = 5;
+// repeated .chat.Group groups = 6;
 inline int LoginRes::_internal_groups_size() const {
   return _impl_.groups_.size();
 }
@@ -6489,79 +7093,44 @@ LoginRes::groups() const {
   return _impl_.groups_;
 }
 
-// repeated string offlineMsgs = 6;
-inline int LoginRes::_internal_offlinemsgs_size() const {
-  return _impl_.offlinemsgs_.size();
+// repeated .chat.OfflineGroupMsg offlinegroupmsg = 7;
+inline int LoginRes::_internal_offlinegroupmsg_size() const {
+  return _impl_.offlinegroupmsg_.size();
 }
-inline int LoginRes::offlinemsgs_size() const {
-  return _internal_offlinemsgs_size();
+inline int LoginRes::offlinegroupmsg_size() const {
+  return _internal_offlinegroupmsg_size();
 }
-inline void LoginRes::clear_offlinemsgs() {
-  _impl_.offlinemsgs_.Clear();
+inline void LoginRes::clear_offlinegroupmsg() {
+  _impl_.offlinegroupmsg_.Clear();
 }
-inline std::string* LoginRes::add_offlinemsgs() {
-  std::string* _s = _internal_add_offlinemsgs();
-  // @@protoc_insertion_point(field_add_mutable:chat.LoginRes.offlineMsgs)
-  return _s;
+inline ::chat::OfflineGroupMsg* LoginRes::mutable_offlinegroupmsg(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.LoginRes.offlinegroupmsg)
+  return _impl_.offlinegroupmsg_.Mutable(index);
 }
-inline const std::string& LoginRes::_internal_offlinemsgs(int index) const {
-  return _impl_.offlinemsgs_.Get(index);
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineGroupMsg >*
+LoginRes::mutable_offlinegroupmsg() {
+  // @@protoc_insertion_point(field_mutable_list:chat.LoginRes.offlinegroupmsg)
+  return &_impl_.offlinegroupmsg_;
 }
-inline const std::string& LoginRes::offlinemsgs(int index) const {
-  // @@protoc_insertion_point(field_get:chat.LoginRes.offlineMsgs)
-  return _internal_offlinemsgs(index);
+inline const ::chat::OfflineGroupMsg& LoginRes::_internal_offlinegroupmsg(int index) const {
+  return _impl_.offlinegroupmsg_.Get(index);
 }
-inline std::string* LoginRes::mutable_offlinemsgs(int index) {
-  // @@protoc_insertion_point(field_mutable:chat.LoginRes.offlineMsgs)
-  return _impl_.offlinemsgs_.Mutable(index);
+inline const ::chat::OfflineGroupMsg& LoginRes::offlinegroupmsg(int index) const {
+  // @@protoc_insertion_point(field_get:chat.LoginRes.offlinegroupmsg)
+  return _internal_offlinegroupmsg(index);
 }
-inline void LoginRes::set_offlinemsgs(int index, const std::string& value) {
-  _impl_.offlinemsgs_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set:chat.LoginRes.offlineMsgs)
+inline ::chat::OfflineGroupMsg* LoginRes::_internal_add_offlinegroupmsg() {
+  return _impl_.offlinegroupmsg_.Add();
 }
-inline void LoginRes::set_offlinemsgs(int index, std::string&& value) {
-  _impl_.offlinemsgs_.Mutable(index)->assign(std::move(value));
-  // @@protoc_insertion_point(field_set:chat.LoginRes.offlineMsgs)
+inline ::chat::OfflineGroupMsg* LoginRes::add_offlinegroupmsg() {
+  ::chat::OfflineGroupMsg* _add = _internal_add_offlinegroupmsg();
+  // @@protoc_insertion_point(field_add:chat.LoginRes.offlinegroupmsg)
+  return _add;
 }
-inline void LoginRes::set_offlinemsgs(int index, const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  _impl_.offlinemsgs_.Mutable(index)->assign(value);
-  // @@protoc_insertion_point(field_set_char:chat.LoginRes.offlineMsgs)
-}
-inline void LoginRes::set_offlinemsgs(int index, const char* value, size_t size) {
-  _impl_.offlinemsgs_.Mutable(index)->assign(
-    reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:chat.LoginRes.offlineMsgs)
-}
-inline std::string* LoginRes::_internal_add_offlinemsgs() {
-  return _impl_.offlinemsgs_.Add();
-}
-inline void LoginRes::add_offlinemsgs(const std::string& value) {
-  _impl_.offlinemsgs_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add:chat.LoginRes.offlineMsgs)
-}
-inline void LoginRes::add_offlinemsgs(std::string&& value) {
-  _impl_.offlinemsgs_.Add(std::move(value));
-  // @@protoc_insertion_point(field_add:chat.LoginRes.offlineMsgs)
-}
-inline void LoginRes::add_offlinemsgs(const char* value) {
-  GOOGLE_DCHECK(value != nullptr);
-  _impl_.offlinemsgs_.Add()->assign(value);
-  // @@protoc_insertion_point(field_add_char:chat.LoginRes.offlineMsgs)
-}
-inline void LoginRes::add_offlinemsgs(const char* value, size_t size) {
-  _impl_.offlinemsgs_.Add()->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_add_pointer:chat.LoginRes.offlineMsgs)
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>&
-LoginRes::offlinemsgs() const {
-  // @@protoc_insertion_point(field_list:chat.LoginRes.offlineMsgs)
-  return _impl_.offlinemsgs_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<std::string>*
-LoginRes::mutable_offlinemsgs() {
-  // @@protoc_insertion_point(field_mutable_list:chat.LoginRes.offlineMsgs)
-  return &_impl_.offlinemsgs_;
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::OfflineGroupMsg >&
+LoginRes::offlinegroupmsg() const {
+  // @@protoc_insertion_point(field_list:chat.LoginRes.offlinegroupmsg)
+  return _impl_.offlinegroupmsg_;
 }
 
 // -------------------------------------------------------------------
@@ -7052,6 +7621,56 @@ inline void OneChatReq::set_allocated_msg(std::string* msg) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chat.OneChatReq.msg)
+}
+
+// string time = 5;
+inline void OneChatReq::clear_time() {
+  _impl_.time_.ClearToEmpty();
+}
+inline const std::string& OneChatReq::time() const {
+  // @@protoc_insertion_point(field_get:chat.OneChatReq.time)
+  return _internal_time();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OneChatReq::set_time(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.time_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OneChatReq.time)
+}
+inline std::string* OneChatReq::mutable_time() {
+  std::string* _s = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:chat.OneChatReq.time)
+  return _s;
+}
+inline const std::string& OneChatReq::_internal_time() const {
+  return _impl_.time_.Get();
+}
+inline void OneChatReq::_internal_set_time(const std::string& value) {
+  
+  _impl_.time_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OneChatReq::_internal_mutable_time() {
+  
+  return _impl_.time_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OneChatReq::release_time() {
+  // @@protoc_insertion_point(field_release:chat.OneChatReq.time)
+  return _impl_.time_.Release();
+}
+inline void OneChatReq::set_allocated_time(std::string* time) {
+  if (time != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.time_.SetAllocated(time, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.time_.IsDefault()) {
+    _impl_.time_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OneChatReq.time)
 }
 
 // -------------------------------------------------------------------
@@ -9638,9 +10257,157 @@ GroupHistoryMsgRes::msgs() const {
   return _impl_.msgs_;
 }
 
+// -------------------------------------------------------------------
+
+// OfflineGroupMsg
+
+// int32 groupid = 1;
+inline void OfflineGroupMsg::clear_groupid() {
+  _impl_.groupid_ = 0;
+}
+inline int32_t OfflineGroupMsg::_internal_groupid() const {
+  return _impl_.groupid_;
+}
+inline int32_t OfflineGroupMsg::groupid() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineGroupMsg.groupid)
+  return _internal_groupid();
+}
+inline void OfflineGroupMsg::_internal_set_groupid(int32_t value) {
+  
+  _impl_.groupid_ = value;
+}
+inline void OfflineGroupMsg::set_groupid(int32_t value) {
+  _internal_set_groupid(value);
+  // @@protoc_insertion_point(field_set:chat.OfflineGroupMsg.groupid)
+}
+
+// int32 userid = 2;
+inline void OfflineGroupMsg::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t OfflineGroupMsg::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t OfflineGroupMsg::userid() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineGroupMsg.userid)
+  return _internal_userid();
+}
+inline void OfflineGroupMsg::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void OfflineGroupMsg::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.OfflineGroupMsg.userid)
+}
+
+// string msg = 3;
+inline void OfflineGroupMsg::clear_msg() {
+  _impl_.msg_.ClearToEmpty();
+}
+inline const std::string& OfflineGroupMsg::msg() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineGroupMsg.msg)
+  return _internal_msg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OfflineGroupMsg::set_msg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.msg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OfflineGroupMsg.msg)
+}
+inline std::string* OfflineGroupMsg::mutable_msg() {
+  std::string* _s = _internal_mutable_msg();
+  // @@protoc_insertion_point(field_mutable:chat.OfflineGroupMsg.msg)
+  return _s;
+}
+inline const std::string& OfflineGroupMsg::_internal_msg() const {
+  return _impl_.msg_.Get();
+}
+inline void OfflineGroupMsg::_internal_set_msg(const std::string& value) {
+  
+  _impl_.msg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OfflineGroupMsg::_internal_mutable_msg() {
+  
+  return _impl_.msg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OfflineGroupMsg::release_msg() {
+  // @@protoc_insertion_point(field_release:chat.OfflineGroupMsg.msg)
+  return _impl_.msg_.Release();
+}
+inline void OfflineGroupMsg::set_allocated_msg(std::string* msg) {
+  if (msg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.msg_.SetAllocated(msg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.msg_.IsDefault()) {
+    _impl_.msg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OfflineGroupMsg.msg)
+}
+
+// string time = 4;
+inline void OfflineGroupMsg::clear_time() {
+  _impl_.time_.ClearToEmpty();
+}
+inline const std::string& OfflineGroupMsg::time() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineGroupMsg.time)
+  return _internal_time();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OfflineGroupMsg::set_time(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.time_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OfflineGroupMsg.time)
+}
+inline std::string* OfflineGroupMsg::mutable_time() {
+  std::string* _s = _internal_mutable_time();
+  // @@protoc_insertion_point(field_mutable:chat.OfflineGroupMsg.time)
+  return _s;
+}
+inline const std::string& OfflineGroupMsg::_internal_time() const {
+  return _impl_.time_.Get();
+}
+inline void OfflineGroupMsg::_internal_set_time(const std::string& value) {
+  
+  _impl_.time_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OfflineGroupMsg::_internal_mutable_time() {
+  
+  return _impl_.time_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OfflineGroupMsg::release_time() {
+  // @@protoc_insertion_point(field_release:chat.OfflineGroupMsg.time)
+  return _impl_.time_.Release();
+}
+inline void OfflineGroupMsg::set_allocated_time(std::string* time) {
+  if (time != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.time_.SetAllocated(time, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.time_.IsDefault()) {
+    _impl_.time_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OfflineGroupMsg.time)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

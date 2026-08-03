@@ -1,6 +1,7 @@
 #include "Util.h"
 #include <fcntl.h>
 #include <iostream>
+#include <string>
 
 int setNonBlock(int fd) {
     int flag = fcntl(fd, F_GETFL, 0);
@@ -16,4 +17,14 @@ int setNonBlock(int fd) {
     }
 
     return 0;
+}
+
+std::string getCurrentTime()
+{
+    char buf[32];
+    time_t now = time(nullptr);
+
+    strftime(buf, sizeof(buf), "%F %T", localtime(&now));
+
+    return buf;
 }

@@ -93,14 +93,49 @@ void recvMessage(int sockfd)
             if(msgid == chat::LOGIN_MSG_ACK)
             {
                 chat::LoginRes res;
-
                 res.ParseFromString(body);
 
-
                 cout
-                <<"login:"
-                <<res.errmsg()
-                <<endl;
+                    << "login:"
+                    << res.errmsg()
+                    << endl;
+
+                // 私聊离线消息
+                if(res.offlinemsgs_size() > 0)
+                {
+                    cout << "\n===== 离线私聊消息 =====" << endl;
+
+                    for(auto &msg : res.offlinemsgs())
+                    {
+                        cout
+                            << "[" << msg.time() << "] "
+                            << msg.fromid()
+                            << " -> "
+                            << msg.toid()
+                            << " : "
+                            << msg.msg()
+                            << endl;
+                    }
+                }
+
+                // 群聊离线消息
+                if(res.offlinegroupmsg_size() > 0)
+                {
+                    cout << "\n===== 离线群聊消息 =====" << endl;
+
+                    for(auto &msg : res.offlinegroupmsg())
+                    {
+                        cout
+                            << "[" << msg.time() << "] "
+                            << "group "
+                            << msg.groupid()
+                            << " user "
+                            << msg.userid()
+                            << " : "
+                            << msg.msg()
+                            << endl;
+                    }
+                }
             }
 
 

@@ -53,6 +53,13 @@ enum MsgTyp {
     GROUP_HISTORY_MSG_ACK = 32;
 }
 
+message OfflineMsg {
+    int32 fromid = 1;
+    int32 toid = 2;
+    string msg = 3;
+    string time = 4;
+}
+
 message LoginReq {
     MsgTyp msgid = 1;
     int32 id = 2;
@@ -63,9 +70,10 @@ message LoginRes {
     int32 err = 1;
     string errmsg = 2;
     User user = 3;
-    repeated User friends = 4;
-    repeated Group groups = 5;
-    repeated string offlineMsgs = 6;
+    repeated OfflineMsg offlinemsgs = 4;
+    repeated User friends = 5;
+    repeated Group groups = 6;
+    repeated OfflineGroupMsg offlinegroupmsg = 7;
 }
 
 message RegisterReq {
@@ -97,6 +105,7 @@ message OneChatReq {
     int32 fromid = 2;
     int32 toid = 3;
     string msg = 4;
+    string time = 5;
 }
 
 message OneChatRes {
@@ -252,4 +261,11 @@ message GroupHistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
     repeated GroupHistoryMsgReq msgs = 3;
+}
+
+message OfflineGroupMsg {
+    int32 groupid = 1;
+    int32 userid = 2;
+    string msg = 3;
+    string time = 4;
 }

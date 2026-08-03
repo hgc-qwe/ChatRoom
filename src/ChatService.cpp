@@ -6,6 +6,7 @@
 #include "MessageModel.h"
 #include "Message.h"
 #include "GroupMessageModel.h"
+#include "Util.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
@@ -25,6 +26,7 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
             res.set_errmsg("login success");
             LOG_INFO("user {} login success", req.id());
             addUserConn(req.id(), conn);
+            redis.set("user:state:" + std::to_string(req.id()), "online");
             conn->setUserId(req.id());
 
             auto loginUser = res.mutable_user();
@@ -32,19 +34,49 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
             loginUser->set_name(user.getName());
             loginUser->set_state(user.getState());
 
-            std::vector<Message> offmsgs = messageModel.queryOffline(req.id());
+            std::string key = "offline:msg:" + std::to_string(req.id());
+            std::vector<std::string> redisMsgs;
+            redis.getList(key, redisMsgs);
 
-            for (auto& msg : offmsgs) {
-                res.add_offlinemsgs(msg.getMsg());
+            for (auto& data : redisMsgs) {
+                chat::OfflineMsg offline;
+                if (!offline.ParseFromString(data)) continue;
+                auto item = res.add_offlinemsgs();
+                item->set_fromid(offline.fromid());
+                item->set_toid(offline.toid());
+                item->set_msg(offline.msg());
+                item->set_time(offline.time());
             }
-            messageModel.updateStatus(req.id());
-            std::vector<User> users = friendModel.query(req.id());
+            if (!redisMsgs.empty()) redis.del(key);
 
+            std::string groupkey = "offline:group:" + std::to_string(req.id());
+            std::vector<std::string> groupMsg;
+            redis.getList(groupkey, groupMsg);
+
+            for (auto& data : groupMsg) {
+                chat::OfflineGroupMsg msg;
+                if (!msg.ParseFromString(data)) continue;
+                auto item = res.add_offlinegroupmsg();
+                item->set_groupid(msg.groupid());
+                item->set_userid(msg.userid());
+                item->set_msg(msg.msg());
+                item->set_time(msg.time());
+            }
+            if (!groupMsg.empty()) redis.del(groupkey);
+
+            messageModel.updateStatus(req.id());
+            
+            std::vector<User> users = friendModel.query(req.id());
             for (auto& u : users) {
                 chat::User* user = res.add_friends();
                 user->set_id(u.getId());
                 user->set_name(u.getName());
-                user->set_state(u.getState());
+                std::string state;
+                if(redis.get("user:state:" + std::to_string(u.getId()), state)) {
+                    user->set_state(state);
+                } else {
+                    user->set_state("offline");
+                }
             }
             std::vector<Group> groups = groupModel.queryGroups(req.id());
 
@@ -122,7 +154,13 @@ void ChatService::queryFriend(std::shared_ptr<TcpConnection> conn, const chat::Q
         chat::User* item = res.add_friends();
         item->set_id(f.getId());
         item->set_name(f.getName());
-        item->set_state(f.getState());
+        
+        std::string state;
+        if(redis.get("user:state:" + std::to_string(f.getId()), state)) {
+            item->set_state(state);
+        } else {
+            item->set_state("offline");
+        }
     }
     res.set_err(0);
     res.set_errmsg("query friends success");
@@ -198,28 +236,33 @@ void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneCh
         res.set_errmsg("not friend");
         return;
     }
-    if (!messageModel.insert(req.fromid(), req.toid(), req.msg())) {
-        res.set_err(1);
-        res.set_errmsg("save message failed");
-        return;
-    }
     auto targetConn = getUserConn(req.toid());
+     std::string data;
+     req.SerializeToString(&data);
     if (targetConn) {
-        std::string data;
-        req.SerializeToString(&data);
         targetConn->sendMessage(MessageCodec::encode(chat::ONE_CHAT_MSG, data));
+        messageModel.insert(req.fromid(), req.toid(), req.msg());
         res.set_err(0);
         res.set_errmsg("send success");
         LOG_INFO("{} send message to {}", req.fromid(), req.toid());
     } else {
-        if (messageModel.insert(req.fromid(), req.toid(), req.msg())) {
-            res.set_err(0);
-            res.set_errmsg("message saved");
-            LOG_WARN("user {} offline, save message", req.toid());
-        } else {
-            res.set_err(1);
-            res.set_errmsg("send failed");
-        }
+        chat::OfflineMsg offline;
+        offline.set_fromid(req.fromid());
+        offline.set_toid(req.toid());
+        offline.set_msg(req.msg());
+        std::string now = getCurrentTime();
+        offline.set_time(now);
+        
+        std::string value;
+        offline.SerializeToString(&value);
+
+        std::string key = "offline:msg:" + std::to_string(req.toid());
+        redis.pushList(key, value);
+
+        messageModel.insert(req.fromid(), req.toid(), req.msg());
+
+        res.set_err(0);
+        res.set_errmsg("offline save");
     }
 }
 
@@ -255,7 +298,11 @@ void ChatService::addGroup(std::shared_ptr<TcpConnection> conn, const chat::AddG
 }
 
 void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res) {
-    groupMessageModel.insert(req.groupid(), req.userid(), req.msg());
+    if(!groupMessageModel.insert(req.groupid(), req.userid(), req.msg())) {
+        res.set_err(1);
+        res.set_errmsg("save group message failed");
+        return;
+    }
     auto users = groupModel.queryGroupUsers(req.userid(), req.groupid());
     std::string data;
     req.SerializeToString(&data);
@@ -264,6 +311,18 @@ void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::Gro
         auto userconn = getUserConn(id);
         if (userconn) {
             userconn->sendMessage(MessageCodec::encode(chat::GROUP_CHAT_MSG, data));
+        } else {
+            chat::OfflineGroupMsg offline;
+            offline.set_groupid(req.groupid());
+            offline.set_userid(req.userid());
+            offline.set_msg(req.msg());
+            std::string now = getCurrentTime();
+            offline.set_time(now);
+            
+            std::string value;
+            offline.SerializeToString(&value);
+
+            redis.pushList("offline:group:" + std::to_string(id),value);
         }
     }
     res.set_err(0);
@@ -321,6 +380,7 @@ void ChatService::clientClose(int userid) {
     if (user.getId() == userid && user.getState() == "online") {
         user.setState("offline");
         if (userModel.updateState(user)) {
+            redis.set("user:state:" + std::to_string(userid), "offline");
             LOG_INFO("user {} disconnected", userid);
         } else {
             LOG_ERROR("user {} update offline failed", userid);

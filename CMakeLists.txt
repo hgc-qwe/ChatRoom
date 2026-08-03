@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(Protobuf REQUIRED)
 find_package(spdlog REQUIRED)
+set(HIREDIS_LIB /usr/lib/x86_64-linux-gnu/libhiredis.so)
 
 # ============================================
 # 公共源文件（Server 和 Client 共享的部分）
@@ -60,6 +61,7 @@ add_executable(
 
     # database
     src/Mysql.cpp
+    src/Redis.cpp
 
     # 公共文件
     ${COMMON_SRC}
@@ -78,6 +80,7 @@ target_link_libraries(
     mysqlclient
     protobuf::libprotobuf
     spdlog::spdlog
+    ${HIREDIS_LIB}
 )
 
 # ============================================
