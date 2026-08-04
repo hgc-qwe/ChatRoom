@@ -3,6 +3,10 @@
 #include <arpa/inet.h>
 #include <thread>
 #include <iomanip>
+#include <fstream>
+#include <filesystem>
+#include <unordered_map>
+#include <chrono>
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
@@ -10,6 +14,12 @@
 using namespace std;
 
 int currentUserid = -1;
+std::ofstream recvFile;
+std::string recvFileId;
+uint64_t recvFileSize = 0;
+std::ofstream downloadFile;
+std::string downloadFileId;
+std::string downloadFilePath;
 
 void queryFriend(int sockfd, int userid)
 {
@@ -38,13 +48,150 @@ void queryFriend(int sockfd, int userid)
     );
 }
 
+bool sendAll(int sockfd,
+             const char* data,
+             size_t len)
+{
+    size_t sent = 0;
+
+    while(sent < len)
+    {
+        int n = send(
+            sockfd,
+            data + sent,
+            len - sent,
+            0
+        );
+
+
+        if(n <= 0)
+            return false;
+
+
+        sent += n;
+    }
+
+
+    return true;
+}
+
+void sendFile(int sockfd,
+              int fromid,
+              int toid,
+              const std::string& path)
+{
+    namespace fs = std::filesystem;
+
+    std::ifstream ifs(path, std::ios::binary);
+    if (!ifs.is_open())
+    {
+        std::cout << "open file failed\n";
+        return;
+    }
+
+    // 文件大小
+    uint64_t filesize = fs::file_size(path);
+
+    // 文件名
+    std::string filename = fs::path(path).filename().string();
+
+    // 生成一个简单 fileid
+    std::string fileid =
+        std::to_string(fromid) + "_" +
+        std::to_string(
+            std::chrono::system_clock::now()
+            .time_since_epoch()
+            .count());
+
+    //-----------------------------
+    // 1. FileStart
+    //-----------------------------
+    chat::FileStartReq startReq;
+    startReq.set_fromid(fromid);
+    startReq.set_toid(toid);
+    startReq.set_filename(filename);
+    startReq.set_filesize(filesize);
+    startReq.set_fileid(fileid);
+
+    std::string data;
+    startReq.SerializeToString(&data);
+
+    std::string packet =
+        MessageCodec::encode(
+            chat::FILE_START_MSG,
+            data);
+
+    sendAll(sockfd,
+         packet.data(),
+         packet.size());
+
+    //-----------------------------
+    // 2. FileChunk
+    //-----------------------------
+    const size_t CHUNK_SIZE = 1024 * 1024;   // 64KB
+
+    char buffer[CHUNK_SIZE];
+    uint64_t offset = 0;
+
+    while (ifs)
+    {
+        ifs.read(buffer, CHUNK_SIZE);
+
+        std::streamsize len = ifs.gcount();
+
+        if (len <= 0)
+            break;
+
+        chat::FileChunkReq chunkReq;
+        chunkReq.set_fileid(fileid);
+        chunkReq.set_offset(offset);
+        chunkReq.set_data(buffer, len);
+
+        data.clear();
+        chunkReq.SerializeToString(&data);
+
+        packet =
+            MessageCodec::encode(
+                chat::FILE_CHUNK_MSG,
+                data);
+
+        sendAll(sockfd,
+             packet.data(),
+             packet.size());
+
+        offset += len;
+    }
+
+    //-----------------------------
+    // 3. FileEnd
+    //-----------------------------
+    chat::FileEndReq endReq;
+    endReq.set_fileid(fileid);
+
+    data.clear();
+    endReq.SerializeToString(&data);
+
+    packet =
+        MessageCodec::encode(
+            chat::FILE_END_MSG,
+            data);
+
+    sendAll(sockfd,
+         packet.data(),
+         packet.size());
+
+    std::cout << "file send finish\n";
+}
+
 
 // 接收服务器消息线程
 void recvMessage(int sockfd)
 {
+    Buffer buf;
+
     while(true)
     {
-        char buffer[4096] = {0};
+        char buffer[64 * 1024] = {0};
 
 
         int n = recv(
@@ -61,8 +208,6 @@ void recvMessage(int sockfd)
             break;
         }
 
-
-        Buffer buf;
 
         buf.append(
             buffer,
@@ -134,6 +279,25 @@ void recvMessage(int sockfd)
                             << " : "
                             << msg.msg()
                             << endl;
+                    }
+                }
+
+                if(res.offlinefiles_size() > 0)
+                {
+                    cout << "\n===== 离线文件消息 =====" << endl;
+
+                    for(auto& file : res.offlinefiles())
+                    {
+                        cout
+                        <<"离线文件:"
+                        <<file.filename()
+                        <<" size:"
+                        <<file.filesize()
+                        <<" from:"
+                        <<file.fromid()
+                        <<" fileid:"
+                        <<file.fileid()
+                        <<endl;
                     }
                 }
             }
@@ -383,6 +547,202 @@ void recvMessage(int sockfd)
                 }
             }
 
+            else if(msgid == chat::FILE_START_MSG)
+            {
+                chat::FileStartReq req;
+
+                req.ParseFromString(body);
+
+
+                cout
+                <<"收到文件:"
+                <<req.filename()
+                <<" size:"
+                <<req.filesize()
+                <<endl;
+
+
+
+                std::filesystem::create_directory(
+                    "./clientDownload"
+                );
+
+
+                std::string path =
+                    "./clientDownload/"
+                    + req.filename();
+
+
+                recvFile.open(
+                    path,
+                    std::ios::binary
+                );
+
+
+                if(recvFile.is_open())
+                {
+                    recvFileId = req.fileid();
+
+                    recvFileSize=req.filesize();
+
+                    cout
+                    <<"开始接收文件:"
+                    <<path
+                    <<endl;
+                }
+                else
+                {
+                    cout<<"open recv file failed"<<endl;
+                }
+
+            }
+
+            else if(msgid == chat::FILE_CHUNK_MSG)
+            {
+                chat::FileChunkReq req;
+
+
+                req.ParseFromString(body);
+
+
+
+                if(recvFile.is_open()
+                && req.fileid()==recvFileId)
+                {
+
+                    recvFile.write(
+                        req.data().data(),
+                        req.data().size()
+                    );
+
+
+                }
+
+            }
+
+
+            else if(msgid == chat::FILE_END_MSG)
+            {
+
+                chat::FileEndReq req;
+
+
+                req.ParseFromString(body);
+
+
+
+                if(recvFile.is_open()
+                && req.fileid()==recvFileId)
+                {
+
+                    recvFile.close();
+
+
+                    cout
+                    <<"文件接收完成"
+                    <<endl;
+
+                }
+
+            }
+
+            else if(msgid == chat::DOWNLOAD_START_MSG)
+            {
+                chat::DownloadStart start;
+
+                start.ParseFromString(body);
+
+
+                cout
+                <<"开始下载:"
+                <<start.filename()
+                <<" size:"
+                <<start.filesize()
+                <<endl;
+
+
+                // 创建下载目录
+                std::filesystem::create_directory(
+                    "./clientDownload"
+                );
+
+
+                // 保存路径
+                downloadFilePath =
+                    "./clientDownload/"
+                    + start.filename();
+
+
+                downloadFile.open(
+                    downloadFilePath,
+                    std::ios::binary
+                );
+
+
+                if(downloadFile.is_open())
+                {
+                    downloadFileId = start.fileid();
+
+
+                    cout
+                    <<"保存到:"
+                    <<downloadFilePath
+                    <<endl;
+                }
+                else
+                {
+                    cout
+                    <<"open download file failed"
+                    <<endl;
+                }
+            }
+
+            else if(msgid == chat::DOWNLOAD_CHUNK_MSG)
+            {
+                chat::DownloadChunk chunk;
+
+                chunk.ParseFromString(body);
+
+
+                if(downloadFile.is_open()
+                && chunk.fileid()==downloadFileId)
+                {
+
+                    downloadFile.write(
+                        chunk.data().data(),
+                        chunk.data().size()
+                    );
+
+
+                    cout
+                    <<"receive:"
+                    <<chunk.data().size()
+                    <<" bytes"
+                    <<endl;
+                }
+            }
+
+
+            else if(msgid == chat::DOWNLOAD_END_MSG)
+            {
+                chat::DownloadEnd end;
+
+                end.ParseFromString(body);
+
+
+                if(downloadFile.is_open()
+                && end.fileid()==downloadFileId)
+                {
+                    downloadFile.close();
+
+
+                    cout
+                    <<"下载完成:"
+                    <<downloadFilePath
+                    <<endl;
+                }
+            }
+
 
             cout<<"\n";
         }
@@ -451,6 +811,8 @@ int main()
         cout<<"7 query history msg\n";
         cout<<"8 group chat\n";
         cout<<"9 query group history msg\n";
+        cout<<"10 send file\n";
+        cout<<"11 download file\n";
         cout<<"0 exit\n";
 
 
@@ -806,6 +1168,61 @@ int main()
 
         }
 
+        else if(op == 10)
+        {
+            int fromid,toid;
+            string path;
+
+
+            cout<<"fromid:";
+            cin>>fromid;
+
+            cout<<"toid:";
+            cin>>toid;
+
+            cout<<"file path:";
+            cin.ignore();
+            getline(cin,path);
+
+
+            thread t(
+                sendFile,
+                sockfd,
+                fromid,
+                toid,
+                path
+            );
+
+
+            t.detach();
+        }
+
+        else if(op == 11)
+        {
+            
+            string fileid;
+
+            cout << "fileid:";
+            cin.ignore();
+            getline(cin, fileid);
+
+            chat::DownloadFileReq req;
+
+            req.set_fileid(fileid);
+            req.set_userid(currentUserid);
+
+            req.SerializeToString(
+                &data
+            );
+
+
+            packet =
+            MessageCodec::encode(
+                chat::DOWNLOAD_FILE_MSG,
+                data
+            );
+
+        }
 
         else
         {
@@ -814,12 +1231,7 @@ int main()
 
 
 
-        send(
-            sockfd,
-            packet.data(),
-            packet.size(),
-            0
-        );
+        sendAll(sockfd, packet.data(), packet.size());
 
 
         cout

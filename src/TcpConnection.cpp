@@ -78,6 +78,7 @@ void TcpConnection::sendBuffer() {
             writeBuffer.retrieve(n);
         } else {
             if (errno == EAGAIN || errno == EWOULDBLOCK) return;
+            if (errno == EINTR) continue;
             perror("send");
             close();
             return;

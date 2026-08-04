@@ -1,4 +1,7 @@
 #include <iostream>
+#include <filesystem>
+#include <fstream>
+#include <sys/stat.h>
 #include "ChatService.h"
 #include "Logger.h"
 #include "MessageCodec.h"
@@ -7,6 +10,8 @@
 #include "Message.h"
 #include "GroupMessageModel.h"
 #include "Util.h"
+#include "TcpConnection.h"
+#include "FileModel.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
@@ -25,7 +30,7 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
             res.set_err(0);
             res.set_errmsg("login success");
             LOG_INFO("user {} login success", req.id());
-            addUserConn(req.id(), conn);
+            addUserConn(conn, req.id());
             redis.set("user:state:" + std::to_string(req.id()), "online");
             conn->setUserId(req.id());
 
@@ -48,6 +53,33 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
                 item->set_time(offline.time());
             }
             if (!redisMsgs.empty()) redis.del(key);
+
+            std::string filekey = "offline:file:" + std::to_string(req.id());
+            std::vector<std::string> files;
+            redis.getList(filekey, files);
+
+            for (auto& data : files) {
+                chat::OfflineFile file;
+                if (!file.ParseFromString(data)) continue;
+                auto item = res.add_offlinefiles();
+                item->set_fromid(file.fromid());
+                item->set_toid(file.toid());
+                item->set_filename(file.filename());
+                item->set_filesize(file.filesize());
+                item->set_fileid(file.fileid());
+            }
+            if (!files.empty()) redis.del(filekey);
+            else {
+                auto offFiles = fileModel.queryOffline(req.id());
+                for (auto& file : offFiles) {
+                    auto item = res.add_offlinefiles();
+                    item->set_fromid(file.getFromid());
+                    item->set_toid(file.getToid());
+                    item->set_filename(file.getFilename());
+                    item->set_filesize(file.getFilesize());
+                    item->set_fileid(file.getFileid());
+                }
+            }
 
             std::string groupkey = "offline:group:" + std::to_string(req.id());
             std::vector<std::string> groupMsg;
@@ -344,6 +376,178 @@ void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, cons
     LOG_INFO("query group {} history message", req.groupid());
 }
 
+void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::FileStartReq& req, chat::FileStartRes& res) {
+    mkdir("./files", 0755);
+    std::string path = "./files/" + req.fileid();
+    FILE* fp = fopen(path.c_str(), "wb");
+    if (fp == nullptr) {
+        res.set_err(1);
+        res.set_errmsg("open file failed");
+        return;
+    }
+    {
+        std::lock_guard<std::mutex> lock(fileMutex);
+        fileMap[req.fileid()] = fp;
+        FileInfo info;
+        info.fromid = req.fromid();
+        info.toid = req.toid();
+        info.filename = req.filename();
+        info.filesize = req.filesize();
+        info.fileid = req.fileid();
+        info.path = path;
+        fileInfoMap[req.fileid()] = info;
+    }
+
+    LOG_INFO("start receive file {} size {}", req.filename(), req.filesize());
+    res.set_err(0);
+    res.set_errmsg("start success");
+}
+
+void ChatService::fileChunk(std::shared_ptr<TcpConnection> conn, const chat::FileChunkReq& req, chat::FileChunkRes& res) {
+    std::lock_guard<std::mutex> lock(fileMutex);
+    auto it = fileMap.find(req.fileid());
+    if (it == fileMap.end()) {
+        res.set_err(1);
+        res.set_errmsg("file not found");
+        return;
+    }
+    fwrite(req.data().data(), 1, req.data().size(), it->second);
+    res.set_err(0);
+    res.set_errmsg("chunk success");
+}
+
+void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileEndReq& req, chat::FileEndRes& res) {
+    FileInfo info;
+    {
+        std::lock_guard<std::mutex> lock(fileMutex);
+        auto it = fileMap.find(req.fileid());
+        if (it == fileMap.end()) {
+            res.set_err(1);
+            res.set_errmsg("file not found");
+            return;
+        }
+        fclose(it->second);
+        fileMap.erase(it);
+        info = fileInfoMap[req.fileid()];
+        fileInfoMap.erase(req.fileid());
+    }
+    LOG_INFO("receive file {} finish", req.fileid());
+
+    auto target = getUserConn(info.toid);
+    if (target) sendFile(target, info);
+    else {
+        File file;
+        file.setFromid(info.fromid);
+        file.setToid(info.toid);
+        file.setFilename(info.filename);
+        file.setFilesize(info.filesize);
+        file.setFileid(info.fileid);
+        file.setStatus(0);
+        fileModel.insert(file);
+
+        chat::OfflineFile offline;
+        offline.set_fromid(info.fromid);
+        offline.set_toid(info.toid);
+        offline.set_filename(info.filename);
+        offline.set_filesize(info.filesize);
+        offline.set_fileid(info.fileid);
+
+        std::string data;
+        offline.SerializeToString(&data);
+        redis.pushList("offline:file:" + std::to_string(info.toid), data);
+    }
+
+    res.set_err(0);
+    res.set_errmsg("upload success");
+}
+
+void ChatService::sendFile(std::shared_ptr<TcpConnection> conn, const FileInfo& info) {
+    FILE* fp = fopen(info.path.c_str(), "rb");
+    if (fp == nullptr) return;
+
+    chat::FileStartReq start;
+    start.set_fromid(info.fromid);
+    start.set_toid(info.toid);
+    start.set_filename(info.filename);
+    start.set_filesize(info.filesize);
+    start.set_fileid(info.fileid);
+
+    std::string data;
+    start.SerializeToString(&data);
+    conn->sendMessage(MessageCodec::encode(chat::FILE_START_MSG, data));
+
+    char buffer[64 * 1024];
+    uint64_t offset = 0;
+    while(true) {
+        int n = fread(buffer, 1, sizeof(buffer), fp);
+        if (n <= 0) break;
+        chat::FileChunkReq chunk;
+        chunk.set_fileid(info.fileid);
+        chunk.set_offset(offset);
+        chunk.set_data(buffer, n);
+        data.clear();
+        chunk.SerializeToString(&data);
+        conn->sendMessage(MessageCodec::encode(chat::FILE_CHUNK_MSG, data));
+        offset += n;
+    }
+    fclose(fp);
+    chat::FileEndReq end;
+    end.set_fileid(info.fileid);
+    data.clear();
+    end.SerializeToString(&data);
+    conn->sendMessage(MessageCodec::encode(chat::FILE_END_MSG, data));
+}
+
+void ChatService::downloadFile(std::shared_ptr<TcpConnection> conn, const chat::DownloadFileReq& req, chat::DownloadFileRes& res) {
+    File file = fileModel.queryByFileid(req.fileid());
+    if (file.getFileid().empty()) {
+        res.set_err(1);
+        res.set_errmsg("file not exist");
+        return;
+    }
+    
+    std::string path = "./files/" + req.fileid();
+    FILE* fp = fopen(path.c_str(), "rb");
+    if (fp == nullptr) {
+        res.set_err(1);
+        res.set_errmsg("file not exist");
+        return;
+    }
+
+    chat::DownloadStart start;
+    start.set_fileid(req.fileid());
+    start.set_filename(file.getFilename());
+    start.set_filesize(file.getFilesize());
+
+    std::string data;
+    start.SerializeToString(&data);
+    conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_START_MSG, data));
+
+    char buffer[64 * 1024];
+    uint64_t offset = 0;
+    while(true) {
+        int n = fread(buffer, 1, sizeof(buffer), fp);
+        if (n <= 0) break;
+        chat::DownloadChunk chunk;
+        chunk.set_fileid(req.fileid());
+        chunk.set_offset(offset);
+        chunk.set_data(buffer, n);
+        data.clear();
+        chunk.SerializeToString(&data);
+        conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_CHUNK_MSG, data));
+        offset += n;
+    }
+    fclose(fp);
+    chat::DownloadEnd end;
+    end.set_fileid(req.fileid());
+    data.clear();
+    end.SerializeToString(&data);
+    conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_END_MSG, data));
+    fileModel.updateStatus(req.fileid());
+    res.set_err(0);
+    res.set_errmsg("download success");
+}
+
 void ChatService::logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res) {
     User user = userModel.query(req.userid());
     if (user.getId() == req.userid() && user.getState() == "online") {
@@ -356,7 +560,7 @@ void ChatService::logout(std::shared_ptr<TcpConnection> conn, const chat::Logout
     }
 }
 
-void ChatService::addUserConn(int userid, std::shared_ptr<TcpConnection> conn) {
+void ChatService::addUserConn(std::shared_ptr<TcpConnection> conn, int userid) {
     std::lock_guard<std::mutex> lock(connMutex);
     userConnMap[userid] = conn;
 }

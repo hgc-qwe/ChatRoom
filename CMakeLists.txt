@@ -54,6 +54,7 @@ add_executable(
     src/FriendReqModel.cpp
     src/Message.cpp
     src/MessageModel.cpp
+    src/FileModel.cpp
 
     # entity
     src/User.cpp

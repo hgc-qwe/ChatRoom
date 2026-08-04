@@ -1,5 +1,7 @@
+#pragma once
 #include <unordered_map>
 #include <mutex>
+#include <cstdio>
 #include "Redis.h"
 #include "UserModel.h"
 #include "FriendModel.h"
@@ -9,7 +11,16 @@
 #include "TcpConnection.h"
 #include "FriendReqModel.h"
 #include "GroupMessageModel.h"
-#pragma once
+#include "FileModel.h"
+
+struct FileInfo {
+    int fromid;
+    int toid;
+    std::string filename;
+    std::string fileid;
+    uint64_t filesize;
+    std::string path;
+};
 
 class ChatService
 {
@@ -42,7 +53,17 @@ public:
 
     void queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::GroupHistoryMsgReq& req, chat::GroupHistoryMsgRes& res);
 
-    void addUserConn(int userid, std::shared_ptr<TcpConnection> conn);
+    void fileStart(std::shared_ptr<TcpConnection> conn, const chat::FileStartReq& req, chat::FileStartRes& res);
+
+    void fileChunk(std::shared_ptr<TcpConnection> conn, const chat::FileChunkReq& req, chat::FileChunkRes& res);
+
+    void fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileEndReq& req, chat::FileEndRes& res);
+
+    void sendFile(std::shared_ptr<TcpConnection> conn, const FileInfo& info);
+
+    void downloadFile(std::shared_ptr<TcpConnection> conn, const chat::DownloadFileReq& req, chat::DownloadFileRes& res);
+
+    void addUserConn(std::shared_ptr<TcpConnection> conn, int userid);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
@@ -55,7 +76,12 @@ private:
     MessageModel messageModel;
     FriendReqModel friendReqModel;
     GroupMessageModel groupMessageModel;
+    FileModel fileModel;
     Redis redis;
+
+    std::unordered_map<std::string, FILE*> fileMap;
+    std::unordered_map<std::string, FileInfo> fileInfoMap;
+    std::mutex fileMutex;
 
     std::unordered_map<int, std::shared_ptr<TcpConnection>> userConnMap;
     std::mutex connMutex;

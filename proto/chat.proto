@@ -51,6 +51,27 @@ enum MsgTyp {
 
     GROUP_HISTORY_MSG = 31;
     GROUP_HISTORY_MSG_ACK = 32;
+
+    FILE_START_MSG = 33;
+    FILE_START_MSG_ACK = 34;
+
+    FILE_CHUNK_MSG = 35;
+    FILE_CHUNK_MSG_ACK = 36;
+
+    FILE_END_MSG = 37;
+    FILE_END_MSG_ACK = 38;
+
+    DOWNLOAD_FILE_MSG = 39;
+    DOWNLOAD_FILE_MSG_ACK = 40;
+
+    DOWNLOAD_START_MSG = 41;
+    DOWNLOAD_START_MSG_ACK = 42;
+
+    DOWNLOAD_CHUNK_MSG = 43;
+    DOWNLOAD_CHUNK_MSG_ACK = 44;
+
+    DOWNLOAD_END_MSG = 45;
+    DOWNLOAD_END_MSG_ACK = 46;
 }
 
 message OfflineMsg {
@@ -74,6 +95,7 @@ message LoginRes {
     repeated User friends = 5;
     repeated Group groups = 6;
     repeated OfflineGroupMsg offlinegroupmsg = 7;
+    repeated OfflineFile offlinefiles = 8;
 }
 
 message RegisterReq {
@@ -268,4 +290,71 @@ message OfflineGroupMsg {
     int32 userid = 2;
     string msg = 3;
     string time = 4;
+}
+
+message FileStartReq {
+    int32 fromid = 1;
+    int32 toid = 2;
+    string filename = 3;
+    uint64 filesize = 4;
+    string fileid = 5;
+}
+
+message FileStartRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message FileChunkReq {
+    string fileid = 1;
+    bytes data = 2;
+    uint64 offset = 3;
+}
+
+message FileChunkRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message FileEndReq {
+    string fileid = 1;
+}
+
+message FileEndRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message OfflineFile {
+    int32 fromid = 1;
+    int32 toid = 2;
+    string filename = 3;
+    uint64 filesize = 4;
+    string fileid = 5;
+}
+
+message DownloadFileReq {
+    string fileid = 1;
+    int32 userid = 2;
+}
+
+message DownloadFileRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message DownloadStart {
+    string fileid = 1;
+    string filename = 2;
+    uint64 filesize = 3;
+}
+
+message DownloadChunk {
+    string fileid = 1;
+    bytes data = 2;
+    uint64 offset = 3;
+}
+
+message DownloadEnd {
+    string fileid = 1;
 }

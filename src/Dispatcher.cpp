@@ -182,6 +182,54 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::GROUP_HISTORY_MSG_ACK, response);
         }
+        case chat::FILE_START_MSG: {
+            chat::FileStartReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("FileStartReq parse failed");
+                return "";
+            }
+            chat::FileStartRes res;
+            ChatService::instance()->fileStart(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::FILE_START_MSG_ACK, response);
+        }
+        case chat::FILE_CHUNK_MSG: {
+            chat::FileChunkReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("FileChunkReq parse failed");
+                return "";
+            }
+            chat::FileChunkRes res;
+            ChatService::instance()->fileChunk(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::FILE_CHUNK_MSG_ACK, response);
+        }
+        case chat::FILE_END_MSG: {
+            chat::FileEndReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("FileEndReq parse failed");
+                return "";
+            }
+            chat::FileEndRes res;
+            ChatService::instance()->fileEnd(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::FILE_END_MSG_ACK, response);
+        }
+        case chat::DOWNLOAD_FILE_MSG: {
+            chat::DownloadFileReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("DownloadFileReq parse failed");
+                return "";
+            }
+            chat::DownloadFileRes res;
+            ChatService::instance()->downloadFile(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::DOWNLOAD_FILE_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";
