@@ -4,9 +4,9 @@
 #include "GroupMessage.h"
 #include "GroupMessageModel.h"
 
-bool GroupMessageModel::insert(int groupid, int userid, std::string msg) {
-    std::string sql = "insert into group_message (groupid, userid, msg) values (" 
-         + std::to_string(groupid) + "," + std::to_string(userid) + ",'" + msg + "');";
+bool GroupMessageModel::insert(int groupid, int userid, std::string msg, std::string username) {
+    std::string sql = "insert into group_message (groupid, userid, msg, username) values (" 
+         + std::to_string(groupid) + "," + std::to_string(userid) + ",'" + msg + "','" + username + "');";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;
@@ -30,6 +30,7 @@ std::vector<GroupMessage> GroupMessageModel::query(int groupid) {
         msg.setUserid(atoi(row[2]));
         msg.setMsg(row[3]);
         msg.setTime(row[4]);
+        msg.setUsername(row[5]);
         msgs.push_back(msg);
     }
     mysql_free_result(res);

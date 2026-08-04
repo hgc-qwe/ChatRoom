@@ -75,3 +75,13 @@ bool FriendModel::remove(int userid, int friendid) {
 
     return mysql.update(sql);
 }
+
+bool FriendModel::removeAll(int userid) {
+    std::string sql ="delete from friend where userid="+ std::to_string(userid) + " or friendid=" + std::to_string(userid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    return mysql.update(sql);
+}

@@ -5,7 +5,7 @@
 
 class MessageModel {
 public:
-    bool insert(int fromid, int toid, std::string msg);
+    bool insert(int fromid, int toid, std::string msg, std::string fromname);
 
     std::vector<Message> queryOffline(int userid);
 

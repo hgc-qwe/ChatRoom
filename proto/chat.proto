@@ -72,6 +72,9 @@ enum MsgTyp {
 
     DOWNLOAD_END_MSG = 45;
     DOWNLOAD_END_MSG_ACK = 46;
+
+    CANCEL_ACCOUNT_MSG = 47;
+    CANCEL_ACCOUNT_MSG_ACK = 48;
 }
 
 message OfflineMsg {
@@ -128,6 +131,7 @@ message OneChatReq {
     int32 toid = 3;
     string msg = 4;
     string time = 5;
+    string fromname = 6;
 }
 
 message OneChatRes {
@@ -169,6 +173,7 @@ message GroupChatReq {
     int32 userid = 3;
     string msg = 4;
     string time = 5;
+    string username = 6;
 }
 
 message GroupChatRes {
@@ -331,6 +336,7 @@ message OfflineFile {
     string filename = 3;
     uint64 filesize = 4;
     string fileid = 5;
+    string fromname = 6;
 }
 
 message DownloadFileReq {
@@ -357,4 +363,13 @@ message DownloadChunk {
 
 message DownloadEnd {
     string fileid = 1;
+}
+
+message CancelAccountReq {
+    int32 userid = 1;
+}
+
+message CancelAccountRes {
+    int32 err = 1;
+    string errmsg = 2;
 }

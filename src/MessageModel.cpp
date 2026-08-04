@@ -5,9 +5,9 @@
 #include "Message.h"
 #include "MessageModel.h"
 
-bool MessageModel::insert(int fromid, int toid, std::string msg) {
-    std::string sql = "insert into message (fromid, toid, msg) values (" 
-         + std::to_string(fromid) + "," + std::to_string(toid) + ",'" + msg + "');";
+bool MessageModel::insert(int fromid, int toid, std::string msg, std::string fromname) {
+    std::string sql = "insert into message (fromid, toid, msg, fromname) values (" 
+         + std::to_string(fromid) + "," + std::to_string(toid) + ",'" + msg + "','" + fromname + "');";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;
@@ -31,6 +31,7 @@ std::vector<Message> MessageModel::queryOffline(int userid) {
         msg.setToid(atoi(row[2]));
         msg.setMsg(row[3]);
         msg.setTime(row[4]);
+        msg.setFromname(row[5]);
         msgs.push_back(msg);
     }
     mysql_free_result(res);
@@ -60,6 +61,7 @@ std::vector<Message> MessageModel::queryHistory(int userid, int friendid) {
         msg.setToid(atoi(row[2]));
         msg.setMsg(row[3]);
         msg.setTime(row[4]);
+        msg.setFromname(row[5]);
         msgs.push_back(msg);
     }
     mysql_free_result(res);

@@ -8,8 +8,9 @@ private:
     int toid = 0;
     std::string msg;
     std::string time;
+    std::string fromname;
 public:
-    Message(int id, int fromid, int toid, std::string msg, std::string time);
+    Message(int id, int fromid, int toid, std::string msg, std::string time, std::string fromname);
     Message() = default;
 
     int getId() const;
@@ -26,4 +27,7 @@ public:
 
     std::string getTime() const;
     void setTime(const std::string& time);
+
+    std::string getFromname() const;
+    void setFromname(const std::string& fromname);
 };

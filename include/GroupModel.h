@@ -12,4 +12,6 @@ public:
     std::vector<Group> queryGroups(int userid);
 
     std::vector<int> queryGroupUsers(int userid, int groupid);
+
+    bool removeAll(int userid);
 };

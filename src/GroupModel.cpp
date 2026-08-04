@@ -68,3 +68,13 @@ std::vector<int> GroupModel::queryGroupUsers(int userid, int groupid) {
     mysql_free_result(res);
     return usersid;
 }
+
+bool GroupModel::removeAll(int userid) {
+    std::string sql ="delete from groupuser where userid="+ std::to_string(userid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    return mysql.update(sql);
+}

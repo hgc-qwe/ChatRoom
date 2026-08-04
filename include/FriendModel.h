@@ -16,4 +16,6 @@ public:
     bool isFriend(int fromid, int toid);
 
     bool remove(int userid, int friendid);
+
+    bool removeAll(int userid);
 };

@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <unordered_map>
 #include <chrono>
+#include <limits>
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
@@ -714,11 +715,6 @@ void recvMessage(int sockfd)
                     );
 
 
-                    cout
-                    <<"receive:"
-                    <<chunk.data().size()
-                    <<" bytes"
-                    <<endl;
                 }
             }
 
@@ -740,6 +736,35 @@ void recvMessage(int sockfd)
                     <<"下载完成:"
                     <<downloadFilePath
                     <<endl;
+                }
+            }
+
+
+            else if(msgid == chat::CANCEL_ACCOUNT_MSG_ACK)
+            {
+                chat::CancelAccountRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+
+                if(res.err() == 0)
+                {
+                    close(sockfd);
+                    return;
+                }
+            }
+
+            else if(msgid == chat::REG_MSG_ACK)
+            {
+
+                chat::RegisterRes res;
+                res.ParseFromString(body);
+
+                cout << "register: " << res.errmsg() << endl;
+
+                if(res.err() == 0)
+                {
+                    cout << "userid: " << res.userid() << endl;
                 }
             }
 
@@ -813,6 +838,8 @@ int main()
         cout<<"9 query group history msg\n";
         cout<<"10 send file\n";
         cout<<"11 download file\n";
+        cout<<"12 cancel account\n";
+        cout<<"13 register\n";
         cout<<"0 exit\n";
 
 
@@ -871,6 +898,11 @@ int main()
         else if(op == 2)
         {
 
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::AddFriendReq req;
 
 
@@ -912,7 +944,11 @@ int main()
         // 查询好友申请
         else if(op == 3)
         {
-
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::QueryFriendReqReq req;
 
 
@@ -946,7 +982,11 @@ int main()
         // 同意好友
         else if(op == 4)
         {
-
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::AcceptFriendReq req;
 
 
@@ -994,6 +1034,11 @@ int main()
 
         else if(op==5)
         {
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::DeleteFriendReq req;
 
 
@@ -1025,6 +1070,11 @@ int main()
 
         else if(op == 6)
         {
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::OneChatReq req;
 
             int fromid;
@@ -1041,7 +1091,7 @@ int main()
 
 
             cout<<"msg:";
-            cin.ignore();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, msg);
 
 
@@ -1062,7 +1112,11 @@ int main()
 
         else if(op == 7)
         {
-
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::HistoryMsgReq req;
 
 
@@ -1099,6 +1153,11 @@ int main()
 
         else if(op == 8)
         {
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::GroupChatReq req;
 
             int groupid;
@@ -1115,7 +1174,7 @@ int main()
 
 
             cout<<"msg:";
-            cin.ignore();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, msg);
 
 
@@ -1136,7 +1195,11 @@ int main()
 
         else if(op == 9)
         {
-
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             chat::GroupHistoryMsgReq req;
 
 
@@ -1170,6 +1233,11 @@ int main()
 
         else if(op == 10)
         {
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             int fromid,toid;
             string path;
 
@@ -1181,7 +1249,7 @@ int main()
             cin>>toid;
 
             cout<<"file path:";
-            cin.ignore();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin,path);
 
 
@@ -1199,11 +1267,15 @@ int main()
 
         else if(op == 11)
         {
-            
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
             string fileid;
 
             cout << "fileid:";
-            cin.ignore();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, fileid);
 
             chat::DownloadFileReq req;
@@ -1221,6 +1293,57 @@ int main()
                 chat::DOWNLOAD_FILE_MSG,
                 data
             );
+
+        }
+
+        else if(op == 12)
+        {
+            if(currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
+
+            chat::CancelAccountReq req;
+
+            req.set_userid(currentUserid);
+
+
+
+
+            req.SerializeToString(
+                &data
+            );
+
+
+            packet =
+            MessageCodec::encode(
+                chat::CANCEL_ACCOUNT_MSG,
+                data
+            );
+
+        }
+
+        else if(op == 13)
+        {
+
+            chat::RegisterReq req;
+
+            string name;
+            string pwd;
+
+            cout << "username:";
+            cin >> name;
+
+            cout << "password:";
+            cin >> pwd;
+
+            req.set_name(name);
+            req.set_password(pwd);
+
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(chat::REG_MSG, data);
 
         }
 

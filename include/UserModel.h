@@ -10,4 +10,6 @@ public:
     bool updateState(User user);
 
     bool restState();
+
+    bool remove(int userid);
 };

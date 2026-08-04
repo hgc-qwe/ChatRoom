@@ -5,8 +5,8 @@
 #include "Mysql.h"
 
 bool FileModel::insert(File file) {
-    std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
-        std::to_string(file.getToid()) + ",'" + file.getFilename() + "'," + std::to_string(file.getFilesize()) + "," + std::to_string(file.getStatus()) + ");";
+    std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status, fromname) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
+        std::to_string(file.getToid()) + ",'" + file.getFilename() + "'," + std::to_string(file.getFilesize()) + "," + std::to_string(file.getStatus()) + ",'" + file.getFromname() + "');";
     Mysql mysql;
     if (!mysql.connect()) return false;
     return mysql.update(sql);
@@ -29,6 +29,7 @@ std::vector<File> FileModel::queryOffline(int userid) {
             file.setFilename(row[3]);
             file.setFilesize(std::stoull(row[4]));
             file.setStatus(std::stoi(row[5]));
+            file.setFromname(row[6]);
             files.push_back(file);
         }
         mysql_free_result(res);
@@ -59,6 +60,7 @@ File FileModel::queryByFileid(std::string fileid) {
             file.setFilename(row[3]);
             file.setFilesize(std::stoull(row[4]));
             file.setStatus(std::stoi(row[5]));
+            file.setFromname(row[6]);
         }
         mysql_free_result(res);
     }

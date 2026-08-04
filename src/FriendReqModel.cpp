@@ -39,3 +39,13 @@ bool FriendReqModel::updateStatus(int fromid, int toid, int status) {
     }
     return mysql.update(sql);
 }
+
+bool FriendReqModel::removeAll(int userid) {
+    std::string sql ="delete from friend_request where fromid="+ std::to_string(userid) + " or toid=" + std::to_string(userid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    return mysql.update(sql);
+}

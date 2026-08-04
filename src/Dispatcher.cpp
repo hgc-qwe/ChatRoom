@@ -230,6 +230,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::DOWNLOAD_FILE_MSG_ACK, response);
         }
+        case chat::CANCEL_ACCOUNT_MSG: {
+            chat::CancelAccountReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("CancelAccountReq parse failed");
+                return "";
+            }
+            chat::CancelAccountRes res;
+            ChatService::instance()->cancelAccount(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::CANCEL_ACCOUNT_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

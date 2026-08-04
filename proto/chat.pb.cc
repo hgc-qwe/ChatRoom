@@ -136,6 +136,7 @@ PROTOBUF_CONSTEXPR OneChatReq::OneChatReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.msg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.time_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.fromname_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.msgid_)*/0
   , /*decltype(_impl_.fromid_)*/0
   , /*decltype(_impl_.toid_)*/0
@@ -231,6 +232,7 @@ PROTOBUF_CONSTEXPR GroupChatReq::GroupChatReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.msg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.time_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.msgid_)*/0
   , /*decltype(_impl_.groupid_)*/0
   , /*decltype(_impl_.userid_)*/0
@@ -645,6 +647,7 @@ PROTOBUF_CONSTEXPR OfflineFile::OfflineFile(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.filename_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.fileid_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.fromname_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.fromid_)*/0
   , /*decltype(_impl_.toid_)*/0
   , /*decltype(_impl_.filesize_)*/uint64_t{0u}
@@ -729,8 +732,35 @@ struct DownloadEndDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DownloadEndDefaultTypeInternal _DownloadEnd_default_instance_;
+PROTOBUF_CONSTEXPR CancelAccountReq::CancelAccountReq(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.userid_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct CancelAccountReqDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CancelAccountReqDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CancelAccountReqDefaultTypeInternal() {}
+  union {
+    CancelAccountReq _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CancelAccountReqDefaultTypeInternal _CancelAccountReq_default_instance_;
+PROTOBUF_CONSTEXPR CancelAccountRes::CancelAccountRes(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.errmsg_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.err_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct CancelAccountResDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR CancelAccountResDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~CancelAccountResDefaultTypeInternal() {}
+  union {
+    CancelAccountRes _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CancelAccountResDefaultTypeInternal _CancelAccountRes_default_instance_;
 }  // namespace chat
-static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[47];
+static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[49];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_proto_2fchat_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_proto_2fchat_2eproto = nullptr;
 
@@ -815,6 +845,7 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::chat::OneChatReq, _impl_.toid_),
   PROTOBUF_FIELD_OFFSET(::chat::OneChatReq, _impl_.msg_),
   PROTOBUF_FIELD_OFFSET(::chat::OneChatReq, _impl_.time_),
+  PROTOBUF_FIELD_OFFSET(::chat::OneChatReq, _impl_.fromname_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::OneChatRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -874,6 +905,7 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::chat::GroupChatReq, _impl_.userid_),
   PROTOBUF_FIELD_OFFSET(::chat::GroupChatReq, _impl_.msg_),
   PROTOBUF_FIELD_OFFSET(::chat::GroupChatReq, _impl_.time_),
+  PROTOBUF_FIELD_OFFSET(::chat::GroupChatReq, _impl_.username_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::GroupChatRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1120,6 +1152,7 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::chat::OfflineFile, _impl_.filename_),
   PROTOBUF_FIELD_OFFSET(::chat::OfflineFile, _impl_.filesize_),
   PROTOBUF_FIELD_OFFSET(::chat::OfflineFile, _impl_.fileid_),
+  PROTOBUF_FIELD_OFFSET(::chat::OfflineFile, _impl_.fromname_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::DownloadFileReq, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1161,6 +1194,21 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::chat::DownloadEnd, _impl_.fileid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::CancelAccountReq, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::CancelAccountReq, _impl_.userid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::CancelAccountRes, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::CancelAccountRes, _impl_.err_),
+  PROTOBUF_FIELD_OFFSET(::chat::CancelAccountRes, _impl_.errmsg_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::chat::OfflineMsg)},
@@ -1171,45 +1219,47 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 51, -1, -1, sizeof(::chat::AddFriendReq)},
   { 60, -1, -1, sizeof(::chat::AddFriendRes)},
   { 69, -1, -1, sizeof(::chat::OneChatReq)},
-  { 80, -1, -1, sizeof(::chat::OneChatRes)},
-  { 89, -1, -1, sizeof(::chat::CreateGroupReq)},
-  { 99, -1, -1, sizeof(::chat::CreateGroupRes)},
-  { 109, -1, -1, sizeof(::chat::AddGroupReq)},
-  { 119, -1, -1, sizeof(::chat::AddGroupRes)},
-  { 128, -1, -1, sizeof(::chat::GroupChatReq)},
-  { 139, -1, -1, sizeof(::chat::GroupChatRes)},
-  { 148, -1, -1, sizeof(::chat::LogoutReq)},
-  { 156, -1, -1, sizeof(::chat::LogoutRes)},
-  { 165, -1, -1, sizeof(::chat::User)},
-  { 174, -1, -1, sizeof(::chat::GroupUser)},
-  { 183, -1, -1, sizeof(::chat::Group)},
-  { 193, -1, -1, sizeof(::chat::HistoryMsgReq)},
-  { 203, -1, -1, sizeof(::chat::HistoryMsgRes)},
-  { 212, -1, -1, sizeof(::chat::AcceptFriendReq)},
-  { 221, -1, -1, sizeof(::chat::AcceptFriendRes)},
-  { 229, -1, -1, sizeof(::chat::FriendRequest)},
-  { 237, -1, -1, sizeof(::chat::QueryFriendReqReq)},
-  { 245, -1, -1, sizeof(::chat::QueryFriendReqRes)},
-  { 254, -1, -1, sizeof(::chat::FriendAcceptNotify)},
-  { 262, -1, -1, sizeof(::chat::QueryFriendReq)},
-  { 269, -1, -1, sizeof(::chat::QueryFriendRes)},
-  { 278, -1, -1, sizeof(::chat::DeleteFriendReq)},
-  { 286, -1, -1, sizeof(::chat::DeleteFriendRes)},
-  { 294, -1, -1, sizeof(::chat::GroupHistoryMsgReq)},
-  { 304, -1, -1, sizeof(::chat::GroupHistoryMsgRes)},
-  { 313, -1, -1, sizeof(::chat::OfflineGroupMsg)},
-  { 323, -1, -1, sizeof(::chat::FileStartReq)},
-  { 334, -1, -1, sizeof(::chat::FileStartRes)},
-  { 342, -1, -1, sizeof(::chat::FileChunkReq)},
-  { 351, -1, -1, sizeof(::chat::FileChunkRes)},
-  { 359, -1, -1, sizeof(::chat::FileEndReq)},
-  { 366, -1, -1, sizeof(::chat::FileEndRes)},
-  { 374, -1, -1, sizeof(::chat::OfflineFile)},
-  { 385, -1, -1, sizeof(::chat::DownloadFileReq)},
-  { 393, -1, -1, sizeof(::chat::DownloadFileRes)},
-  { 401, -1, -1, sizeof(::chat::DownloadStart)},
-  { 410, -1, -1, sizeof(::chat::DownloadChunk)},
-  { 419, -1, -1, sizeof(::chat::DownloadEnd)},
+  { 81, -1, -1, sizeof(::chat::OneChatRes)},
+  { 90, -1, -1, sizeof(::chat::CreateGroupReq)},
+  { 100, -1, -1, sizeof(::chat::CreateGroupRes)},
+  { 110, -1, -1, sizeof(::chat::AddGroupReq)},
+  { 120, -1, -1, sizeof(::chat::AddGroupRes)},
+  { 129, -1, -1, sizeof(::chat::GroupChatReq)},
+  { 141, -1, -1, sizeof(::chat::GroupChatRes)},
+  { 150, -1, -1, sizeof(::chat::LogoutReq)},
+  { 158, -1, -1, sizeof(::chat::LogoutRes)},
+  { 167, -1, -1, sizeof(::chat::User)},
+  { 176, -1, -1, sizeof(::chat::GroupUser)},
+  { 185, -1, -1, sizeof(::chat::Group)},
+  { 195, -1, -1, sizeof(::chat::HistoryMsgReq)},
+  { 205, -1, -1, sizeof(::chat::HistoryMsgRes)},
+  { 214, -1, -1, sizeof(::chat::AcceptFriendReq)},
+  { 223, -1, -1, sizeof(::chat::AcceptFriendRes)},
+  { 231, -1, -1, sizeof(::chat::FriendRequest)},
+  { 239, -1, -1, sizeof(::chat::QueryFriendReqReq)},
+  { 247, -1, -1, sizeof(::chat::QueryFriendReqRes)},
+  { 256, -1, -1, sizeof(::chat::FriendAcceptNotify)},
+  { 264, -1, -1, sizeof(::chat::QueryFriendReq)},
+  { 271, -1, -1, sizeof(::chat::QueryFriendRes)},
+  { 280, -1, -1, sizeof(::chat::DeleteFriendReq)},
+  { 288, -1, -1, sizeof(::chat::DeleteFriendRes)},
+  { 296, -1, -1, sizeof(::chat::GroupHistoryMsgReq)},
+  { 306, -1, -1, sizeof(::chat::GroupHistoryMsgRes)},
+  { 315, -1, -1, sizeof(::chat::OfflineGroupMsg)},
+  { 325, -1, -1, sizeof(::chat::FileStartReq)},
+  { 336, -1, -1, sizeof(::chat::FileStartRes)},
+  { 344, -1, -1, sizeof(::chat::FileChunkReq)},
+  { 353, -1, -1, sizeof(::chat::FileChunkRes)},
+  { 361, -1, -1, sizeof(::chat::FileEndReq)},
+  { 368, -1, -1, sizeof(::chat::FileEndRes)},
+  { 376, -1, -1, sizeof(::chat::OfflineFile)},
+  { 388, -1, -1, sizeof(::chat::DownloadFileReq)},
+  { 396, -1, -1, sizeof(::chat::DownloadFileRes)},
+  { 404, -1, -1, sizeof(::chat::DownloadStart)},
+  { 413, -1, -1, sizeof(::chat::DownloadChunk)},
+  { 422, -1, -1, sizeof(::chat::DownloadEnd)},
+  { 429, -1, -1, sizeof(::chat::CancelAccountReq)},
+  { 436, -1, -1, sizeof(::chat::CancelAccountRes)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -1260,6 +1310,8 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chat::_DownloadStart_default_instance_._instance,
   &::chat::_DownloadChunk_default_instance_._instance,
   &::chat::_DownloadEnd_default_instance_._instance,
+  &::chat::_CancelAccountReq_default_instance_._instance,
+  &::chat::_CancelAccountRes_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -1280,108 +1332,113 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "AddFriendReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTy"
   "p\022\016\n\006fromid\030\002 \001(\005\022\014\n\004toid\030\003 \001(\005\"H\n\014AddFr"
   "iendRes\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003"
-  "err\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\"b\n\nOneChatReq\022"
+  "err\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\"t\n\nOneChatReq\022"
   "\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006fromid\030\002"
   " \001(\005\022\014\n\004toid\030\003 \001(\005\022\013\n\003msg\030\004 \001(\t\022\014\n\004time\030"
-  "\005 \001(\t\"F\n\nOneChatRes\022\033\n\005msgid\030\001 \001(\0162\014.cha"
-  "t.MsgTyp\022\013\n\003err\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\"c\n"
-  "\016CreateGroupReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.Ms"
-  "gTyp\022\016\n\006userid\030\002 \001(\005\022\021\n\tgroupname\030\003 \001(\t\022"
-  "\021\n\tgroupdesc\030\004 \001(\t\"[\n\016CreateGroupRes\022\033\n\005"
-  "msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 \001(\005\022\016"
-  "\n\006errmsg\030\003 \001(\t\022\017\n\007groupid\030\004 \001(\005\"Y\n\013AddGr"
-  "oupReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006u"
-  "serid\030\002 \001(\005\022\017\n\007groupid\030\003 \001(\005\022\014\n\004role\030\004 \001"
-  "(\t\"G\n\013AddGroupRes\022\033\n\005msgid\030\001 \001(\0162\014.chat."
-  "MsgTyp\022\013\n\003err\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\"g\n\014G"
-  "roupChatReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp"
-  "\022\017\n\007groupid\030\002 \001(\005\022\016\n\006userid\030\003 \001(\005\022\013\n\003msg"
-  "\030\004 \001(\t\022\014\n\004time\030\005 \001(\t\"H\n\014GroupChatRes\022\033\n\005"
-  "msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 \001(\005\022\016"
-  "\n\006errmsg\030\003 \001(\t\"8\n\tLogoutReq\022\033\n\005msgid\030\001 \001"
-  "(\0162\014.chat.MsgTyp\022\016\n\006userid\030\002 \001(\005\"E\n\tLogo"
-  "utRes\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003er"
-  "r\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\"/\n\004User\022\n\n\002id\030\001 "
-  "\001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005state\030\003 \001(\t\"4\n\tGrou"
-  "pUser\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005state"
-  "\030\003 \001(\t\"O\n\005Group\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001("
-  "\t\022\014\n\004desc\030\003 \001(\t\022\036\n\005users\030\004 \003(\0132\017.chat.Gr"
-  "oupUser\"H\n\rHistoryMsgReq\022\016\n\006fromid\030\001 \001(\005"
-  "\022\014\n\004toid\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 \001("
-  "\t\"O\n\rHistoryMsgRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errms"
-  "g\030\002 \001(\t\022!\n\004msgs\030\003 \003(\0132\023.chat.HistoryMsgR"
-  "eq\"P\n\017AcceptFriendReq\022\033\n\005msgid\030\001 \001(\0162\014.c"
-  "hat.MsgTyp\022\016\n\006userid\030\002 \001(\005\022\020\n\010friendid\030\003"
-  " \001(\005\".\n\017AcceptFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006"
-  "errmsg\030\002 \001(\t\"1\n\rFriendRequest\022\016\n\006userid\030"
-  "\001 \001(\005\022\020\n\010username\030\002 \001(\t\"@\n\021QueryFriendRe"
-  "qReq\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006use"
-  "rid\030\002 \001(\005\"W\n\021QueryFriendReqRes\022\013\n\003err\030\001 "
-  "\001(\005\022\016\n\006errmsg\030\002 \001(\t\022%\n\010requests\030\003 \003(\0132\023."
-  "chat.FriendRequest\"6\n\022FriendAcceptNotify"
-  "\022\016\n\006userid\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\" \n\016Qu"
-  "eryFriendReq\022\016\n\006userid\030\001 \001(\005\"J\n\016QueryFri"
-  "endRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\007f"
-  "riends\030\003 \003(\0132\n.chat.User\"3\n\017DeleteFriend"
-  "Req\022\016\n\006userid\030\001 \001(\005\022\020\n\010friendid\030\002 \001(\005\".\n"
-  "\017DeleteFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030"
-  "\002 \001(\t\"P\n\022GroupHistoryMsgReq\022\017\n\007groupid\030\001"
-  " \001(\005\022\016\n\006userid\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022\014\n\004tim"
-  "e\030\004 \001(\t\"Y\n\022GroupHistoryMsgRes\022\013\n\003err\030\001 \001"
-  "(\005\022\016\n\006errmsg\030\002 \001(\t\022&\n\004msgs\030\003 \003(\0132\030.chat."
-  "GroupHistoryMsgReq\"M\n\017OfflineGroupMsg\022\017\n"
-  "\007groupid\030\001 \001(\005\022\016\n\006userid\030\002 \001(\005\022\013\n\003msg\030\003 "
-  "\001(\t\022\014\n\004time\030\004 \001(\t\"`\n\014FileStartReq\022\016\n\006fro"
-  "mid\030\001 \001(\005\022\014\n\004toid\030\002 \001(\005\022\020\n\010filename\030\003 \001("
-  "\t\022\020\n\010filesize\030\004 \001(\004\022\016\n\006fileid\030\005 \001(\t\"+\n\014F"
-  "ileStartRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t"
-  "\"<\n\014FileChunkReq\022\016\n\006fileid\030\001 \001(\t\022\014\n\004data"
-  "\030\002 \001(\014\022\016\n\006offset\030\003 \001(\004\"+\n\014FileChunkRes\022\013"
-  "\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\034\n\nFileEndRe"
-  "q\022\016\n\006fileid\030\001 \001(\t\")\n\nFileEndRes\022\013\n\003err\030\001"
-  " \001(\005\022\016\n\006errmsg\030\002 \001(\t\"_\n\013OfflineFile\022\016\n\006f"
-  "romid\030\001 \001(\005\022\014\n\004toid\030\002 \001(\005\022\020\n\010filename\030\003 "
-  "\001(\t\022\020\n\010filesize\030\004 \001(\004\022\016\n\006fileid\030\005 \001(\t\"1\n"
-  "\017DownloadFileReq\022\016\n\006fileid\030\001 \001(\t\022\016\n\006user"
-  "id\030\002 \001(\005\".\n\017DownloadFileRes\022\013\n\003err\030\001 \001(\005"
-  "\022\016\n\006errmsg\030\002 \001(\t\"C\n\rDownloadStart\022\016\n\006fil"
-  "eid\030\001 \001(\t\022\020\n\010filename\030\002 \001(\t\022\020\n\010filesize\030"
-  "\003 \001(\004\"=\n\rDownloadChunk\022\016\n\006fileid\030\001 \001(\t\022\014"
-  "\n\004data\030\002 \001(\014\022\016\n\006offset\030\003 \001(\004\"\035\n\013Download"
-  "End\022\016\n\006fileid\030\001 \001(\t*\267\010\n\006MsgTyp\022\017\n\013UNKNOW"
-  "N_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_MSG_ACK\020"
-  "\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022\022\n\016ADD_F"
-  "RIEND_MSG\020\005\022\026\n\022ADD_FRIEND_MSG_ACK\020\006\022\020\n\014O"
-  "NE_CHAT_MSG\020\007\022\024\n\020ONE_CHAT_MSG_ACK\020\010\022\024\n\020C"
-  "REATE_GROUP_MSG\020\t\022\030\n\024CREATE_GROUP_MSG_AC"
-  "K\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025\n\021ADD_GROUP_MSG_"
-  "ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020\r\022\026\n\022GROUP_CHAT_"
-  "MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOGOUT_MSG_"
-  "ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023\n\017HISTORY_MSG_AC"
-  "K\020\022\022\025\n\021FRIEND_NOTIFY_MSG\020\023\022\031\n\025FRIEND_NOT"
-  "IFY_MSG_ACK\020\024\022\030\n\024QUERY_FRIEND_REQ_MSG\020\025\022"
-  "\034\n\030QUERY_FRIEND_REQ_MSG_ACK\020\026\022\025\n\021ACCEPT_"
-  "FRIEND_MSG\020\027\022\031\n\025ACCEPT_FRIEND_MSG_ACK\020\030\022"
-  "\034\n\030FRIEND_ACCEPT_NOTIFY_MSG\020\031\022 \n\034FRIEND_"
-  "ACCEPT_NOTIFY_MSG_ACK\020\032\022\024\n\020QUERY_FRIEND_"
-  "MSG\020\033\022\030\n\024QUERY_FRIEND_MSG_ACK\020\034\022\025\n\021DELET"
-  "E_FRIEND_MSG\020\035\022\031\n\025DELETE_FRIEND_MSG_ACK\020"
-  "\036\022\025\n\021GROUP_HISTORY_MSG\020\037\022\031\n\025GROUP_HISTOR"
-  "Y_MSG_ACK\020 \022\022\n\016FILE_START_MSG\020!\022\026\n\022FILE_"
-  "START_MSG_ACK\020\"\022\022\n\016FILE_CHUNK_MSG\020#\022\026\n\022F"
-  "ILE_CHUNK_MSG_ACK\020$\022\020\n\014FILE_END_MSG\020%\022\024\n"
-  "\020FILE_END_MSG_ACK\020&\022\025\n\021DOWNLOAD_FILE_MSG"
-  "\020\'\022\031\n\025DOWNLOAD_FILE_MSG_ACK\020(\022\026\n\022DOWNLOA"
-  "D_START_MSG\020)\022\032\n\026DOWNLOAD_START_MSG_ACK\020"
-  "*\022\026\n\022DOWNLOAD_CHUNK_MSG\020+\022\032\n\026DOWNLOAD_CH"
-  "UNK_MSG_ACK\020,\022\024\n\020DOWNLOAD_END_MSG\020-\022\030\n\024D"
-  "OWNLOAD_END_MSG_ACK\020.b\006proto3"
+  "\005 \001(\t\022\020\n\010fromname\030\006 \001(\t\"F\n\nOneChatRes\022\033\n"
+  "\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 \001(\005\022"
+  "\016\n\006errmsg\030\003 \001(\t\"c\n\016CreateGroupReq\022\033\n\005msg"
+  "id\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006userid\030\002 \001(\005\022\021"
+  "\n\tgroupname\030\003 \001(\t\022\021\n\tgroupdesc\030\004 \001(\t\"[\n\016"
+  "CreateGroupRes\022\033\n\005msgid\030\001 \001(\0162\014.chat.Msg"
+  "Typ\022\013\n\003err\030\002 \001(\005\022\016\n\006errmsg\030\003 \001(\t\022\017\n\007grou"
+  "pid\030\004 \001(\005\"Y\n\013AddGroupReq\022\033\n\005msgid\030\001 \001(\0162"
+  "\014.chat.MsgTyp\022\016\n\006userid\030\002 \001(\005\022\017\n\007groupid"
+  "\030\003 \001(\005\022\014\n\004role\030\004 \001(\t\"G\n\013AddGroupRes\022\033\n\005m"
+  "sgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 \001(\005\022\016\n"
+  "\006errmsg\030\003 \001(\t\"y\n\014GroupChatReq\022\033\n\005msgid\030\001"
+  " \001(\0162\014.chat.MsgTyp\022\017\n\007groupid\030\002 \001(\005\022\016\n\006u"
+  "serid\030\003 \001(\005\022\013\n\003msg\030\004 \001(\t\022\014\n\004time\030\005 \001(\t\022\020"
+  "\n\010username\030\006 \001(\t\"H\n\014GroupChatRes\022\033\n\005msgi"
+  "d\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 \001(\005\022\016\n\006er"
+  "rmsg\030\003 \001(\t\"8\n\tLogoutReq\022\033\n\005msgid\030\001 \001(\0162\014"
+  ".chat.MsgTyp\022\016\n\006userid\030\002 \001(\005\"E\n\tLogoutRe"
+  "s\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\013\n\003err\030\002 "
+  "\001(\005\022\016\n\006errmsg\030\003 \001(\t\"/\n\004User\022\n\n\002id\030\001 \001(\005\022"
+  "\014\n\004name\030\002 \001(\t\022\r\n\005state\030\003 \001(\t\"4\n\tGroupUse"
+  "r\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\r\n\005state\030\003 \001"
+  "(\t\"O\n\005Group\022\n\n\002id\030\001 \001(\005\022\014\n\004name\030\002 \001(\t\022\014\n"
+  "\004desc\030\003 \001(\t\022\036\n\005users\030\004 \003(\0132\017.chat.GroupU"
+  "ser\"H\n\rHistoryMsgReq\022\016\n\006fromid\030\001 \001(\005\022\014\n\004"
+  "toid\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 \001(\t\"O\n"
+  "\rHistoryMsgRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 "
+  "\001(\t\022!\n\004msgs\030\003 \003(\0132\023.chat.HistoryMsgReq\"P"
+  "\n\017AcceptFriendReq\022\033\n\005msgid\030\001 \001(\0162\014.chat."
+  "MsgTyp\022\016\n\006userid\030\002 \001(\005\022\020\n\010friendid\030\003 \001(\005"
+  "\".\n\017AcceptFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errm"
+  "sg\030\002 \001(\t\"1\n\rFriendRequest\022\016\n\006userid\030\001 \001("
+  "\005\022\020\n\010username\030\002 \001(\t\"@\n\021QueryFriendReqReq"
+  "\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\022\016\n\006userid\030"
+  "\002 \001(\005\"W\n\021QueryFriendReqRes\022\013\n\003err\030\001 \001(\005\022"
+  "\016\n\006errmsg\030\002 \001(\t\022%\n\010requests\030\003 \003(\0132\023.chat"
+  ".FriendRequest\"6\n\022FriendAcceptNotify\022\016\n\006"
+  "userid\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\" \n\016QueryF"
+  "riendReq\022\016\n\006userid\030\001 \001(\005\"J\n\016QueryFriendR"
+  "es\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\007frien"
+  "ds\030\003 \003(\0132\n.chat.User\"3\n\017DeleteFriendReq\022"
+  "\016\n\006userid\030\001 \001(\005\022\020\n\010friendid\030\002 \001(\005\".\n\017Del"
+  "eteFriendRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001("
+  "\t\"P\n\022GroupHistoryMsgReq\022\017\n\007groupid\030\001 \001(\005"
+  "\022\016\n\006userid\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 "
+  "\001(\t\"Y\n\022GroupHistoryMsgRes\022\013\n\003err\030\001 \001(\005\022\016"
+  "\n\006errmsg\030\002 \001(\t\022&\n\004msgs\030\003 \003(\0132\030.chat.Grou"
+  "pHistoryMsgReq\"M\n\017OfflineGroupMsg\022\017\n\007gro"
+  "upid\030\001 \001(\005\022\016\n\006userid\030\002 \001(\005\022\013\n\003msg\030\003 \001(\t\022"
+  "\014\n\004time\030\004 \001(\t\"`\n\014FileStartReq\022\016\n\006fromid\030"
+  "\001 \001(\005\022\014\n\004toid\030\002 \001(\005\022\020\n\010filename\030\003 \001(\t\022\020\n"
+  "\010filesize\030\004 \001(\004\022\016\n\006fileid\030\005 \001(\t\"+\n\014FileS"
+  "tartRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"<\n\014"
+  "FileChunkReq\022\016\n\006fileid\030\001 \001(\t\022\014\n\004data\030\002 \001"
+  "(\014\022\016\n\006offset\030\003 \001(\004\"+\n\014FileChunkRes\022\013\n\003er"
+  "r\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\034\n\nFileEndReq\022\016\n"
+  "\006fileid\030\001 \001(\t\")\n\nFileEndRes\022\013\n\003err\030\001 \001(\005"
+  "\022\016\n\006errmsg\030\002 \001(\t\"q\n\013OfflineFile\022\016\n\006fromi"
+  "d\030\001 \001(\005\022\014\n\004toid\030\002 \001(\005\022\020\n\010filename\030\003 \001(\t\022"
+  "\020\n\010filesize\030\004 \001(\004\022\016\n\006fileid\030\005 \001(\t\022\020\n\010fro"
+  "mname\030\006 \001(\t\"1\n\017DownloadFileReq\022\016\n\006fileid"
+  "\030\001 \001(\t\022\016\n\006userid\030\002 \001(\005\".\n\017DownloadFileRe"
+  "s\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"C\n\rDownlo"
+  "adStart\022\016\n\006fileid\030\001 \001(\t\022\020\n\010filename\030\002 \001("
+  "\t\022\020\n\010filesize\030\003 \001(\004\"=\n\rDownloadChunk\022\016\n\006"
+  "fileid\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022\016\n\006offset\030\003 \001"
+  "(\004\"\035\n\013DownloadEnd\022\016\n\006fileid\030\001 \001(\t\"\"\n\020Can"
+  "celAccountReq\022\016\n\006userid\030\001 \001(\005\"/\n\020CancelA"
+  "ccountRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\353"
+  "\010\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020"
+  "\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG"
+  "_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FR"
+  "IEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_"
+  "CHAT_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024"
+  "CREATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020"
+  "\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_M"
+  "SG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_M"
+  "SG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020"
+  "\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_"
+  "MSG\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUER"
+  "Y_FRIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_M"
+  "SG_ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEP"
+  "T_FRIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTI"
+  "FY_MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_ACK"
+  "\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND"
+  "_MSG_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DEL"
+  "ETE_FRIEND_MSG_ACK\020\036\022\025\n\021GROUP_HISTORY_MS"
+  "G\020\037\022\031\n\025GROUP_HISTORY_MSG_ACK\020 \022\022\n\016FILE_S"
+  "TART_MSG\020!\022\026\n\022FILE_START_MSG_ACK\020\"\022\022\n\016FI"
+  "LE_CHUNK_MSG\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020$\022\020"
+  "\n\014FILE_END_MSG\020%\022\024\n\020FILE_END_MSG_ACK\020&\022\025"
+  "\n\021DOWNLOAD_FILE_MSG\020\'\022\031\n\025DOWNLOAD_FILE_M"
+  "SG_ACK\020(\022\026\n\022DOWNLOAD_START_MSG\020)\022\032\n\026DOWN"
+  "LOAD_START_MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUNK_M"
+  "SG\020+\022\032\n\026DOWNLOAD_CHUNK_MSG_ACK\020,\022\024\n\020DOWN"
+  "LOAD_END_MSG\020-\022\030\n\024DOWNLOAD_END_MSG_ACK\020."
+  "\022\026\n\022CANCEL_ACCOUNT_MSG\020/\022\032\n\026CANCEL_ACCOU"
+  "NT_MSG_ACK\0200b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 4509, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 4700, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
-    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 47,
+    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 49,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
     file_level_metadata_proto_2fchat_2eproto, file_level_enum_descriptors_proto_2fchat_2eproto,
     file_level_service_descriptors_proto_2fchat_2eproto,
@@ -1446,6 +1503,8 @@ bool MsgTyp_IsValid(int value) {
     case 44:
     case 45:
     case 46:
+    case 47:
+    case 48:
       return true;
     default:
       return false;
@@ -3546,6 +3605,7 @@ OneChatReq::OneChatReq(const OneChatReq& from)
   new (&_impl_) Impl_{
       decltype(_impl_.msg_){}
     , decltype(_impl_.time_){}
+    , decltype(_impl_.fromname_){}
     , decltype(_impl_.msgid_){}
     , decltype(_impl_.fromid_){}
     , decltype(_impl_.toid_){}
@@ -3568,6 +3628,14 @@ OneChatReq::OneChatReq(const OneChatReq& from)
     _this->_impl_.time_.Set(from._internal_time(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.fromname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.fromname_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_fromname().empty()) {
+    _this->_impl_.fromname_.Set(from._internal_fromname(), 
+      _this->GetArenaForAllocation());
+  }
   ::memcpy(&_impl_.msgid_, &from._impl_.msgid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.toid_) -
     reinterpret_cast<char*>(&_impl_.msgid_)) + sizeof(_impl_.toid_));
@@ -3581,6 +3649,7 @@ inline void OneChatReq::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.msg_){}
     , decltype(_impl_.time_){}
+    , decltype(_impl_.fromname_){}
     , decltype(_impl_.msgid_){0}
     , decltype(_impl_.fromid_){0}
     , decltype(_impl_.toid_){0}
@@ -3593,6 +3662,10 @@ inline void OneChatReq::SharedCtor(
   _impl_.time_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.time_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.fromname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.fromname_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -3609,6 +3682,7 @@ inline void OneChatReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.msg_.Destroy();
   _impl_.time_.Destroy();
+  _impl_.fromname_.Destroy();
 }
 
 void OneChatReq::SetCachedSize(int size) const {
@@ -3623,6 +3697,7 @@ void OneChatReq::Clear() {
 
   _impl_.msg_.ClearToEmpty();
   _impl_.time_.ClearToEmpty();
+  _impl_.fromname_.ClearToEmpty();
   ::memset(&_impl_.msgid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.toid_) -
       reinterpret_cast<char*>(&_impl_.msgid_)) + sizeof(_impl_.toid_));
@@ -3677,6 +3752,16 @@ const char* OneChatReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ct
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "chat.OneChatReq.time"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string fromname = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_fromname();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.OneChatReq.fromname"));
         } else
           goto handle_unusual;
         continue;
@@ -3748,6 +3833,16 @@ uint8_t* OneChatReq::_InternalSerialize(
         5, this->_internal_time(), target);
   }
 
+  // string fromname = 6;
+  if (!this->_internal_fromname().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_fromname().data(), static_cast<int>(this->_internal_fromname().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.OneChatReq.fromname");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_fromname(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -3776,6 +3871,13 @@ size_t OneChatReq::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_time());
+  }
+
+  // string fromname = 6;
+  if (!this->_internal_fromname().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_fromname());
   }
 
   // .chat.MsgTyp msgid = 1;
@@ -3818,6 +3920,9 @@ void OneChatReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PRO
   if (!from._internal_time().empty()) {
     _this->_internal_set_time(from._internal_time());
   }
+  if (!from._internal_fromname().empty()) {
+    _this->_internal_set_fromname(from._internal_fromname());
+  }
   if (from._internal_msgid() != 0) {
     _this->_internal_set_msgid(from._internal_msgid());
   }
@@ -3853,6 +3958,10 @@ void OneChatReq::InternalSwap(OneChatReq* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.time_, lhs_arena,
       &other->_impl_.time_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.fromname_, lhs_arena,
+      &other->_impl_.fromname_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(OneChatReq, _impl_.toid_)
@@ -5314,6 +5423,7 @@ GroupChatReq::GroupChatReq(const GroupChatReq& from)
   new (&_impl_) Impl_{
       decltype(_impl_.msg_){}
     , decltype(_impl_.time_){}
+    , decltype(_impl_.username_){}
     , decltype(_impl_.msgid_){}
     , decltype(_impl_.groupid_){}
     , decltype(_impl_.userid_){}
@@ -5336,6 +5446,14 @@ GroupChatReq::GroupChatReq(const GroupChatReq& from)
     _this->_impl_.time_.Set(from._internal_time(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_username().empty()) {
+    _this->_impl_.username_.Set(from._internal_username(), 
+      _this->GetArenaForAllocation());
+  }
   ::memcpy(&_impl_.msgid_, &from._impl_.msgid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.userid_) -
     reinterpret_cast<char*>(&_impl_.msgid_)) + sizeof(_impl_.userid_));
@@ -5349,6 +5467,7 @@ inline void GroupChatReq::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.msg_){}
     , decltype(_impl_.time_){}
+    , decltype(_impl_.username_){}
     , decltype(_impl_.msgid_){0}
     , decltype(_impl_.groupid_){0}
     , decltype(_impl_.userid_){0}
@@ -5361,6 +5480,10 @@ inline void GroupChatReq::SharedCtor(
   _impl_.time_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.time_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -5377,6 +5500,7 @@ inline void GroupChatReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.msg_.Destroy();
   _impl_.time_.Destroy();
+  _impl_.username_.Destroy();
 }
 
 void GroupChatReq::SetCachedSize(int size) const {
@@ -5391,6 +5515,7 @@ void GroupChatReq::Clear() {
 
   _impl_.msg_.ClearToEmpty();
   _impl_.time_.ClearToEmpty();
+  _impl_.username_.ClearToEmpty();
   ::memset(&_impl_.msgid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.userid_) -
       reinterpret_cast<char*>(&_impl_.msgid_)) + sizeof(_impl_.userid_));
@@ -5445,6 +5570,16 @@ const char* GroupChatReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "chat.GroupChatReq.time"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string username = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_username();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.GroupChatReq.username"));
         } else
           goto handle_unusual;
         continue;
@@ -5516,6 +5651,16 @@ uint8_t* GroupChatReq::_InternalSerialize(
         5, this->_internal_time(), target);
   }
 
+  // string username = 6;
+  if (!this->_internal_username().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.GroupChatReq.username");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_username(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -5544,6 +5689,13 @@ size_t GroupChatReq::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_time());
+  }
+
+  // string username = 6;
+  if (!this->_internal_username().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_username());
   }
 
   // .chat.MsgTyp msgid = 1;
@@ -5586,6 +5738,9 @@ void GroupChatReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (!from._internal_time().empty()) {
     _this->_internal_set_time(from._internal_time());
   }
+  if (!from._internal_username().empty()) {
+    _this->_internal_set_username(from._internal_username());
+  }
   if (from._internal_msgid() != 0) {
     _this->_internal_set_msgid(from._internal_msgid());
   }
@@ -5621,6 +5776,10 @@ void GroupChatReq::InternalSwap(GroupChatReq* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.time_, lhs_arena,
       &other->_impl_.time_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.username_, lhs_arena,
+      &other->_impl_.username_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(GroupChatReq, _impl_.userid_)
@@ -12535,6 +12694,7 @@ OfflineFile::OfflineFile(const OfflineFile& from)
   new (&_impl_) Impl_{
       decltype(_impl_.filename_){}
     , decltype(_impl_.fileid_){}
+    , decltype(_impl_.fromname_){}
     , decltype(_impl_.fromid_){}
     , decltype(_impl_.toid_){}
     , decltype(_impl_.filesize_){}
@@ -12557,6 +12717,14 @@ OfflineFile::OfflineFile(const OfflineFile& from)
     _this->_impl_.fileid_.Set(from._internal_fileid(), 
       _this->GetArenaForAllocation());
   }
+  _impl_.fromname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.fromname_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_fromname().empty()) {
+    _this->_impl_.fromname_.Set(from._internal_fromname(), 
+      _this->GetArenaForAllocation());
+  }
   ::memcpy(&_impl_.fromid_, &from._impl_.fromid_,
     static_cast<size_t>(reinterpret_cast<char*>(&_impl_.filesize_) -
     reinterpret_cast<char*>(&_impl_.fromid_)) + sizeof(_impl_.filesize_));
@@ -12570,6 +12738,7 @@ inline void OfflineFile::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.filename_){}
     , decltype(_impl_.fileid_){}
+    , decltype(_impl_.fromname_){}
     , decltype(_impl_.fromid_){0}
     , decltype(_impl_.toid_){0}
     , decltype(_impl_.filesize_){uint64_t{0u}}
@@ -12582,6 +12751,10 @@ inline void OfflineFile::SharedCtor(
   _impl_.fileid_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.fileid_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.fromname_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.fromname_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -12598,6 +12771,7 @@ inline void OfflineFile::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.filename_.Destroy();
   _impl_.fileid_.Destroy();
+  _impl_.fromname_.Destroy();
 }
 
 void OfflineFile::SetCachedSize(int size) const {
@@ -12612,6 +12786,7 @@ void OfflineFile::Clear() {
 
   _impl_.filename_.ClearToEmpty();
   _impl_.fileid_.ClearToEmpty();
+  _impl_.fromname_.ClearToEmpty();
   ::memset(&_impl_.fromid_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&_impl_.filesize_) -
       reinterpret_cast<char*>(&_impl_.fromid_)) + sizeof(_impl_.filesize_));
@@ -12665,6 +12840,16 @@ const char* OfflineFile::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "chat.OfflineFile.fileid"));
+        } else
+          goto handle_unusual;
+        continue;
+      // string fromname = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 50)) {
+          auto str = _internal_mutable_fromname();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.OfflineFile.fromname"));
         } else
           goto handle_unusual;
         continue;
@@ -12735,6 +12920,16 @@ uint8_t* OfflineFile::_InternalSerialize(
         5, this->_internal_fileid(), target);
   }
 
+  // string fromname = 6;
+  if (!this->_internal_fromname().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_fromname().data(), static_cast<int>(this->_internal_fromname().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.OfflineFile.fromname");
+    target = stream->WriteStringMaybeAliased(
+        6, this->_internal_fromname(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -12763,6 +12958,13 @@ size_t OfflineFile::ByteSizeLong() const {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
         this->_internal_fileid());
+  }
+
+  // string fromname = 6;
+  if (!this->_internal_fromname().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_fromname());
   }
 
   // int32 fromid = 1;
@@ -12804,6 +13006,9 @@ void OfflineFile::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (!from._internal_fileid().empty()) {
     _this->_internal_set_fileid(from._internal_fileid());
   }
+  if (!from._internal_fromname().empty()) {
+    _this->_internal_set_fromname(from._internal_fromname());
+  }
   if (from._internal_fromid() != 0) {
     _this->_internal_set_fromid(from._internal_fromid());
   }
@@ -12839,6 +13044,10 @@ void OfflineFile::InternalSwap(OfflineFile* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.fileid_, lhs_arena,
       &other->_impl_.fileid_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.fromname_, lhs_arena,
+      &other->_impl_.fromname_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(OfflineFile, _impl_.filesize_)
@@ -14072,6 +14281,414 @@ void DownloadEnd::InternalSwap(DownloadEnd* other) {
       file_level_metadata_proto_2fchat_2eproto[46]);
 }
 
+// ===================================================================
+
+class CancelAccountReq::_Internal {
+ public:
+};
+
+CancelAccountReq::CancelAccountReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.CancelAccountReq)
+}
+CancelAccountReq::CancelAccountReq(const CancelAccountReq& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  CancelAccountReq* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.userid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_impl_.userid_ = from._impl_.userid_;
+  // @@protoc_insertion_point(copy_constructor:chat.CancelAccountReq)
+}
+
+inline void CancelAccountReq::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.userid_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+}
+
+CancelAccountReq::~CancelAccountReq() {
+  // @@protoc_insertion_point(destructor:chat.CancelAccountReq)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void CancelAccountReq::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+}
+
+void CancelAccountReq::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void CancelAccountReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.CancelAccountReq)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.userid_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* CancelAccountReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 userid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.userid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* CancelAccountReq::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.CancelAccountReq)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_userid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.CancelAccountReq)
+  return target;
+}
+
+size_t CancelAccountReq::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.CancelAccountReq)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_userid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CancelAccountReq::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    CancelAccountReq::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CancelAccountReq::GetClassData() const { return &_class_data_; }
+
+
+void CancelAccountReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<CancelAccountReq*>(&to_msg);
+  auto& from = static_cast<const CancelAccountReq&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.CancelAccountReq)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from._internal_userid() != 0) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void CancelAccountReq::CopyFrom(const CancelAccountReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.CancelAccountReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CancelAccountReq::IsInitialized() const {
+  return true;
+}
+
+void CancelAccountReq::InternalSwap(CancelAccountReq* other) {
+  using std::swap;
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  swap(_impl_.userid_, other->_impl_.userid_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata CancelAccountReq::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_proto_2fchat_2eproto_getter, &descriptor_table_proto_2fchat_2eproto_once,
+      file_level_metadata_proto_2fchat_2eproto[47]);
+}
+
+// ===================================================================
+
+class CancelAccountRes::_Internal {
+ public:
+};
+
+CancelAccountRes::CancelAccountRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.CancelAccountRes)
+}
+CancelAccountRes::CancelAccountRes(const CancelAccountRes& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  CancelAccountRes* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.errmsg_){}
+    , decltype(_impl_.err_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.errmsg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_errmsg().empty()) {
+    _this->_impl_.errmsg_.Set(from._internal_errmsg(), 
+      _this->GetArenaForAllocation());
+  }
+  _this->_impl_.err_ = from._impl_.err_;
+  // @@protoc_insertion_point(copy_constructor:chat.CancelAccountRes)
+}
+
+inline void CancelAccountRes::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.errmsg_){}
+    , decltype(_impl_.err_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.errmsg_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+CancelAccountRes::~CancelAccountRes() {
+  // @@protoc_insertion_point(destructor:chat.CancelAccountRes)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void CancelAccountRes::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.errmsg_.Destroy();
+}
+
+void CancelAccountRes::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void CancelAccountRes::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.CancelAccountRes)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.errmsg_.ClearToEmpty();
+  _impl_.err_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* CancelAccountRes::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 err = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.err_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string errmsg = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_errmsg();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.CancelAccountRes.errmsg"));
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* CancelAccountRes::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.CancelAccountRes)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 err = 1;
+  if (this->_internal_err() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_err(), target);
+  }
+
+  // string errmsg = 2;
+  if (!this->_internal_errmsg().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_errmsg().data(), static_cast<int>(this->_internal_errmsg().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.CancelAccountRes.errmsg");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_errmsg(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.CancelAccountRes)
+  return target;
+}
+
+size_t CancelAccountRes::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.CancelAccountRes)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string errmsg = 2;
+  if (!this->_internal_errmsg().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_errmsg());
+  }
+
+  // int32 err = 1;
+  if (this->_internal_err() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_err());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData CancelAccountRes::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    CancelAccountRes::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*CancelAccountRes::GetClassData() const { return &_class_data_; }
+
+
+void CancelAccountRes::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<CancelAccountRes*>(&to_msg);
+  auto& from = static_cast<const CancelAccountRes&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.CancelAccountRes)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_errmsg().empty()) {
+    _this->_internal_set_errmsg(from._internal_errmsg());
+  }
+  if (from._internal_err() != 0) {
+    _this->_internal_set_err(from._internal_err());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void CancelAccountRes::CopyFrom(const CancelAccountRes& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.CancelAccountRes)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CancelAccountRes::IsInitialized() const {
+  return true;
+}
+
+void CancelAccountRes::InternalSwap(CancelAccountRes* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.errmsg_, lhs_arena,
+      &other->_impl_.errmsg_, rhs_arena
+  );
+  swap(_impl_.err_, other->_impl_.err_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata CancelAccountRes::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_proto_2fchat_2eproto_getter, &descriptor_table_proto_2fchat_2eproto_once,
+      file_level_metadata_proto_2fchat_2eproto[48]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace chat
 PROTOBUF_NAMESPACE_OPEN
@@ -14262,6 +14879,14 @@ Arena::CreateMaybeMessage< ::chat::DownloadChunk >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chat::DownloadEnd*
 Arena::CreateMaybeMessage< ::chat::DownloadEnd >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chat::DownloadEnd >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::CancelAccountReq*
+Arena::CreateMaybeMessage< ::chat::CancelAccountReq >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::CancelAccountReq >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::CancelAccountRes*
+Arena::CreateMaybeMessage< ::chat::CancelAccountRes >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::CancelAccountRes >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

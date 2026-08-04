@@ -1,7 +1,7 @@
 #include <string>
 #include "Message.h"
 
-Message::Message(int id, int fromid, int toid, std::string msg, std::string time): id(id), fromid(fromid), toid(toid), msg(msg), time(time) {
+Message::Message(int id, int fromid, int toid, std::string msg, std::string time, std::string fromname): id(id), fromid(fromid), toid(toid), msg(msg), time(time), fromname(fromname) {
 
 }
 
@@ -43,4 +43,12 @@ std::string Message::getTime() const {
 
 void Message::setTime(const std::string& time) {
     this->time = time;
+}
+
+std::string Message::getFromname() const {
+    return fromname;
+}
+
+void Message::setFromname(const std::string& fromname) {
+    this->fromname = fromname;
 }

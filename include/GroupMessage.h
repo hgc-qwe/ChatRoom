@@ -8,8 +8,9 @@ private:
     int userid = 0;
     std::string msg;
     std::string time;
+    std::string username;
 public:
-    GroupMessage(int id, int groupid, int userid, std::string msg, std::string time): id(id), groupid(groupid), userid(userid), msg(msg), time(time) {
+    GroupMessage(int id, int groupid, int userid, std::string msg, std::string time, std::string username): id(id), groupid(groupid), userid(userid), msg(msg), time(time), username(username) {
 
     }
 
@@ -48,5 +49,12 @@ public:
     }
     void setTime(const std::string& time) {
         this->time = time;
+    }
+
+    std::string getUsername() const {
+        return username;
+    }
+    void setUsername(const std::string& username) {
+        this->username = username;
     }
 };

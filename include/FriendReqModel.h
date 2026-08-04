@@ -9,4 +9,6 @@ public:
     std::vector<FriendRequest> query(int userid);
 
     bool updateStatus(int fromid, int toid, int status);
+
+    bool removeAll(int userid);
 };

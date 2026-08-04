@@ -63,6 +63,8 @@ public:
 
     void downloadFile(std::shared_ptr<TcpConnection> conn, const chat::DownloadFileReq& req, chat::DownloadFileRes& res);
 
+    void cancelAccount(std::shared_ptr<TcpConnection> conn, const chat::CancelAccountReq& req, chat::CancelAccountRes& res);
+
     void addUserConn(std::shared_ptr<TcpConnection> conn, int userid);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);

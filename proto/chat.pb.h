@@ -64,6 +64,12 @@ extern AddGroupReqDefaultTypeInternal _AddGroupReq_default_instance_;
 class AddGroupRes;
 struct AddGroupResDefaultTypeInternal;
 extern AddGroupResDefaultTypeInternal _AddGroupRes_default_instance_;
+class CancelAccountReq;
+struct CancelAccountReqDefaultTypeInternal;
+extern CancelAccountReqDefaultTypeInternal _CancelAccountReq_default_instance_;
+class CancelAccountRes;
+struct CancelAccountResDefaultTypeInternal;
+extern CancelAccountResDefaultTypeInternal _CancelAccountRes_default_instance_;
 class CreateGroupReq;
 struct CreateGroupReqDefaultTypeInternal;
 extern CreateGroupReqDefaultTypeInternal _CreateGroupReq_default_instance_;
@@ -195,6 +201,8 @@ template<> ::chat::AddFriendReq* Arena::CreateMaybeMessage<::chat::AddFriendReq>
 template<> ::chat::AddFriendRes* Arena::CreateMaybeMessage<::chat::AddFriendRes>(Arena*);
 template<> ::chat::AddGroupReq* Arena::CreateMaybeMessage<::chat::AddGroupReq>(Arena*);
 template<> ::chat::AddGroupRes* Arena::CreateMaybeMessage<::chat::AddGroupRes>(Arena*);
+template<> ::chat::CancelAccountReq* Arena::CreateMaybeMessage<::chat::CancelAccountReq>(Arena*);
+template<> ::chat::CancelAccountRes* Arena::CreateMaybeMessage<::chat::CancelAccountRes>(Arena*);
 template<> ::chat::CreateGroupReq* Arena::CreateMaybeMessage<::chat::CreateGroupReq>(Arena*);
 template<> ::chat::CreateGroupRes* Arena::CreateMaybeMessage<::chat::CreateGroupRes>(Arena*);
 template<> ::chat::DeleteFriendReq* Arena::CreateMaybeMessage<::chat::DeleteFriendReq>(Arena*);
@@ -287,12 +295,14 @@ enum MsgTyp : int {
   DOWNLOAD_CHUNK_MSG_ACK = 44,
   DOWNLOAD_END_MSG = 45,
   DOWNLOAD_END_MSG_ACK = 46,
+  CANCEL_ACCOUNT_MSG = 47,
+  CANCEL_ACCOUNT_MSG_ACK = 48,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = DOWNLOAD_END_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = CANCEL_ACCOUNT_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -1784,6 +1794,7 @@ class OneChatReq final :
   enum : int {
     kMsgFieldNumber = 4,
     kTimeFieldNumber = 5,
+    kFromnameFieldNumber = 6,
     kMsgidFieldNumber = 1,
     kFromidFieldNumber = 2,
     kToidFieldNumber = 3,
@@ -1814,6 +1825,20 @@ class OneChatReq final :
   const std::string& _internal_time() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
   std::string* _internal_mutable_time();
+  public:
+
+  // string fromname = 6;
+  void clear_fromname();
+  const std::string& fromname() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_fromname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_fromname();
+  PROTOBUF_NODISCARD std::string* release_fromname();
+  void set_allocated_fromname(std::string* fromname);
+  private:
+  const std::string& _internal_fromname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_fromname(const std::string& value);
+  std::string* _internal_mutable_fromname();
   public:
 
   // .chat.MsgTyp msgid = 1;
@@ -1853,6 +1878,7 @@ class OneChatReq final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fromname_;
     int msgid_;
     int32_t fromid_;
     int32_t toid_;
@@ -2899,6 +2925,7 @@ class GroupChatReq final :
   enum : int {
     kMsgFieldNumber = 4,
     kTimeFieldNumber = 5,
+    kUsernameFieldNumber = 6,
     kMsgidFieldNumber = 1,
     kGroupidFieldNumber = 2,
     kUseridFieldNumber = 3,
@@ -2929,6 +2956,20 @@ class GroupChatReq final :
   const std::string& _internal_time() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_time(const std::string& value);
   std::string* _internal_mutable_time();
+  public:
+
+  // string username = 6;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
   public:
 
   // .chat.MsgTyp msgid = 1;
@@ -2968,6 +3009,7 @@ class GroupChatReq final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr msg_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr time_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
     int msgid_;
     int32_t groupid_;
     int32_t userid_;
@@ -7798,6 +7840,7 @@ class OfflineFile final :
   enum : int {
     kFilenameFieldNumber = 3,
     kFileidFieldNumber = 5,
+    kFromnameFieldNumber = 6,
     kFromidFieldNumber = 1,
     kToidFieldNumber = 2,
     kFilesizeFieldNumber = 4,
@@ -7828,6 +7871,20 @@ class OfflineFile final :
   const std::string& _internal_fileid() const;
   inline PROTOBUF_ALWAYS_INLINE void _internal_set_fileid(const std::string& value);
   std::string* _internal_mutable_fileid();
+  public:
+
+  // string fromname = 6;
+  void clear_fromname();
+  const std::string& fromname() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_fromname(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_fromname();
+  PROTOBUF_NODISCARD std::string* release_fromname();
+  void set_allocated_fromname(std::string* fromname);
+  private:
+  const std::string& _internal_fromname() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_fromname(const std::string& value);
+  std::string* _internal_mutable_fromname();
   public:
 
   // int32 fromid = 1;
@@ -7867,6 +7924,7 @@ class OfflineFile final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr filename_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fileid_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fromname_;
     int32_t fromid_;
     int32_t toid_;
     uint64_t filesize_;
@@ -8711,6 +8769,318 @@ class DownloadEnd final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fileid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CancelAccountReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.CancelAccountReq) */ {
+ public:
+  inline CancelAccountReq() : CancelAccountReq(nullptr) {}
+  ~CancelAccountReq() override;
+  explicit PROTOBUF_CONSTEXPR CancelAccountReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CancelAccountReq(const CancelAccountReq& from);
+  CancelAccountReq(CancelAccountReq&& from) noexcept
+    : CancelAccountReq() {
+    *this = ::std::move(from);
+  }
+
+  inline CancelAccountReq& operator=(const CancelAccountReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CancelAccountReq& operator=(CancelAccountReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CancelAccountReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CancelAccountReq* internal_default_instance() {
+    return reinterpret_cast<const CancelAccountReq*>(
+               &_CancelAccountReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    47;
+
+  friend void swap(CancelAccountReq& a, CancelAccountReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CancelAccountReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CancelAccountReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CancelAccountReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CancelAccountReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CancelAccountReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CancelAccountReq& from) {
+    CancelAccountReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CancelAccountReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.CancelAccountReq";
+  }
+  protected:
+  explicit CancelAccountReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.CancelAccountReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class CancelAccountRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.CancelAccountRes) */ {
+ public:
+  inline CancelAccountRes() : CancelAccountRes(nullptr) {}
+  ~CancelAccountRes() override;
+  explicit PROTOBUF_CONSTEXPR CancelAccountRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CancelAccountRes(const CancelAccountRes& from);
+  CancelAccountRes(CancelAccountRes&& from) noexcept
+    : CancelAccountRes() {
+    *this = ::std::move(from);
+  }
+
+  inline CancelAccountRes& operator=(const CancelAccountRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CancelAccountRes& operator=(CancelAccountRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CancelAccountRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CancelAccountRes* internal_default_instance() {
+    return reinterpret_cast<const CancelAccountRes*>(
+               &_CancelAccountRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    48;
+
+  friend void swap(CancelAccountRes& a, CancelAccountRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CancelAccountRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CancelAccountRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CancelAccountRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CancelAccountRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CancelAccountRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CancelAccountRes& from) {
+    CancelAccountRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CancelAccountRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.CancelAccountRes";
+  }
+  protected:
+  explicit CancelAccountRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.CancelAccountRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -9865,6 +10235,56 @@ inline void OneChatReq::set_allocated_time(std::string* time) {
   // @@protoc_insertion_point(field_set_allocated:chat.OneChatReq.time)
 }
 
+// string fromname = 6;
+inline void OneChatReq::clear_fromname() {
+  _impl_.fromname_.ClearToEmpty();
+}
+inline const std::string& OneChatReq::fromname() const {
+  // @@protoc_insertion_point(field_get:chat.OneChatReq.fromname)
+  return _internal_fromname();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OneChatReq::set_fromname(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.fromname_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OneChatReq.fromname)
+}
+inline std::string* OneChatReq::mutable_fromname() {
+  std::string* _s = _internal_mutable_fromname();
+  // @@protoc_insertion_point(field_mutable:chat.OneChatReq.fromname)
+  return _s;
+}
+inline const std::string& OneChatReq::_internal_fromname() const {
+  return _impl_.fromname_.Get();
+}
+inline void OneChatReq::_internal_set_fromname(const std::string& value) {
+  
+  _impl_.fromname_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OneChatReq::_internal_mutable_fromname() {
+  
+  return _impl_.fromname_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OneChatReq::release_fromname() {
+  // @@protoc_insertion_point(field_release:chat.OneChatReq.fromname)
+  return _impl_.fromname_.Release();
+}
+inline void OneChatReq::set_allocated_fromname(std::string* fromname) {
+  if (fromname != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.fromname_.SetAllocated(fromname, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.fromname_.IsDefault()) {
+    _impl_.fromname_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OneChatReq.fromname)
+}
+
 // -------------------------------------------------------------------
 
 // OneChatRes
@@ -10587,6 +11007,56 @@ inline void GroupChatReq::set_allocated_time(std::string* time) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chat.GroupChatReq.time)
+}
+
+// string username = 6;
+inline void GroupChatReq::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& GroupChatReq::username() const {
+  // @@protoc_insertion_point(field_get:chat.GroupChatReq.username)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GroupChatReq::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.GroupChatReq.username)
+}
+inline std::string* GroupChatReq::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:chat.GroupChatReq.username)
+  return _s;
+}
+inline const std::string& GroupChatReq::_internal_username() const {
+  return _impl_.username_.Get();
+}
+inline void GroupChatReq::_internal_set_username(const std::string& value) {
+  
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GroupChatReq::_internal_mutable_username() {
+  
+  return _impl_.username_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GroupChatReq::release_username() {
+  // @@protoc_insertion_point(field_release:chat.GroupChatReq.username)
+  return _impl_.username_.Release();
+}
+inline void GroupChatReq::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.username_.IsDefault()) {
+    _impl_.username_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.GroupChatReq.username)
 }
 
 // -------------------------------------------------------------------
@@ -13321,6 +13791,56 @@ inline void OfflineFile::set_allocated_fileid(std::string* fileid) {
   // @@protoc_insertion_point(field_set_allocated:chat.OfflineFile.fileid)
 }
 
+// string fromname = 6;
+inline void OfflineFile::clear_fromname() {
+  _impl_.fromname_.ClearToEmpty();
+}
+inline const std::string& OfflineFile::fromname() const {
+  // @@protoc_insertion_point(field_get:chat.OfflineFile.fromname)
+  return _internal_fromname();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void OfflineFile::set_fromname(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.fromname_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.OfflineFile.fromname)
+}
+inline std::string* OfflineFile::mutable_fromname() {
+  std::string* _s = _internal_mutable_fromname();
+  // @@protoc_insertion_point(field_mutable:chat.OfflineFile.fromname)
+  return _s;
+}
+inline const std::string& OfflineFile::_internal_fromname() const {
+  return _impl_.fromname_.Get();
+}
+inline void OfflineFile::_internal_set_fromname(const std::string& value) {
+  
+  _impl_.fromname_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OfflineFile::_internal_mutable_fromname() {
+  
+  return _impl_.fromname_.Mutable(GetArenaForAllocation());
+}
+inline std::string* OfflineFile::release_fromname() {
+  // @@protoc_insertion_point(field_release:chat.OfflineFile.fromname)
+  return _impl_.fromname_.Release();
+}
+inline void OfflineFile::set_allocated_fromname(std::string* fromname) {
+  if (fromname != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.fromname_.SetAllocated(fromname, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.fromname_.IsDefault()) {
+    _impl_.fromname_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.OfflineFile.fromname)
+}
+
 // -------------------------------------------------------------------
 
 // DownloadFileReq
@@ -13771,9 +14291,111 @@ inline void DownloadEnd::set_allocated_fileid(std::string* fileid) {
   // @@protoc_insertion_point(field_set_allocated:chat.DownloadEnd.fileid)
 }
 
+// -------------------------------------------------------------------
+
+// CancelAccountReq
+
+// int32 userid = 1;
+inline void CancelAccountReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t CancelAccountReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t CancelAccountReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.CancelAccountReq.userid)
+  return _internal_userid();
+}
+inline void CancelAccountReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void CancelAccountReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.CancelAccountReq.userid)
+}
+
+// -------------------------------------------------------------------
+
+// CancelAccountRes
+
+// int32 err = 1;
+inline void CancelAccountRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t CancelAccountRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t CancelAccountRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.CancelAccountRes.err)
+  return _internal_err();
+}
+inline void CancelAccountRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void CancelAccountRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.CancelAccountRes.err)
+}
+
+// string errmsg = 2;
+inline void CancelAccountRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& CancelAccountRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.CancelAccountRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void CancelAccountRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.CancelAccountRes.errmsg)
+}
+inline std::string* CancelAccountRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.CancelAccountRes.errmsg)
+  return _s;
+}
+inline const std::string& CancelAccountRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void CancelAccountRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CancelAccountRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* CancelAccountRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.CancelAccountRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void CancelAccountRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.CancelAccountRes.errmsg)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
