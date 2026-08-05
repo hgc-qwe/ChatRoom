@@ -30,3 +30,6 @@ std::string Group::getDesc() {
 std::vector<GroupUser> Group::getUsers() {
     return users;
 }
+void Group::setUsers(const std::vector<GroupUser>& users) {
+    this->users = users;
+}

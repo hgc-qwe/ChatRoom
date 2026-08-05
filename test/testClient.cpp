@@ -768,6 +768,70 @@ void recvMessage(int sockfd)
                 }
             }
 
+            else if(msgid == chat::GROUP_NOTIFY_MSG)
+            {
+                chat::GroupRequest req;
+
+                req.ParseFromString(body);
+
+                cout
+                <<"收到加群申请:"
+                <<" userid="
+                <<req.userid()
+                <<" username="
+                <<req.username()
+                <<" groupid="
+                <<req.groupid()
+                <<" groupname="
+                <<req.groupname()
+                <<endl;
+            }
+
+            else if(msgid == chat::GROUP_ACCEPT_NOTIFY_MSG)
+            {
+                chat::GroupAcceptNotify notify;
+
+                notify.ParseFromString(body);
+
+                cout
+                <<"加入群成功:"
+                <<" groupid="
+                <<notify.groupid()
+                <<" groupname="
+                <<notify.groupname()
+                <<endl;
+            }
+
+            else if(msgid == chat::QUERY_GROUP_REQ_MSG_ACK)
+            {
+                chat::QueryGroupReqRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"err:"
+                <<res.err()
+                <<" "
+                <<res.errmsg()
+                <<endl;
+
+
+                for(auto& r:res.requests())
+                {
+                    cout
+                    <<"userid:"
+                    <<r.userid()
+                    <<" username:"
+                    <<r.username()
+                    <<" groupid:"
+                    <<r.groupid()
+                    <<" groupname:"
+                    <<r.groupname()
+                    <<endl;
+                }
+            }
+
 
             cout<<"\n";
         }
@@ -840,6 +904,9 @@ int main()
         cout<<"11 download file\n";
         cout<<"12 cancel account\n";
         cout<<"13 register\n";
+        cout<<"14 apply group\n";
+        cout<<"15 query group request\n";
+        cout<<"16 accept group\n";
         cout<<"0 exit\n";
 
 
@@ -1345,6 +1412,91 @@ int main()
 
             packet = MessageCodec::encode(chat::REG_MSG, data);
 
+        }
+
+        else if(op==14)
+        {
+            chat::ApplyGroupReq req;
+
+            int userid;
+            int groupid;
+
+
+            cout<<"userid:";
+            cin>>userid;
+
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+            MessageCodec::encode(
+                chat::APPLY_GROUP_MSG,
+                data
+            );
+        }
+
+        else if(op==15)
+        {
+            chat::QueryGroupReqReq req;
+
+
+            int groupid;
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+
+            req.set_groupid(groupid);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+            MessageCodec::encode(
+                chat::QUERY_GROUP_REQ_MSG,
+                data
+            );
+        }
+
+        else if(op==16)
+        {
+            chat::AcceptGroupReq req;
+
+
+            int userid;
+            int groupid;
+
+
+            cout<<"apply userid:";
+            cin>>userid;
+
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+
+
+            req.SerializeToString(&data);
+
+
+            packet =
+            MessageCodec::encode(
+                chat::ACCEPT_GROUP_MSG,
+                data
+            );
         }
 
         else

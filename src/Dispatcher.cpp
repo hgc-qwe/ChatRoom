@@ -71,19 +71,6 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::CREATE_GROUP_MSG_ACK, response);
         }
-        case chat::ADD_GROUP_MSG: {
-            chat::AddGroupReq req;
-            if (!req.ParseFromString(data)) {
-                LOG_ERROR("AddGroupReq parse failed");
-                return "";
-            }
-
-            chat::AddGroupRes res;
-            ChatService::instance()->addGroup(conn, req, res);
-            std::string response;
-            res.SerializeToString(&response);
-            return MessageCodec::encode(chat::ADD_GROUP_MSG_ACK, response);
-        }
         case chat::GROUP_CHAT_MSG: {
             chat::GroupChatReq req;
             if (!req.ParseFromString(data)) {
@@ -241,6 +228,54 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             std::string response;
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::CANCEL_ACCOUNT_MSG_ACK, response);
+        }
+        case chat::QUERY_GROUP_REQ_MSG: {
+            chat::QueryGroupReqReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryGroupReqReq parse failed");
+                return "";
+            }
+            chat::QueryGroupReqRes res;
+            ChatService::instance()->queryGroupreq(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_GROUP_REQ_MSG_ACK, response);
+        }
+        case chat::ACCEPT_GROUP_MSG: {
+            chat::AcceptGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("AcceptGroupReq parse failed");
+                return "";
+            }
+            chat::AcceptGroupRes res;
+            ChatService::instance()->acceptGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::ACCEPT_GROUP_MSG_ACK, response);
+        }
+        case chat::QUERY_GROUP_MSG: {
+            chat::QueryGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryGroupReq parse failed");
+                return "";
+            }
+            chat::QueryGroupRes res;
+            ChatService::instance()->queryGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_GROUP_MSG_ACK, response);
+        }
+        case chat::APPLY_GROUP_MSG: {
+            chat::ApplyGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("ApplyGroupReq parse failed");
+                return "";
+            }
+            chat::ApplyGroupRes res;
+            ChatService::instance()->applyGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::APPLY_GROUP_MSG_ACK, response);
         }
         default: {
             LOG_ERROR("unknown message");

@@ -11,6 +11,7 @@
 #include "TcpConnection.h"
 #include "FriendReqModel.h"
 #include "GroupMessageModel.h"
+#include "GroupReqModel.h"
 #include "FileModel.h"
 
 struct FileInfo {
@@ -28,6 +29,7 @@ public:
     static ChatService* instance();
 
     void login(std::shared_ptr<TcpConnection> conn, const chat::LoginReq& req, chat::LoginRes& res);
+    
     void reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterReq& req, chat::RegisterRes& res);
 
     void addFriend(std::shared_ptr<TcpConnection> conn, const chat::AddFriendReq& req, chat::AddFriendRes& res);
@@ -35,7 +37,6 @@ public:
     void oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res);
 
     void createGroup(std::shared_ptr<TcpConnection> conn, const chat::CreateGroupReq& req, chat::CreateGroupRes& res);
-    void addGroup(std::shared_ptr<TcpConnection> conn, const chat::AddGroupReq& req, chat::AddGroupRes& res);
 
     void groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res);
 
@@ -67,6 +68,14 @@ public:
 
     void addUserConn(std::shared_ptr<TcpConnection> conn, int userid);
 
+    void applyGroup(std::shared_ptr<TcpConnection> conn, const chat::ApplyGroupReq& req, chat::ApplyGroupRes& res);
+
+    void queryGroupreq(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReqReq& req, chat::QueryGroupReqRes& res);
+
+    void acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::AcceptGroupReq& req, chat::AcceptGroupRes& res);
+
+    void queryGroup(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReq& req, chat::QueryGroupRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);
@@ -78,6 +87,7 @@ private:
     MessageModel messageModel;
     FriendReqModel friendReqModel;
     GroupMessageModel groupMessageModel;
+    GroupReqModel groupReqModel;
     FileModel fileModel;
     Redis redis;
 

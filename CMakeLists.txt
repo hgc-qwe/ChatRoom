@@ -55,6 +55,7 @@ add_executable(
     src/Message.cpp
     src/MessageModel.cpp
     src/FileModel.cpp
+    src/GroupReqModel.cpp
 
     # entity
     src/User.cpp

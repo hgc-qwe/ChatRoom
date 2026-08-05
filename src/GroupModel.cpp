@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "Mysql.h"
+#include "Group.h"
 #include "GroupModel.h"
 
 bool GroupModel::createGroup(Group &group) {
@@ -77,4 +78,112 @@ bool GroupModel::removeAll(int userid) {
     }
 
     return mysql.update(sql);
+}
+
+std::vector<User> GroupModel::queryManagers(int groupid) {
+    std::string sql = "select userid from groupuser where groupid =" + std::to_string(groupid) + " and (grouprole = 'owner' or grouprole = 'admin');";
+    Mysql mysql;
+    std::vector<User> users;
+    if (!mysql.connect()) {
+        return users;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) {
+        return users;
+    }
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(res)) != nullptr) {
+        User user;
+        user.setId(atoi(row[0]));
+        users.push_back(user);
+    }
+    mysql_free_result(res);
+    return users;
+}
+
+bool GroupModel::isInGroup(int userid, int groupid) {
+    std::string sql ="select * from groupuser where userid="+ std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}
+
+bool GroupModel::isGroupExist(int groupid) {
+    std::string sql ="select * from groupuser where groupid="+ std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}
+
+bool GroupModel::isManager(int userid, int groupid) {
+    std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and (grouprole='owner' or grouprole='manager');";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}
+
+Group GroupModel::query(int groupid) {
+    Group group;
+    std::string sql = "select id, groupname, groupdesc from allgroup where id=" + std::to_string(groupid) + ";";
+
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return group;
+    }
+
+    if (MYSQL_RES* res = mysql.query(sql)) {
+        MYSQL_ROW row = mysql_fetch_row(res);
+        if (row != nullptr) {
+            group.setId(atoi(row[0]));
+            group.setName(row[1]);
+            group.setDesc(row[2]);
+        }
+        mysql_free_result(res);
+    }
+    return group;
+}
+
+std::string GroupModel::queryRole(int userid, int groupid) {
+    std::string sql = "select grouprole from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) return "";
+
+    MYSQL_RES* res = mysql.query(sql);
+    if(res = nullptr) return "";
+
+    MYSQL_ROW row = mysql_fetch_row(res);
+    std::string role;
+    if (row != nullptr) role = row[0];
+
+    mysql_free_result(res);
+    return role;
 }

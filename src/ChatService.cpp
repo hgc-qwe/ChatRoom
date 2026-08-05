@@ -404,26 +404,6 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
     }
 }
 
-void ChatService::addGroup(std::shared_ptr<TcpConnection> conn, const chat::AddGroupReq& req, chat::AddGroupRes& res) {
-    if (conn->getUserId() <= 0) {
-        res.set_err(1);
-        res.set_errmsg("please login first");
-        return;
-    }
-    if (conn->getUserId() != req.userid()) {
-        res.set_err(1);
-        res.set_errmsg("please login first");
-        return;
-    }
-    if (groupModel.addGroup(req.userid(), req.groupid(), "normal")) {
-        res.set_err(0);
-        res.set_errmsg("addGroup success");
-    } else {
-        res.set_err(1);
-        res.set_errmsg("addGroup failed");
-    }
-}
-
 void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
@@ -744,4 +724,167 @@ void ChatService::cancelAccount(std::shared_ptr<TcpConnection> conn, const chat:
 
     res.set_err(0);
     res.set_errmsg("cancel account success");
+}
+
+void ChatService::queryGroupreq(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReqReq& req, chat::QueryGroupReqRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int userid = conn->getUserId();
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isManager(userid, req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you arenot admin");
+        return;
+    }
+
+    auto group = groupModel.query(req.groupid());
+    auto requests = groupReqModel.query(req.groupid());
+    for (auto& r : requests) {
+        User user = userModel.query(r.getUserid());
+        auto item = res.add_requests();
+        item->set_userid(user.getId());
+        item->set_username(user.getName());
+        item->set_groupid(group.getId());
+        item->set_groupname(group.getName());
+    }
+    res.set_err(0);
+    res.set_errmsg("query success");
+    LOG_INFO("user {} query group {} requests", userid, req.groupid());
+}
+
+void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::AcceptGroupReq& req, chat::AcceptGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int adminid = conn->getUserId();
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isManager(adminid, req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you arenot admin");
+        return;
+    }
+    if (!groupReqModel.isApplied(req.userid(), req.groupid())) {
+    res.set_err(1);
+    res.set_errmsg("application not exist");
+    return;
+    }
+
+    if (!groupModel.addGroup(req.userid(), req.groupid(), "normal")) {
+        res.set_err(1);
+        res.set_errmsg("add group failed");
+        return;
+    }
+
+    if (!groupReqModel.update(req.groupid(), req.userid(), 1)) {
+        res.set_err(1);
+        res.set_errmsg("accept failed");
+        return;
+    }
+
+    auto target = getUserConn(req.userid());
+    if (target) {
+        chat::GroupAcceptNotify notify;
+        notify.set_groupid(req.groupid());
+        Group group = groupModel.query(req.groupid());
+        notify.set_groupname(group.getName());
+        std::string data;
+        notify.SerializeToString(&data);
+        target->sendMessage(MessageCodec::encode(chat::GROUP_ACCEPT_NOTIFY_MSG, data));
+    }
+    res.set_err(0);
+    res.set_errmsg("accept success");
+    LOG_INFO("admin {} accept user {} join group {}", adminid, req.userid(), req.groupid());
+}
+
+void ChatService::queryGroup(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReq& req, chat::QueryGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+
+    std::vector<Group> groups = groupModel.queryGroups(req.userid());
+    for (auto& g : groups) {
+        chat::Group* item = res.add_groups();
+        item->set_id(g.getId());
+        item->set_name(g.getName());
+        item->set_desc(g.getDesc());
+        item->set_role(groupModel.queryRole(req.userid(), g.getId()));
+    }
+    res.set_err(0);
+    res.set_errmsg("query groups success");
+    LOG_INFO("user {} query groups", req.userid());
+}
+
+void ChatService::applyGroup(std::shared_ptr<TcpConnection> conn, const chat::ApplyGroupReq& req, chat::ApplyGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are in group");
+        return;
+    }
+    if (groupReqModel.isApplied(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you applied");
+        return;
+    }
+    
+    if (!groupReqModel.insert(req.groupid(), req.userid())) {
+        res.set_err(1);
+        res.set_errmsg("apply failed");
+        return;
+    }
+    res.set_err(0);
+    res.set_errmsg("apply group success");
+
+    auto managers = groupModel.queryManagers(req.groupid());
+    User user = userModel.query(req.userid());
+    Group group = groupModel.query(req.groupid());
+    for (auto& manager : managers) {
+        auto target = getUserConn(manager.getId());
+        if (target) {
+            chat::GroupRequest notify;
+            notify.set_userid(req.userid());
+            notify.set_username(user.getName());
+            notify.set_groupid(req.groupid());
+            notify.set_groupname(group.getName());
+
+            std::string data;
+            notify.SerializeToString(&data);
+            target->sendMessage(MessageCodec::encode(chat::GROUP_NOTIFY_MSG, data));
+        }
+    }
+    LOG_INFO("user {} apply group {} success", req.userid(), req.groupid());
 }

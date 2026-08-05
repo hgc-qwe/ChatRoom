@@ -12,6 +12,7 @@ private:
 
 public:
     Group(const std::string& name, const std::string desc);
+    Group() = default;
 
     void setId(int id);
     int getId();
@@ -23,4 +24,5 @@ public:
     std::string getDesc();
 
     std::vector<GroupUser> getUsers();
+    void setUsers(const std::vector<GroupUser>& users);
 };

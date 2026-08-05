@@ -75,6 +75,24 @@ enum MsgTyp {
 
     CANCEL_ACCOUNT_MSG = 47;
     CANCEL_ACCOUNT_MSG_ACK = 48;
+
+    APPLY_GROUP_MSG = 49;
+    APPLY_GROUP_MSG_ACK = 50;
+
+    QUERY_GROUP_REQ_MSG = 51;
+    QUERY_GROUP_REQ_MSG_ACK = 52;
+
+    ACCEPT_GROUP_MSG = 53;
+    ACCEPT_GROUP_MSG_ACK = 54;
+
+    GROUP_NOTIFY_MSG = 55;
+    GROUP_NOTIFY_MSG_ACK = 56;
+
+    GROUP_ACCEPT_NOTIFY_MSG = 57;
+    GROUP_ACCEPT_NOTIFY_MSG_ACK = 58;
+
+    QUERY_GROUP_MSG = 59;
+    QUERY_GROUP_MSG_ACK = 60;
 }
 
 message OfflineMsg {
@@ -210,6 +228,7 @@ message Group {
     string name = 2;
     string desc = 3;
     repeated GroupUser users = 4;
+    string role = 5;
 }
 
 message HistoryMsgReq {
@@ -372,4 +391,56 @@ message CancelAccountReq {
 message CancelAccountRes {
     int32 err = 1;
     string errmsg = 2;
+}
+
+message ApplyGroupReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+}
+
+message ApplyGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message QueryGroupReqReq {
+    int32 groupid = 1;
+}
+
+message GroupRequest {
+    int32 userid = 1;
+    string username = 2;
+    int32 groupid = 3;
+    string groupname = 4;
+}
+
+message QueryGroupReqRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated GroupRequest requests = 3;
+}
+
+message AcceptGroupReq {
+    int32 groupid = 1;
+    int32 userid = 2;
+}
+
+message AcceptGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message QueryGroupReq {
+    int32 userid = 1;
+}
+
+message QueryGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated Group groups = 3;
+}
+
+message GroupAcceptNotify {
+    int32 groupid = 1;
+    string groupname = 2;
 }
