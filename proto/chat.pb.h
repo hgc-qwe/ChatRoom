@@ -163,6 +163,9 @@ extern GroupRequestDefaultTypeInternal _GroupRequest_default_instance_;
 class GroupUser;
 struct GroupUserDefaultTypeInternal;
 extern GroupUserDefaultTypeInternal _GroupUser_default_instance_;
+class GroupUserInfo;
+struct GroupUserInfoDefaultTypeInternal;
+extern GroupUserInfoDefaultTypeInternal _GroupUserInfo_default_instance_;
 class HistoryMsgReq;
 struct HistoryMsgReqDefaultTypeInternal;
 extern HistoryMsgReqDefaultTypeInternal _HistoryMsgReq_default_instance_;
@@ -226,12 +229,30 @@ extern QueryGroupReqResDefaultTypeInternal _QueryGroupReqRes_default_instance_;
 class QueryGroupRes;
 struct QueryGroupResDefaultTypeInternal;
 extern QueryGroupResDefaultTypeInternal _QueryGroupRes_default_instance_;
+class QueryGroupUserReq;
+struct QueryGroupUserReqDefaultTypeInternal;
+extern QueryGroupUserReqDefaultTypeInternal _QueryGroupUserReq_default_instance_;
+class QueryGroupUserRes;
+struct QueryGroupUserResDefaultTypeInternal;
+extern QueryGroupUserResDefaultTypeInternal _QueryGroupUserRes_default_instance_;
 class RegisterReq;
 struct RegisterReqDefaultTypeInternal;
 extern RegisterReqDefaultTypeInternal _RegisterReq_default_instance_;
 class RegisterRes;
 struct RegisterResDefaultTypeInternal;
 extern RegisterResDefaultTypeInternal _RegisterRes_default_instance_;
+class RemoveGroupAdminReq;
+struct RemoveGroupAdminReqDefaultTypeInternal;
+extern RemoveGroupAdminReqDefaultTypeInternal _RemoveGroupAdminReq_default_instance_;
+class RemoveGroupAdminRes;
+struct RemoveGroupAdminResDefaultTypeInternal;
+extern RemoveGroupAdminResDefaultTypeInternal _RemoveGroupAdminRes_default_instance_;
+class SetGroupAdminReq;
+struct SetGroupAdminReqDefaultTypeInternal;
+extern SetGroupAdminReqDefaultTypeInternal _SetGroupAdminReq_default_instance_;
+class SetGroupAdminRes;
+struct SetGroupAdminResDefaultTypeInternal;
+extern SetGroupAdminResDefaultTypeInternal _SetGroupAdminRes_default_instance_;
 class TransferOwnerReq;
 struct TransferOwnerReqDefaultTypeInternal;
 extern TransferOwnerReqDefaultTypeInternal _TransferOwnerReq_default_instance_;
@@ -282,6 +303,7 @@ template<> ::chat::GroupHistoryMsgReq* Arena::CreateMaybeMessage<::chat::GroupHi
 template<> ::chat::GroupHistoryMsgRes* Arena::CreateMaybeMessage<::chat::GroupHistoryMsgRes>(Arena*);
 template<> ::chat::GroupRequest* Arena::CreateMaybeMessage<::chat::GroupRequest>(Arena*);
 template<> ::chat::GroupUser* Arena::CreateMaybeMessage<::chat::GroupUser>(Arena*);
+template<> ::chat::GroupUserInfo* Arena::CreateMaybeMessage<::chat::GroupUserInfo>(Arena*);
 template<> ::chat::HistoryMsgReq* Arena::CreateMaybeMessage<::chat::HistoryMsgReq>(Arena*);
 template<> ::chat::HistoryMsgRes* Arena::CreateMaybeMessage<::chat::HistoryMsgRes>(Arena*);
 template<> ::chat::LeaveGroupReq* Arena::CreateMaybeMessage<::chat::LeaveGroupReq>(Arena*);
@@ -303,8 +325,14 @@ template<> ::chat::QueryGroupReq* Arena::CreateMaybeMessage<::chat::QueryGroupRe
 template<> ::chat::QueryGroupReqReq* Arena::CreateMaybeMessage<::chat::QueryGroupReqReq>(Arena*);
 template<> ::chat::QueryGroupReqRes* Arena::CreateMaybeMessage<::chat::QueryGroupReqRes>(Arena*);
 template<> ::chat::QueryGroupRes* Arena::CreateMaybeMessage<::chat::QueryGroupRes>(Arena*);
+template<> ::chat::QueryGroupUserReq* Arena::CreateMaybeMessage<::chat::QueryGroupUserReq>(Arena*);
+template<> ::chat::QueryGroupUserRes* Arena::CreateMaybeMessage<::chat::QueryGroupUserRes>(Arena*);
 template<> ::chat::RegisterReq* Arena::CreateMaybeMessage<::chat::RegisterReq>(Arena*);
 template<> ::chat::RegisterRes* Arena::CreateMaybeMessage<::chat::RegisterRes>(Arena*);
+template<> ::chat::RemoveGroupAdminReq* Arena::CreateMaybeMessage<::chat::RemoveGroupAdminReq>(Arena*);
+template<> ::chat::RemoveGroupAdminRes* Arena::CreateMaybeMessage<::chat::RemoveGroupAdminRes>(Arena*);
+template<> ::chat::SetGroupAdminReq* Arena::CreateMaybeMessage<::chat::SetGroupAdminReq>(Arena*);
+template<> ::chat::SetGroupAdminRes* Arena::CreateMaybeMessage<::chat::SetGroupAdminRes>(Arena*);
 template<> ::chat::TransferOwnerReq* Arena::CreateMaybeMessage<::chat::TransferOwnerReq>(Arena*);
 template<> ::chat::TransferOwnerRes* Arena::CreateMaybeMessage<::chat::TransferOwnerRes>(Arena*);
 template<> ::chat::User* Arena::CreateMaybeMessage<::chat::User>(Arena*);
@@ -379,12 +407,18 @@ enum MsgTyp : int {
   TRANSFER_OWNER_MSG_ACK = 64,
   DISSOLVE_GROUP_MSG = 65,
   DISSOLVE_GROUP_MSG_ACK = 66,
+  QUERY_GROUP_USER_MSG = 67,
+  QUERY_GROUP_USER_MSG_ACK = 68,
+  SET_GROUP_ADMIN_MSG = 69,
+  SET_GROUP_ADMIN_MSG_ACK = 70,
+  REMOVE_GROUP_ADMIN_MSG = 71,
+  REMOVE_GROUP_ADMIN_MSG_ACK = 72,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = DISSOLVE_GROUP_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = REMOVE_GROUP_ADMIN_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -11829,6 +11863,1197 @@ class DissolveGroupRes final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class QueryGroupUserReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.QueryGroupUserReq) */ {
+ public:
+  inline QueryGroupUserReq() : QueryGroupUserReq(nullptr) {}
+  ~QueryGroupUserReq() override;
+  explicit PROTOBUF_CONSTEXPR QueryGroupUserReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QueryGroupUserReq(const QueryGroupUserReq& from);
+  QueryGroupUserReq(QueryGroupUserReq&& from) noexcept
+    : QueryGroupUserReq() {
+    *this = ::std::move(from);
+  }
+
+  inline QueryGroupUserReq& operator=(const QueryGroupUserReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QueryGroupUserReq& operator=(QueryGroupUserReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QueryGroupUserReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QueryGroupUserReq* internal_default_instance() {
+    return reinterpret_cast<const QueryGroupUserReq*>(
+               &_QueryGroupUserReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    65;
+
+  friend void swap(QueryGroupUserReq& a, QueryGroupUserReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QueryGroupUserReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QueryGroupUserReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QueryGroupUserReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QueryGroupUserReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QueryGroupUserReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QueryGroupUserReq& from) {
+    QueryGroupUserReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QueryGroupUserReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.QueryGroupUserReq";
+  }
+  protected:
+  explicit QueryGroupUserReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+    kGroupidFieldNumber = 2,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // int32 groupid = 2;
+  void clear_groupid();
+  int32_t groupid() const;
+  void set_groupid(int32_t value);
+  private:
+  int32_t _internal_groupid() const;
+  void _internal_set_groupid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.QueryGroupUserReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    int32_t groupid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class QueryGroupUserRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.QueryGroupUserRes) */ {
+ public:
+  inline QueryGroupUserRes() : QueryGroupUserRes(nullptr) {}
+  ~QueryGroupUserRes() override;
+  explicit PROTOBUF_CONSTEXPR QueryGroupUserRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QueryGroupUserRes(const QueryGroupUserRes& from);
+  QueryGroupUserRes(QueryGroupUserRes&& from) noexcept
+    : QueryGroupUserRes() {
+    *this = ::std::move(from);
+  }
+
+  inline QueryGroupUserRes& operator=(const QueryGroupUserRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QueryGroupUserRes& operator=(QueryGroupUserRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QueryGroupUserRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QueryGroupUserRes* internal_default_instance() {
+    return reinterpret_cast<const QueryGroupUserRes*>(
+               &_QueryGroupUserRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    66;
+
+  friend void swap(QueryGroupUserRes& a, QueryGroupUserRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QueryGroupUserRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QueryGroupUserRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QueryGroupUserRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QueryGroupUserRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QueryGroupUserRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QueryGroupUserRes& from) {
+    QueryGroupUserRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QueryGroupUserRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.QueryGroupUserRes";
+  }
+  protected:
+  explicit QueryGroupUserRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUsersFieldNumber = 3,
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // repeated .chat.GroupUserInfo users = 3;
+  int users_size() const;
+  private:
+  int _internal_users_size() const;
+  public:
+  void clear_users();
+  ::chat::GroupUserInfo* mutable_users(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::GroupUserInfo >*
+      mutable_users();
+  private:
+  const ::chat::GroupUserInfo& _internal_users(int index) const;
+  ::chat::GroupUserInfo* _internal_add_users();
+  public:
+  const ::chat::GroupUserInfo& users(int index) const;
+  ::chat::GroupUserInfo* add_users();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::GroupUserInfo >&
+      users() const;
+
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.QueryGroupUserRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::GroupUserInfo > users_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class GroupUserInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.GroupUserInfo) */ {
+ public:
+  inline GroupUserInfo() : GroupUserInfo(nullptr) {}
+  ~GroupUserInfo() override;
+  explicit PROTOBUF_CONSTEXPR GroupUserInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  GroupUserInfo(const GroupUserInfo& from);
+  GroupUserInfo(GroupUserInfo&& from) noexcept
+    : GroupUserInfo() {
+    *this = ::std::move(from);
+  }
+
+  inline GroupUserInfo& operator=(const GroupUserInfo& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GroupUserInfo& operator=(GroupUserInfo&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GroupUserInfo& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GroupUserInfo* internal_default_instance() {
+    return reinterpret_cast<const GroupUserInfo*>(
+               &_GroupUserInfo_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    67;
+
+  friend void swap(GroupUserInfo& a, GroupUserInfo& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GroupUserInfo* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GroupUserInfo* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GroupUserInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GroupUserInfo>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const GroupUserInfo& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const GroupUserInfo& from) {
+    GroupUserInfo::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GroupUserInfo* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.GroupUserInfo";
+  }
+  protected:
+  explicit GroupUserInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUsernameFieldNumber = 2,
+    kRoleFieldNumber = 3,
+    kUseridFieldNumber = 1,
+  };
+  // string username = 2;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
+  public:
+
+  // string role = 3;
+  void clear_role();
+  const std::string& role() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_role(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_role();
+  PROTOBUF_NODISCARD std::string* release_role();
+  void set_allocated_role(std::string* role);
+  private:
+  const std::string& _internal_role() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_role(const std::string& value);
+  std::string* _internal_mutable_role();
+  public:
+
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.GroupUserInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr role_;
+    int32_t userid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SetGroupAdminReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.SetGroupAdminReq) */ {
+ public:
+  inline SetGroupAdminReq() : SetGroupAdminReq(nullptr) {}
+  ~SetGroupAdminReq() override;
+  explicit PROTOBUF_CONSTEXPR SetGroupAdminReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SetGroupAdminReq(const SetGroupAdminReq& from);
+  SetGroupAdminReq(SetGroupAdminReq&& from) noexcept
+    : SetGroupAdminReq() {
+    *this = ::std::move(from);
+  }
+
+  inline SetGroupAdminReq& operator=(const SetGroupAdminReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SetGroupAdminReq& operator=(SetGroupAdminReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SetGroupAdminReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SetGroupAdminReq* internal_default_instance() {
+    return reinterpret_cast<const SetGroupAdminReq*>(
+               &_SetGroupAdminReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    68;
+
+  friend void swap(SetGroupAdminReq& a, SetGroupAdminReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SetGroupAdminReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SetGroupAdminReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SetGroupAdminReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SetGroupAdminReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SetGroupAdminReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const SetGroupAdminReq& from) {
+    SetGroupAdminReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SetGroupAdminReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.SetGroupAdminReq";
+  }
+  protected:
+  explicit SetGroupAdminReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+    kGroupidFieldNumber = 2,
+    kTargetidFieldNumber = 3,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // int32 groupid = 2;
+  void clear_groupid();
+  int32_t groupid() const;
+  void set_groupid(int32_t value);
+  private:
+  int32_t _internal_groupid() const;
+  void _internal_set_groupid(int32_t value);
+  public:
+
+  // int32 targetid = 3;
+  void clear_targetid();
+  int32_t targetid() const;
+  void set_targetid(int32_t value);
+  private:
+  int32_t _internal_targetid() const;
+  void _internal_set_targetid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.SetGroupAdminReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    int32_t groupid_;
+    int32_t targetid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class SetGroupAdminRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.SetGroupAdminRes) */ {
+ public:
+  inline SetGroupAdminRes() : SetGroupAdminRes(nullptr) {}
+  ~SetGroupAdminRes() override;
+  explicit PROTOBUF_CONSTEXPR SetGroupAdminRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  SetGroupAdminRes(const SetGroupAdminRes& from);
+  SetGroupAdminRes(SetGroupAdminRes&& from) noexcept
+    : SetGroupAdminRes() {
+    *this = ::std::move(from);
+  }
+
+  inline SetGroupAdminRes& operator=(const SetGroupAdminRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline SetGroupAdminRes& operator=(SetGroupAdminRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const SetGroupAdminRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const SetGroupAdminRes* internal_default_instance() {
+    return reinterpret_cast<const SetGroupAdminRes*>(
+               &_SetGroupAdminRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    69;
+
+  friend void swap(SetGroupAdminRes& a, SetGroupAdminRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(SetGroupAdminRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(SetGroupAdminRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  SetGroupAdminRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<SetGroupAdminRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const SetGroupAdminRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const SetGroupAdminRes& from) {
+    SetGroupAdminRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(SetGroupAdminRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.SetGroupAdminRes";
+  }
+  protected:
+  explicit SetGroupAdminRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.SetGroupAdminRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class RemoveGroupAdminReq final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.RemoveGroupAdminReq) */ {
+ public:
+  inline RemoveGroupAdminReq() : RemoveGroupAdminReq(nullptr) {}
+  ~RemoveGroupAdminReq() override;
+  explicit PROTOBUF_CONSTEXPR RemoveGroupAdminReq(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RemoveGroupAdminReq(const RemoveGroupAdminReq& from);
+  RemoveGroupAdminReq(RemoveGroupAdminReq&& from) noexcept
+    : RemoveGroupAdminReq() {
+    *this = ::std::move(from);
+  }
+
+  inline RemoveGroupAdminReq& operator=(const RemoveGroupAdminReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RemoveGroupAdminReq& operator=(RemoveGroupAdminReq&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RemoveGroupAdminReq& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RemoveGroupAdminReq* internal_default_instance() {
+    return reinterpret_cast<const RemoveGroupAdminReq*>(
+               &_RemoveGroupAdminReq_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    70;
+
+  friend void swap(RemoveGroupAdminReq& a, RemoveGroupAdminReq& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RemoveGroupAdminReq* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RemoveGroupAdminReq* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RemoveGroupAdminReq* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RemoveGroupAdminReq>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RemoveGroupAdminReq& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const RemoveGroupAdminReq& from) {
+    RemoveGroupAdminReq::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RemoveGroupAdminReq* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.RemoveGroupAdminReq";
+  }
+  protected:
+  explicit RemoveGroupAdminReq(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUseridFieldNumber = 1,
+    kGroupidFieldNumber = 2,
+    kTargetidFieldNumber = 3,
+  };
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // int32 groupid = 2;
+  void clear_groupid();
+  int32_t groupid() const;
+  void set_groupid(int32_t value);
+  private:
+  int32_t _internal_groupid() const;
+  void _internal_set_groupid(int32_t value);
+  public:
+
+  // int32 targetid = 3;
+  void clear_targetid();
+  int32_t targetid() const;
+  void set_targetid(int32_t value);
+  private:
+  int32_t _internal_targetid() const;
+  void _internal_set_targetid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.RemoveGroupAdminReq)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    int32_t userid_;
+    int32_t groupid_;
+    int32_t targetid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
+// -------------------------------------------------------------------
+
+class RemoveGroupAdminRes final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.RemoveGroupAdminRes) */ {
+ public:
+  inline RemoveGroupAdminRes() : RemoveGroupAdminRes(nullptr) {}
+  ~RemoveGroupAdminRes() override;
+  explicit PROTOBUF_CONSTEXPR RemoveGroupAdminRes(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RemoveGroupAdminRes(const RemoveGroupAdminRes& from);
+  RemoveGroupAdminRes(RemoveGroupAdminRes&& from) noexcept
+    : RemoveGroupAdminRes() {
+    *this = ::std::move(from);
+  }
+
+  inline RemoveGroupAdminRes& operator=(const RemoveGroupAdminRes& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RemoveGroupAdminRes& operator=(RemoveGroupAdminRes&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RemoveGroupAdminRes& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RemoveGroupAdminRes* internal_default_instance() {
+    return reinterpret_cast<const RemoveGroupAdminRes*>(
+               &_RemoveGroupAdminRes_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    71;
+
+  friend void swap(RemoveGroupAdminRes& a, RemoveGroupAdminRes& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RemoveGroupAdminRes* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RemoveGroupAdminRes* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RemoveGroupAdminRes* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RemoveGroupAdminRes>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RemoveGroupAdminRes& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const RemoveGroupAdminRes& from) {
+    RemoveGroupAdminRes::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RemoveGroupAdminRes* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.RemoveGroupAdminRes";
+  }
+  protected:
+  explicit RemoveGroupAdminRes(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kErrmsgFieldNumber = 2,
+    kErrFieldNumber = 1,
+  };
+  // string errmsg = 2;
+  void clear_errmsg();
+  const std::string& errmsg() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_errmsg(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_errmsg();
+  PROTOBUF_NODISCARD std::string* release_errmsg();
+  void set_allocated_errmsg(std::string* errmsg);
+  private:
+  const std::string& _internal_errmsg() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_errmsg(const std::string& value);
+  std::string* _internal_mutable_errmsg();
+  public:
+
+  // int32 err = 1;
+  void clear_err();
+  int32_t err() const;
+  void set_err(int32_t value);
+  private:
+  int32_t _internal_err() const;
+  void _internal_set_err(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.RemoveGroupAdminRes)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr errmsg_;
+    int32_t err_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -18286,9 +19511,581 @@ inline void DissolveGroupRes::set_allocated_errmsg(std::string* errmsg) {
   // @@protoc_insertion_point(field_set_allocated:chat.DissolveGroupRes.errmsg)
 }
 
+// -------------------------------------------------------------------
+
+// QueryGroupUserReq
+
+// int32 userid = 1;
+inline void QueryGroupUserReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t QueryGroupUserReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t QueryGroupUserReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.QueryGroupUserReq.userid)
+  return _internal_userid();
+}
+inline void QueryGroupUserReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void QueryGroupUserReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.QueryGroupUserReq.userid)
+}
+
+// int32 groupid = 2;
+inline void QueryGroupUserReq::clear_groupid() {
+  _impl_.groupid_ = 0;
+}
+inline int32_t QueryGroupUserReq::_internal_groupid() const {
+  return _impl_.groupid_;
+}
+inline int32_t QueryGroupUserReq::groupid() const {
+  // @@protoc_insertion_point(field_get:chat.QueryGroupUserReq.groupid)
+  return _internal_groupid();
+}
+inline void QueryGroupUserReq::_internal_set_groupid(int32_t value) {
+  
+  _impl_.groupid_ = value;
+}
+inline void QueryGroupUserReq::set_groupid(int32_t value) {
+  _internal_set_groupid(value);
+  // @@protoc_insertion_point(field_set:chat.QueryGroupUserReq.groupid)
+}
+
+// -------------------------------------------------------------------
+
+// QueryGroupUserRes
+
+// int32 err = 1;
+inline void QueryGroupUserRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t QueryGroupUserRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t QueryGroupUserRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.QueryGroupUserRes.err)
+  return _internal_err();
+}
+inline void QueryGroupUserRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void QueryGroupUserRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.QueryGroupUserRes.err)
+}
+
+// string errmsg = 2;
+inline void QueryGroupUserRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& QueryGroupUserRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.QueryGroupUserRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void QueryGroupUserRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.QueryGroupUserRes.errmsg)
+}
+inline std::string* QueryGroupUserRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.QueryGroupUserRes.errmsg)
+  return _s;
+}
+inline const std::string& QueryGroupUserRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void QueryGroupUserRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* QueryGroupUserRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* QueryGroupUserRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.QueryGroupUserRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void QueryGroupUserRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.QueryGroupUserRes.errmsg)
+}
+
+// repeated .chat.GroupUserInfo users = 3;
+inline int QueryGroupUserRes::_internal_users_size() const {
+  return _impl_.users_.size();
+}
+inline int QueryGroupUserRes::users_size() const {
+  return _internal_users_size();
+}
+inline void QueryGroupUserRes::clear_users() {
+  _impl_.users_.Clear();
+}
+inline ::chat::GroupUserInfo* QueryGroupUserRes::mutable_users(int index) {
+  // @@protoc_insertion_point(field_mutable:chat.QueryGroupUserRes.users)
+  return _impl_.users_.Mutable(index);
+}
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::GroupUserInfo >*
+QueryGroupUserRes::mutable_users() {
+  // @@protoc_insertion_point(field_mutable_list:chat.QueryGroupUserRes.users)
+  return &_impl_.users_;
+}
+inline const ::chat::GroupUserInfo& QueryGroupUserRes::_internal_users(int index) const {
+  return _impl_.users_.Get(index);
+}
+inline const ::chat::GroupUserInfo& QueryGroupUserRes::users(int index) const {
+  // @@protoc_insertion_point(field_get:chat.QueryGroupUserRes.users)
+  return _internal_users(index);
+}
+inline ::chat::GroupUserInfo* QueryGroupUserRes::_internal_add_users() {
+  return _impl_.users_.Add();
+}
+inline ::chat::GroupUserInfo* QueryGroupUserRes::add_users() {
+  ::chat::GroupUserInfo* _add = _internal_add_users();
+  // @@protoc_insertion_point(field_add:chat.QueryGroupUserRes.users)
+  return _add;
+}
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::chat::GroupUserInfo >&
+QueryGroupUserRes::users() const {
+  // @@protoc_insertion_point(field_list:chat.QueryGroupUserRes.users)
+  return _impl_.users_;
+}
+
+// -------------------------------------------------------------------
+
+// GroupUserInfo
+
+// int32 userid = 1;
+inline void GroupUserInfo::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t GroupUserInfo::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t GroupUserInfo::userid() const {
+  // @@protoc_insertion_point(field_get:chat.GroupUserInfo.userid)
+  return _internal_userid();
+}
+inline void GroupUserInfo::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void GroupUserInfo::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.GroupUserInfo.userid)
+}
+
+// string username = 2;
+inline void GroupUserInfo::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& GroupUserInfo::username() const {
+  // @@protoc_insertion_point(field_get:chat.GroupUserInfo.username)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GroupUserInfo::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.GroupUserInfo.username)
+}
+inline std::string* GroupUserInfo::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:chat.GroupUserInfo.username)
+  return _s;
+}
+inline const std::string& GroupUserInfo::_internal_username() const {
+  return _impl_.username_.Get();
+}
+inline void GroupUserInfo::_internal_set_username(const std::string& value) {
+  
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GroupUserInfo::_internal_mutable_username() {
+  
+  return _impl_.username_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GroupUserInfo::release_username() {
+  // @@protoc_insertion_point(field_release:chat.GroupUserInfo.username)
+  return _impl_.username_.Release();
+}
+inline void GroupUserInfo::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.username_.IsDefault()) {
+    _impl_.username_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.GroupUserInfo.username)
+}
+
+// string role = 3;
+inline void GroupUserInfo::clear_role() {
+  _impl_.role_.ClearToEmpty();
+}
+inline const std::string& GroupUserInfo::role() const {
+  // @@protoc_insertion_point(field_get:chat.GroupUserInfo.role)
+  return _internal_role();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void GroupUserInfo::set_role(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.role_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.GroupUserInfo.role)
+}
+inline std::string* GroupUserInfo::mutable_role() {
+  std::string* _s = _internal_mutable_role();
+  // @@protoc_insertion_point(field_mutable:chat.GroupUserInfo.role)
+  return _s;
+}
+inline const std::string& GroupUserInfo::_internal_role() const {
+  return _impl_.role_.Get();
+}
+inline void GroupUserInfo::_internal_set_role(const std::string& value) {
+  
+  _impl_.role_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GroupUserInfo::_internal_mutable_role() {
+  
+  return _impl_.role_.Mutable(GetArenaForAllocation());
+}
+inline std::string* GroupUserInfo::release_role() {
+  // @@protoc_insertion_point(field_release:chat.GroupUserInfo.role)
+  return _impl_.role_.Release();
+}
+inline void GroupUserInfo::set_allocated_role(std::string* role) {
+  if (role != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.role_.SetAllocated(role, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.role_.IsDefault()) {
+    _impl_.role_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.GroupUserInfo.role)
+}
+
+// -------------------------------------------------------------------
+
+// SetGroupAdminReq
+
+// int32 userid = 1;
+inline void SetGroupAdminReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t SetGroupAdminReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t SetGroupAdminReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.SetGroupAdminReq.userid)
+  return _internal_userid();
+}
+inline void SetGroupAdminReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void SetGroupAdminReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.SetGroupAdminReq.userid)
+}
+
+// int32 groupid = 2;
+inline void SetGroupAdminReq::clear_groupid() {
+  _impl_.groupid_ = 0;
+}
+inline int32_t SetGroupAdminReq::_internal_groupid() const {
+  return _impl_.groupid_;
+}
+inline int32_t SetGroupAdminReq::groupid() const {
+  // @@protoc_insertion_point(field_get:chat.SetGroupAdminReq.groupid)
+  return _internal_groupid();
+}
+inline void SetGroupAdminReq::_internal_set_groupid(int32_t value) {
+  
+  _impl_.groupid_ = value;
+}
+inline void SetGroupAdminReq::set_groupid(int32_t value) {
+  _internal_set_groupid(value);
+  // @@protoc_insertion_point(field_set:chat.SetGroupAdminReq.groupid)
+}
+
+// int32 targetid = 3;
+inline void SetGroupAdminReq::clear_targetid() {
+  _impl_.targetid_ = 0;
+}
+inline int32_t SetGroupAdminReq::_internal_targetid() const {
+  return _impl_.targetid_;
+}
+inline int32_t SetGroupAdminReq::targetid() const {
+  // @@protoc_insertion_point(field_get:chat.SetGroupAdminReq.targetid)
+  return _internal_targetid();
+}
+inline void SetGroupAdminReq::_internal_set_targetid(int32_t value) {
+  
+  _impl_.targetid_ = value;
+}
+inline void SetGroupAdminReq::set_targetid(int32_t value) {
+  _internal_set_targetid(value);
+  // @@protoc_insertion_point(field_set:chat.SetGroupAdminReq.targetid)
+}
+
+// -------------------------------------------------------------------
+
+// SetGroupAdminRes
+
+// int32 err = 1;
+inline void SetGroupAdminRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t SetGroupAdminRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t SetGroupAdminRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.SetGroupAdminRes.err)
+  return _internal_err();
+}
+inline void SetGroupAdminRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void SetGroupAdminRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.SetGroupAdminRes.err)
+}
+
+// string errmsg = 2;
+inline void SetGroupAdminRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& SetGroupAdminRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.SetGroupAdminRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void SetGroupAdminRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.SetGroupAdminRes.errmsg)
+}
+inline std::string* SetGroupAdminRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.SetGroupAdminRes.errmsg)
+  return _s;
+}
+inline const std::string& SetGroupAdminRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void SetGroupAdminRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* SetGroupAdminRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* SetGroupAdminRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.SetGroupAdminRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void SetGroupAdminRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.SetGroupAdminRes.errmsg)
+}
+
+// -------------------------------------------------------------------
+
+// RemoveGroupAdminReq
+
+// int32 userid = 1;
+inline void RemoveGroupAdminReq::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t RemoveGroupAdminReq::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t RemoveGroupAdminReq::userid() const {
+  // @@protoc_insertion_point(field_get:chat.RemoveGroupAdminReq.userid)
+  return _internal_userid();
+}
+inline void RemoveGroupAdminReq::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void RemoveGroupAdminReq::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.RemoveGroupAdminReq.userid)
+}
+
+// int32 groupid = 2;
+inline void RemoveGroupAdminReq::clear_groupid() {
+  _impl_.groupid_ = 0;
+}
+inline int32_t RemoveGroupAdminReq::_internal_groupid() const {
+  return _impl_.groupid_;
+}
+inline int32_t RemoveGroupAdminReq::groupid() const {
+  // @@protoc_insertion_point(field_get:chat.RemoveGroupAdminReq.groupid)
+  return _internal_groupid();
+}
+inline void RemoveGroupAdminReq::_internal_set_groupid(int32_t value) {
+  
+  _impl_.groupid_ = value;
+}
+inline void RemoveGroupAdminReq::set_groupid(int32_t value) {
+  _internal_set_groupid(value);
+  // @@protoc_insertion_point(field_set:chat.RemoveGroupAdminReq.groupid)
+}
+
+// int32 targetid = 3;
+inline void RemoveGroupAdminReq::clear_targetid() {
+  _impl_.targetid_ = 0;
+}
+inline int32_t RemoveGroupAdminReq::_internal_targetid() const {
+  return _impl_.targetid_;
+}
+inline int32_t RemoveGroupAdminReq::targetid() const {
+  // @@protoc_insertion_point(field_get:chat.RemoveGroupAdminReq.targetid)
+  return _internal_targetid();
+}
+inline void RemoveGroupAdminReq::_internal_set_targetid(int32_t value) {
+  
+  _impl_.targetid_ = value;
+}
+inline void RemoveGroupAdminReq::set_targetid(int32_t value) {
+  _internal_set_targetid(value);
+  // @@protoc_insertion_point(field_set:chat.RemoveGroupAdminReq.targetid)
+}
+
+// -------------------------------------------------------------------
+
+// RemoveGroupAdminRes
+
+// int32 err = 1;
+inline void RemoveGroupAdminRes::clear_err() {
+  _impl_.err_ = 0;
+}
+inline int32_t RemoveGroupAdminRes::_internal_err() const {
+  return _impl_.err_;
+}
+inline int32_t RemoveGroupAdminRes::err() const {
+  // @@protoc_insertion_point(field_get:chat.RemoveGroupAdminRes.err)
+  return _internal_err();
+}
+inline void RemoveGroupAdminRes::_internal_set_err(int32_t value) {
+  
+  _impl_.err_ = value;
+}
+inline void RemoveGroupAdminRes::set_err(int32_t value) {
+  _internal_set_err(value);
+  // @@protoc_insertion_point(field_set:chat.RemoveGroupAdminRes.err)
+}
+
+// string errmsg = 2;
+inline void RemoveGroupAdminRes::clear_errmsg() {
+  _impl_.errmsg_.ClearToEmpty();
+}
+inline const std::string& RemoveGroupAdminRes::errmsg() const {
+  // @@protoc_insertion_point(field_get:chat.RemoveGroupAdminRes.errmsg)
+  return _internal_errmsg();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void RemoveGroupAdminRes::set_errmsg(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.errmsg_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.RemoveGroupAdminRes.errmsg)
+}
+inline std::string* RemoveGroupAdminRes::mutable_errmsg() {
+  std::string* _s = _internal_mutable_errmsg();
+  // @@protoc_insertion_point(field_mutable:chat.RemoveGroupAdminRes.errmsg)
+  return _s;
+}
+inline const std::string& RemoveGroupAdminRes::_internal_errmsg() const {
+  return _impl_.errmsg_.Get();
+}
+inline void RemoveGroupAdminRes::_internal_set_errmsg(const std::string& value) {
+  
+  _impl_.errmsg_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RemoveGroupAdminRes::_internal_mutable_errmsg() {
+  
+  return _impl_.errmsg_.Mutable(GetArenaForAllocation());
+}
+inline std::string* RemoveGroupAdminRes::release_errmsg() {
+  // @@protoc_insertion_point(field_release:chat.RemoveGroupAdminRes.errmsg)
+  return _impl_.errmsg_.Release();
+}
+inline void RemoveGroupAdminRes::set_allocated_errmsg(std::string* errmsg) {
+  if (errmsg != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.errmsg_.SetAllocated(errmsg, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.errmsg_.IsDefault()) {
+    _impl_.errmsg_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.RemoveGroupAdminRes.errmsg)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

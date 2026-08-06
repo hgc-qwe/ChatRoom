@@ -4,12 +4,12 @@
 
 class GroupUser {
 private:
-    std::string Role;
+    std::string role;
 
 public:
     User user;
 
-    void setRole(std::string& role);
+    void setRole(const std::string& role);
 
-    std::string getRole();
+    std::string getRole() const;
 };

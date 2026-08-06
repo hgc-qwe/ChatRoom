@@ -102,6 +102,15 @@ enum MsgTyp {
 
     DISSOLVE_GROUP_MSG = 65;
     DISSOLVE_GROUP_MSG_ACK = 66;
+
+    QUERY_GROUP_USER_MSG = 67;
+    QUERY_GROUP_USER_MSG_ACK = 68;
+
+    SET_GROUP_ADMIN_MSG = 69;
+    SET_GROUP_ADMIN_MSG_ACK = 70;
+
+    REMOVE_GROUP_ADMIN_MSG = 71;
+    REMOVE_GROUP_ADMIN_MSG_ACK = 72;
 }
 
 message OfflineMsg {
@@ -481,6 +490,45 @@ message DissolveGroupReq {
 }
 
 message DissolveGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message QueryGroupUserReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+}
+
+message QueryGroupUserRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated GroupUserInfo users = 3;
+}
+
+message GroupUserInfo {
+    int32 userid = 1;
+    string username = 2;
+    string role = 3;
+}
+
+message SetGroupAdminReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+    int32 targetid = 3;
+}
+
+message SetGroupAdminRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message RemoveGroupAdminReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+    int32 targetid = 3;
+}
+
+message RemoveGroupAdminRes {
     int32 err = 1;
     string errmsg = 2;
 }

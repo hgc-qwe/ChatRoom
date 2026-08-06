@@ -82,6 +82,12 @@ public:
 
     void dissolveGroup(std::shared_ptr<TcpConnection> conn, const chat::DissolveGroupReq& req, chat::DissolveGroupRes& res);
 
+    void queryGroupUsers(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupUserReq& req, chat::QueryGroupUserRes& res);
+
+    void setGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::SetGroupAdminReq& req, chat::SetGroupAdminRes& res);
+
+    void removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupAdminReq& req, chat::RemoveGroupAdminRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);

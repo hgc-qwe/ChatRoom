@@ -39,4 +39,6 @@ public:
     bool isOwner(int userid, int groupid);
 
     bool isAdmin(int userid, int groupid);
+
+    std::vector<GroupUser> queryUsers(int groupid);
 };

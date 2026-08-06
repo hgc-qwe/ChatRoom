@@ -977,3 +977,113 @@ void ChatService::dissolveGroup(std::shared_ptr<TcpConnection> conn, const chat:
     res.set_err(1);
     res.set_errmsg("dissolve group failed");
 }
+
+void ChatService::queryGroupUsers(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupUserReq& req, chat::QueryGroupUserRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    auto users = groupModel.queryUsers(req.groupid());
+    for (auto& user : users) {
+        auto item = res.add_users();
+        item->set_userid(user.user.getId());
+        item->set_username(user.user.getName());
+        item->set_role(user.getRole());
+    }
+    res.set_err(0);
+    res.set_errmsg("query success");
+    LOG_INFO("user {} query group {} users", req.userid(), req.groupid());
+}
+
+void ChatService::setGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::SetGroupAdminReq& req, chat::SetGroupAdminRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    if (!groupModel.isOwner(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not owner");
+        return;
+    }
+    if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("target is not in group");
+        return;
+    }
+    if (groupModel.isManager(req.targetid(), req.groupid())) {
+        res.set_err(0);
+        res.set_errmsg("target are not normal");
+        return;
+    }
+    if (groupModel.updateRole(req.targetid(), req.groupid(), "admin")) {
+        res.set_err(0);
+        res.set_errmsg("set group admin success");
+        LOG_INFO("owner {} set group {} admin {}", req.userid(), req.groupid(), req.targetid());
+        return;
+    }
+    res.set_err(1);
+    res.set_errmsg("set group admin failed");
+}
+
+void ChatService::removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupAdminReq& req, chat::RemoveGroupAdminRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    if (!groupModel.isOwner(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not owner");
+        return;
+    }
+    if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("target is not in group");
+        return;
+    }
+    if (!groupModel.isAdmin(req.targetid(), req.groupid())) {
+        res.set_err(0);
+        res.set_errmsg("target are not admin");
+        return;
+    }
+    if (groupModel.updateRole(req.targetid(), req.groupid(), "normal")) {
+        res.set_err(0);
+        res.set_errmsg("remove group admin success");
+        LOG_INFO("owner {} remove group {} admin {}", req.userid(), req.groupid(), req.targetid());
+        return;
+    }
+    res.set_err(1);
+    res.set_errmsg("remove group admin failed");
+}

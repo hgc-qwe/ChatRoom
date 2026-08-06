@@ -839,7 +839,7 @@ void recvMessage(int sockfd)
 
                 cout << res.errmsg() << endl;
 
-                if(res.err() == 2)        // 群主不能直接退群
+                if(res.err() == 2)       
                 {
                     cout << "\nYou are owner.\n";
                     cout << "18. transfer owner\n";
@@ -858,6 +858,40 @@ void recvMessage(int sockfd)
             else if(msgid == chat::DISSOLVE_GROUP_MSG_ACK)
             {
                 chat::DissolveGroupRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+            }
+
+            else if(msgid == chat::QUERY_GROUP_USER_MSG_ACK)
+            {
+                chat::QueryGroupUserRes res;
+
+                res.ParseFromString(body);
+
+                cout<<res.errmsg()<<endl;
+
+                for(auto &u : res.users())
+                {
+                    cout
+                    <<"userid:"<<u.userid()
+                    <<" username:"<<u.username()
+                    <<" role:"<<u.role()
+                    <<endl;
+                }
+            }
+
+            else if(msgid == chat::SET_GROUP_ADMIN_MSG_ACK)
+            {
+                chat::SetGroupAdminRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+            }
+
+            else if(msgid == chat::REMOVE_GROUP_ADMIN_MSG_ACK)
+            {
+                chat::RemoveGroupAdminRes res;
                 res.ParseFromString(body);
 
                 cout << res.errmsg() << endl;
@@ -940,6 +974,9 @@ int main()
         cout<<"17 leave group\n";
         cout<<"18 transfer owner\n";
         cout<<"19 dissolve group\n";
+        cout<<"20 query group users\n";
+        cout<<"21 set group admin\n";
+        cout<<"22 remove group admin\n";
         cout<<"0 exit\n";
 
 
@@ -1605,6 +1642,88 @@ int main()
 
             packet = MessageCodec::encode(
                 chat::DISSOLVE_GROUP_MSG,
+                data
+            );
+        }
+
+        else if (op == 20) {
+            chat::QueryGroupUserReq req;
+
+            int userid;
+            int groupid;
+
+            cout<<"userid:";
+            cin>>userid;
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+
+            req.SerializeToString(&data);
+
+            packet =
+            MessageCodec::encode(
+                chat::QUERY_GROUP_USER_MSG,
+                data
+            );
+        }
+
+        else if (op == 21) {
+            chat::SetGroupAdminReq req;
+
+            int userid;
+            int groupid;
+            int targetid;
+
+            cout<<"userid:";
+            cin>>userid;
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+            cout<<"targetid:";
+            cin>>targetid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+            req.set_targetid(targetid);
+
+            req.SerializeToString(&data);
+
+            packet =
+            MessageCodec::encode(
+                chat::SET_GROUP_ADMIN_MSG,
+                data
+            );
+        }
+
+        else if (op == 22) {
+            chat::RemoveGroupAdminReq req;
+
+            int userid;
+            int groupid;
+            int targetid;
+
+            cout<<"userid:";
+            cin>>userid;
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+            cout<<"targetid:";
+            cin>>targetid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+            req.set_targetid(targetid);
+
+            req.SerializeToString(&data);
+
+            packet =
+            MessageCodec::encode(
+                chat::REMOVE_GROUP_ADMIN_MSG,
                 data
             );
         }

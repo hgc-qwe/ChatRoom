@@ -256,3 +256,27 @@ bool GroupModel::isAdmin(int userid, int groupid) {
     }
     return false;
 }
+
+std::vector<GroupUser> GroupModel::queryUsers(int groupid) {
+    std::string sql = "select u.id,u.name,gu.grouprole from groupuser gu inner join user u on gu.userid=u.id where gu.groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    std::vector<GroupUser> users;
+    if (!mysql.connect()) {
+        return users;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) return users;
+
+    MYSQL_ROW row;
+    while ((row = mysql_fetch_row(res)) != nullptr) {
+        GroupUser user;
+
+        user.user.setId(atoi(row[0]));
+        user.user.setName(row[1]);
+        user.setRole(row[2]);
+        users.push_back(user);
+    }
+    mysql_free_result(res);
+    return users;
+}

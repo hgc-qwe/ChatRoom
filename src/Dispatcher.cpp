@@ -313,6 +313,42 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::DISSOLVE_GROUP_MSG_ACK, response);
         }
+        case chat::QUERY_GROUP_USER_MSG: {
+            chat::QueryGroupUserReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryGroupUserReq parse failed");
+                return "";
+            }
+            chat::QueryGroupUserRes res;
+            ChatService::instance()->queryGroupUsers(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_GROUP_USER_MSG_ACK, response);
+        }
+        case chat::SET_GROUP_ADMIN_MSG: {
+            chat::SetGroupAdminReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("SetGroupAdminReq parse failed");
+                return "";
+            }
+            chat::SetGroupAdminRes res;
+            ChatService::instance()->setGroupAdmin(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::SET_GROUP_ADMIN_MSG_ACK, response);
+        }
+        case chat::REMOVE_GROUP_ADMIN_MSG: {
+            chat::RemoveGroupAdminReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("RemoveGroupAdminReq parse failed");
+                return "";
+            }
+            chat::RemoveGroupAdminRes res;
+            ChatService::instance()->removeGroupAdmin(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::REMOVE_GROUP_ADMIN_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";
