@@ -27,4 +27,16 @@ public:
     bool isManager(int userid, int groupid);
 
     Group query(int groupid);
+
+    bool leaveGroup(int userid, int groupid);
+
+    bool removeUser(int userid, int groupid);
+
+    bool updateRole(int userid, int groupid, const std::string& role);
+
+    bool removeGroup(int groupid);
+
+    bool isOwner(int userid, int groupid);
+
+    bool isAdmin(int userid, int groupid);
 };

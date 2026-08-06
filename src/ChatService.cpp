@@ -888,3 +888,92 @@ void ChatService::applyGroup(std::shared_ptr<TcpConnection> conn, const chat::Ap
     }
     LOG_INFO("user {} apply group {} success", req.userid(), req.groupid());
 }
+
+void ChatService::leaveGroup(std::shared_ptr<TcpConnection> conn, const chat::LeaveGroupReq& req, chat::LeaveGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    if (groupModel.isOwner(req.userid(), req.groupid())) {
+        res.set_err(2);
+        res.set_errmsg("please transfer owner or dissolve group");
+        return;
+    }
+    if (groupModel.leaveGroup(req.userid(), req.groupid())) {
+        res.set_err(0);
+        res.set_errmsg("leave group success");
+        LOG_INFO("user {} leave group {}", req.userid(), req.groupid());
+    } else {
+        res.set_err(1);
+        res.set_errmsg("leave group failed");
+    }
+}
+
+void ChatService::transferOwner(std::shared_ptr<TcpConnection> conn, const chat::TransferOwnerReq& req, chat::TransferOwnerRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (groupModel.isOwner(req.oldownerid(), req.groupid())) {
+        if (groupModel.isInGroup(req.newownerid(), req.groupid())) {
+            if (groupModel.updateRole(req.oldownerid(), req.groupid(), "normal") && groupModel.updateRole(req.newownerid(), req.groupid(), "owner")) {
+                res.set_err(0);
+                res.set_errmsg("transfer owner success");
+                LOG_INFO("oldowner {} transfer newowner {} success", req.oldownerid(), req.newownerid());
+                return;
+            }
+        }
+    }
+    res.set_err(1);
+    res.set_errmsg("transfer owner failed");
+}
+
+void ChatService::dissolveGroup(std::shared_ptr<TcpConnection> conn, const chat::DissolveGroupReq& req, chat::DissolveGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    if (groupModel.isOwner(req.userid(), req.groupid())) {
+        if (groupModel.removeGroup(req.groupid())) {
+            res.set_err(0);
+            res.set_errmsg("dissolve group success");
+            LOG_INFO("owner {} dissolve group {} success", req.userid(), req.groupid());
+            return;
+        }
+    }
+    res.set_err(1);
+    res.set_errmsg("dissolve group failed");
+}

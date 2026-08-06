@@ -277,6 +277,42 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::APPLY_GROUP_MSG_ACK, response);
         }
+        case chat::LEAVE_GROUP_MSG: {
+            chat::LeaveGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("LeaveGroupReq parse failed");
+                return "";
+            }
+            chat::LeaveGroupRes res;
+            ChatService::instance()->leaveGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::LEAVE_GROUP_MSG_ACK, response);
+        }
+        case chat::TRANSFER_OWNER_MSG: {
+            chat::TransferOwnerReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("TransferOwnerReq parse failed");
+                return "";
+            }
+            chat::TransferOwnerRes res;
+            ChatService::instance()->transferOwner(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::TRANSFER_OWNER_MSG_ACK, response);
+        }
+        case chat::DISSOLVE_GROUP_MSG: {
+            chat::DissolveGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("DissolveGroupReq parse failed");
+                return "";
+            }
+            chat::DissolveGroupRes res;
+            ChatService::instance()->dissolveGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::DISSOLVE_GROUP_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

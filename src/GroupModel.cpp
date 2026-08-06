@@ -187,3 +187,72 @@ std::string GroupModel::queryRole(int userid, int groupid) {
     mysql_free_result(res);
     return role;
 }
+
+bool GroupModel::leaveGroup(int userid, int groupid) {
+    std::string sql = "delete from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}
+
+bool GroupModel::removeUser(int userid, int groupid) {
+    std::string sql = "delete from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}
+
+bool GroupModel::updateRole(int userid, int groupid, const std::string& role) {
+    std::string sql = "update groupuser set grouprole='" + role + "' where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}
+
+bool GroupModel::removeGroup(int groupid) {
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    mysql.update("delete from groupuser where groupid=" + std::to_string(groupid) + ";");
+    mysql.update("delete from group_request where groupid=" + std::to_string(groupid) + ";");
+    mysql.update("delete from group_message where groupid=" + std::to_string(groupid) + ";");
+    return mysql.update("delete from allgroup where id=" + std::to_string(groupid) + ";");
+}
+
+bool GroupModel::isOwner(int userid, int groupid) {
+    std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and grouprole='owner';";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}
+
+bool GroupModel::isAdmin(int userid, int groupid) {
+    std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and grouprole='admin';";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}

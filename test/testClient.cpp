@@ -832,6 +832,36 @@ void recvMessage(int sockfd)
                 }
             }
 
+            else if(msgid == chat::LEAVE_GROUP_MSG_ACK)
+            {
+                chat::LeaveGroupRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+
+                if(res.err() == 2)        // 群主不能直接退群
+                {
+                    cout << "\nYou are owner.\n";
+                    cout << "18. transfer owner\n";
+                    cout << "19. dissolve group\n";
+                }
+            }
+
+            else if(msgid == chat::TRANSFER_OWNER_MSG_ACK)
+            {
+                chat::TransferOwnerRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+            }
+
+            else if(msgid == chat::DISSOLVE_GROUP_MSG_ACK)
+            {
+                chat::DissolveGroupRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+            }
 
             cout<<"\n";
         }
@@ -907,6 +937,9 @@ int main()
         cout<<"14 apply group\n";
         cout<<"15 query group request\n";
         cout<<"16 accept group\n";
+        cout<<"17 leave group\n";
+        cout<<"18 transfer owner\n";
+        cout<<"19 dissolve group\n";
         cout<<"0 exit\n";
 
 
@@ -1495,6 +1528,83 @@ int main()
             packet =
             MessageCodec::encode(
                 chat::ACCEPT_GROUP_MSG,
+                data
+            );
+        }
+
+        else if(op == 17)
+        {
+            chat::LeaveGroupReq req;
+
+            int userid;
+            int groupid;
+
+            cout << "userid:";
+            cin >> userid;
+
+            cout << "groupid:";
+            cin >> groupid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(
+                chat::LEAVE_GROUP_MSG,
+                data
+            );
+        }
+
+        else if(op == 18)
+        {
+            chat::TransferOwnerReq req;
+
+            int oldownerid;
+            int newownerid;
+            int groupid;
+
+            cout << "old owner:";
+            cin >> oldownerid;
+
+            cout << "new owner:";
+            cin >> newownerid;
+
+            cout << "groupid:";
+            cin >> groupid;
+
+            req.set_oldownerid(oldownerid);
+            req.set_newownerid(newownerid);
+            req.set_groupid(groupid);
+
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(
+                chat::TRANSFER_OWNER_MSG,
+                data
+            );
+        }
+
+        else if(op == 19)
+        {
+            chat::DissolveGroupReq req;
+
+            int userid;
+            int groupid;
+
+            cout << "userid:";
+            cin >> userid;
+
+            cout << "groupid:";
+            cin >> groupid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(
+                chat::DISSOLVE_GROUP_MSG,
                 data
             );
         }

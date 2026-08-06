@@ -93,6 +93,15 @@ enum MsgTyp {
 
     QUERY_GROUP_MSG = 59;
     QUERY_GROUP_MSG_ACK = 60;
+
+    LEAVE_GROUP_MSG = 61;
+    LEAVE_GROUP_MSG_ACK = 62;
+
+    TRANSFER_OWNER_MSG = 63;
+    TRANSFER_OWNER_MSG_ACK = 64;
+
+    DISSOLVE_GROUP_MSG = 65;
+    DISSOLVE_GROUP_MSG_ACK = 66;
 }
 
 message OfflineMsg {
@@ -443,4 +452,35 @@ message QueryGroupRes {
 message GroupAcceptNotify {
     int32 groupid = 1;
     string groupname = 2;
+}
+
+message LeaveGroupReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+}
+
+message LeaveGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message TransferOwnerReq {
+    int32 oldownerid = 1;
+    int32 newownerid = 2;
+    int32 groupid = 3;
+}
+
+message TransferOwnerRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message DissolveGroupReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+}
+
+message DissolveGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
 }
