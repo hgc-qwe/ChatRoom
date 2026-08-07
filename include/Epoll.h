@@ -1,6 +1,7 @@
+#pragma once
 #include <vector>
 #include <sys/epoll.h>
-#pragma once
+
 
 class Epoll {
 private:

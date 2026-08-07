@@ -897,6 +897,20 @@ void recvMessage(int sockfd)
                 cout << res.errmsg() << endl;
             }
 
+            else if(msgid == chat::REMOVE_GROUP_USER_MSG_ACK)
+            {
+                chat::RemoveGroupUserRes res;
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+            }
+
+            else if (msgid == chat::REMOVE_GROUP_USER_NOTIFY_MSG) {
+                chat::RemoveGroupUserNotify notify;
+                notify.ParseFromString(body);
+                cout << "你已被移出群：" << notify.groupname() << " (groupid = " << notify.groupid() << ")" << endl;
+            }
+
             cout<<"\n";
         }
 
@@ -977,6 +991,7 @@ int main()
         cout<<"20 query group users\n";
         cout<<"21 set group admin\n";
         cout<<"22 remove group admin\n";
+        cout<<"23 remove group user\n";
         cout<<"0 exit\n";
 
 
@@ -1724,6 +1739,35 @@ int main()
             packet =
             MessageCodec::encode(
                 chat::REMOVE_GROUP_ADMIN_MSG,
+                data
+            );
+        }
+
+        else if (op == 23) {
+            chat::RemoveGroupUserReq req;
+
+            int userid;
+            int groupid;
+            int targetid;
+
+            cout<<"userid:";
+            cin>>userid;
+
+            cout<<"groupid:";
+            cin>>groupid;
+
+            cout<<"targetid:";
+            cin>>targetid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+            req.set_targetid(targetid);
+
+            req.SerializeToString(&data);
+
+            packet =
+            MessageCodec::encode(
+                chat::REMOVE_GROUP_USER_MSG,
                 data
             );
         }

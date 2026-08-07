@@ -178,7 +178,7 @@ std::string GroupModel::queryRole(int userid, int groupid) {
     if (!mysql.connect()) return "";
 
     MYSQL_RES* res = mysql.query(sql);
-    if(res = nullptr) return "";
+    if(res == nullptr) return "";
 
     MYSQL_ROW row = mysql_fetch_row(res);
     std::string role;

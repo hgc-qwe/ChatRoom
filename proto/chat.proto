@@ -111,6 +111,12 @@ enum MsgTyp {
 
     REMOVE_GROUP_ADMIN_MSG = 71;
     REMOVE_GROUP_ADMIN_MSG_ACK = 72;
+
+    REMOVE_GROUP_USER_MSG = 73;
+    REMOVE_GROUP_USER_MSG_ACK = 74;
+
+    REMOVE_GROUP_USER_NOTIFY_MSG = 75;
+    REMOVE_GROUP_USER_NOTIFY_MSG_ACK = 76;
 }
 
 message OfflineMsg {
@@ -531,4 +537,20 @@ message RemoveGroupAdminReq {
 message RemoveGroupAdminRes {
     int32 err = 1;
     string errmsg = 2;
+}
+
+message RemoveGroupUserReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+    int32 targetid = 3;
+}
+
+message RemoveGroupUserRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message RemoveGroupUserNotify {
+    int32 groupid = 1;
+    string groupname = 2;
 }

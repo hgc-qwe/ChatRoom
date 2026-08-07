@@ -349,6 +349,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::REMOVE_GROUP_ADMIN_MSG_ACK, response);
         }
+        case chat::REMOVE_GROUP_USER_MSG: {
+            chat::RemoveGroupUserReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("RemoveGroupUserReq parse failed");
+                return "";
+            }
+            chat::RemoveGroupUserRes res;
+            ChatService::instance()->removeGroupUser(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::REMOVE_GROUP_USER_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

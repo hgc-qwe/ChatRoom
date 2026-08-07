@@ -1,7 +1,7 @@
+#pragma once
 #include <vector>
 #include "Group.h"
 #include "User.h"
-#pragma once
 
 class GroupModel {
 public:

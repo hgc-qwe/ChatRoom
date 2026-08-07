@@ -88,6 +88,8 @@ public:
 
     void removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupAdminReq& req, chat::RemoveGroupAdminRes& res);
 
+    void removeGroupUser(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupUserReq& req, chat::RemoveGroupUserRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);

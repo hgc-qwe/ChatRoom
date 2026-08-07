@@ -1087,3 +1087,86 @@ void ChatService::removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const ch
     res.set_err(1);
     res.set_errmsg("remove group admin failed");
 }
+
+void ChatService::removeGroupUser(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupUserReq& req, chat::RemoveGroupUserRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (conn->getUserId() != req.userid()) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isInGroup(req.userid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    }
+    if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("target is not in group");
+        return;
+    }
+    std::string role = groupModel.queryRole(req.userid(), req.groupid());
+    if (role == "normal") {
+        res.set_err(1);
+        res.set_errmsg("you cannot remove users");
+        return;
+    } else if (role == "admin") {
+        if (groupModel.isManager(req.targetid(), req.groupid())) {
+            res.set_err(1);
+            res.set_errmsg("you cannot remove owner or admin");
+            return;
+        } else {
+            if (groupModel.removeUser(req.targetid(), req.groupid())) {
+                auto target = getUserConn(req.targetid());
+                if (target) {
+                    chat::RemoveGroupUserNotify notify;
+                    notify.set_groupid(req.groupid());
+                    Group group = groupModel.query(req.groupid());
+                    notify.set_groupname(group.getName());
+                    std::string data;
+                    notify.SerializeToString(&data);
+                    target->sendMessage(MessageCodec::encode(chat::REMOVE_GROUP_USER_NOTIFY_MSG, data));
+                }
+                res.set_err(0);
+                res.set_errmsg("remove user success");
+                LOG_INFO("admin {} remove user {}", req.userid(), req.targetid());
+                return;
+            }
+            res.set_err(1);
+            res.set_errmsg("remove user failed");
+        }
+    } else {
+        if (req.userid() == req.targetid()) {
+            res.set_err(1);
+            res.set_errmsg("you cannot remove yourself");
+            return;
+        }
+        if (groupModel.removeUser(req.targetid(), req.groupid())) {
+            auto target = getUserConn(req.targetid());
+            if (target) {
+                chat::RemoveGroupUserNotify notify;
+                notify.set_groupid(req.groupid());
+                Group group = groupModel.query(req.groupid());
+                notify.set_groupname(group.getName());
+                std::string data;
+                notify.SerializeToString(&data);
+                target->sendMessage(MessageCodec::encode(chat::REMOVE_GROUP_USER_NOTIFY_MSG, data));
+            }
+            res.set_err(0);
+            res.set_errmsg("remove user success");
+            LOG_INFO("owner {} remove user {}", req.userid(), req.targetid());
+            return;
+        }
+        res.set_err(1);
+        res.set_errmsg("remove user failed");
+    }
+}

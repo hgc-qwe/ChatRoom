@@ -1,7 +1,8 @@
+#pragma once
 #include <string>
 #include <vector>
 #include "GroupUser.h"
-#pragma once
+
 
 class Group {
 private:
