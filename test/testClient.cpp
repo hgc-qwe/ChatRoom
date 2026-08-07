@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <limits>
+#include "Logger.h"
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
@@ -76,10 +77,7 @@ bool sendAll(int sockfd,
     return true;
 }
 
-void sendFile(int sockfd,
-              int fromid,
-              int toid,
-              const std::string& path)
+void sendFile(int sockfd, int fromid, int toid, int groupid, const std::string& path)
 {
     namespace fs = std::filesystem;
 
@@ -113,6 +111,7 @@ void sendFile(int sockfd,
     startReq.set_filename(filename);
     startReq.set_filesize(filesize);
     startReq.set_fileid(fileid);
+    startReq.set_groupid(groupid);
 
     std::string data;
     startReq.SerializeToString(&data);
@@ -299,6 +298,23 @@ void recvMessage(int sockfd)
                         <<" fileid:"
                         <<file.fileid()
                         <<endl;
+                    }
+                }
+
+                if (res.offlinegroupfiles_size() > 0) {
+                    cout << "\n===== 离线群文件消息 =====" << endl;
+
+                    for (int i = 0; i < res.offlinegroupfiles_size(); ++i) {
+                        const auto& file = res.offlinegroupfiles(i);
+
+                        cout << "\n========== 离线群文件 ==========" << endl;
+                        cout << "群组: " << file.groupname() << endl;
+                        cout << "发送者: " << file.fromname()
+                            << " (userid=" << file.fromid() << ")" << endl;
+                        cout << "文件名: " << file.filename() << endl;
+                        cout << "文件大小: " << file.filesize() << " bytes" << endl;
+                        cout << "fileid: " << file.fileid() << endl;
+                        cout << "================================" << endl;
                     }
                 }
             }
@@ -911,6 +927,54 @@ void recvMessage(int sockfd)
                 cout << "你已被移出群：" << notify.groupname() << " (groupid = " << notify.groupid() << ")" << endl;
             }
 
+            else if(msgid == chat::REFUSE_GROUP_MSG_ACK)
+            {
+                chat::RefuseGroupRes res;
+
+                res.ParseFromString(body);
+
+                cout
+                <<"refuse group:"
+                <<res.errmsg()
+                <<endl;
+            }
+
+            else if(msgid == chat::REFUSE_GROUP_NOTIFY_MSG)
+            {
+                chat::RefuseGroupNotify notify;
+
+                notify.ParseFromString(body);
+
+                cout
+                <<"你的加群申请被拒绝:"
+                <<" groupid="
+                <<notify.groupid()
+                <<" groupname="
+                <<notify.groupname()
+                <<endl;
+            }
+
+
+            else if (msgid == chat::GROUP_FILE_NOTIFY_MSG)
+            {
+                chat::GroupFileNotify notify;
+
+                if (!notify.ParseFromString(body))
+                {
+                    cout << "GroupFileNotify parse failed" << endl;
+                    return;
+                }
+
+                cout << "\n========== 收到群文件 ==========" << endl;
+                cout << "群组: " << notify.groupname() << endl;
+                cout << "发送者: " << notify.fromname()
+                    << " (userid=" << notify.fromid() << ")" << endl;
+                cout << "文件名: " << notify.filename() << endl;
+                cout << "文件大小: " << notify.filesize() << " bytes" << endl;
+                cout << "fileid: " << notify.fileid() << endl;
+                cout << "================================" << endl;
+            }
+
             cout<<"\n";
         }
 
@@ -992,6 +1056,8 @@ int main()
         cout<<"21 set group admin\n";
         cout<<"22 remove group admin\n";
         cout<<"23 remove group user\n";
+        cout<<"24 refuse group\n";
+        cout<<"25 send group file\n";
         cout<<"0 exit\n";
 
 
@@ -1410,6 +1476,7 @@ int main()
                 sockfd,
                 fromid,
                 toid,
+                0,
                 path
             );
 
@@ -1770,6 +1837,59 @@ int main()
                 chat::REMOVE_GROUP_USER_MSG,
                 data
             );
+        }
+
+        else if(op == 24)
+        {
+            chat::RefuseGroupReq req;
+
+            int userid;
+            int groupid;
+            int targetid;
+
+            cout << "userid:";
+            cin >> userid;
+
+            cout << "groupid:";
+            cin >> groupid;
+
+            cout << "targetid:";
+            cin >> targetid;
+
+            req.set_userid(userid);
+            req.set_groupid(groupid);
+            req.set_targetid(targetid);
+
+            req.SerializeToString(&data);
+
+            packet =
+                MessageCodec::encode(
+                    chat::REFUSE_GROUP_MSG,
+                    data
+                );
+        }
+
+        else if (op == 25) {
+            int groupid;
+            string filepath;
+
+            cout << "groupid:";
+            cin >> groupid;
+
+            cout << "file path:";
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            getline(cin, filepath);
+
+            thread t(
+                sendFile,
+                sockfd,
+                currentUserid,
+                0,
+                groupid,
+                filepath
+            );
+
+            t.detach();
         }
 
         else

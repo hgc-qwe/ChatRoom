@@ -5,15 +5,15 @@
 #include "Mysql.h"
 
 bool FileModel::insert(File file) {
-    std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status, fromname) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
-        std::to_string(file.getToid()) + ",'" + file.getFilename() + "'," + std::to_string(file.getFilesize()) + "," + std::to_string(file.getStatus()) + ",'" + file.getFromname() + "');";
+    std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status, fromname, type, groupid) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
+        std::to_string(file.getToid()) + ",'" + file.getFilename() + "'," + std::to_string(file.getFilesize()) + "," + std::to_string(file.getStatus()) + ",'" + file.getFromname() + "'," + std::to_string(file.getType()) + "," + std::to_string(file.getGroupid()) + ");";
     Mysql mysql;
     if (!mysql.connect()) return false;
     return mysql.update(sql);
 }
 
 std::vector<File> FileModel::queryOffline(int userid) {
-    std::string sql = "select * from file where toid=" + std::to_string(userid) + " and status = 0;";
+    std::string sql = "select * from file where toid=" + std::to_string(userid) + " and status = 0 and type = 0;";
     std::vector<File> files;
     Mysql mysql;
     if (!mysql.connect()) return files;
@@ -30,6 +30,8 @@ std::vector<File> FileModel::queryOffline(int userid) {
             file.setFilesize(std::stoull(row[4]));
             file.setStatus(std::stoi(row[5]));
             file.setFromname(row[6]);
+            file.setType(std::stoi(row[7]));
+            file.setGroupid(std::stoi(row[8]));
             files.push_back(file);
         }
         mysql_free_result(res);
@@ -61,6 +63,8 @@ File FileModel::queryByFileid(std::string fileid) {
             file.setFilesize(std::stoull(row[4]));
             file.setStatus(std::stoi(row[5]));
             file.setFromname(row[6]);
+            file.setType(std::stoi(row[7]));
+            file.setGroupid(std::stoi(row[8]));
         }
         mysql_free_result(res);
     }

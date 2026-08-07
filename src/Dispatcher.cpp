@@ -361,6 +361,18 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::REMOVE_GROUP_USER_MSG_ACK, response);
         }
+        case chat::REFUSE_GROUP_MSG: {
+            chat::RefuseGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("RefuseGroupReq parse failed");
+                return "";
+            }
+            chat::RefuseGroupRes res;
+            ChatService::instance()->refuseGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::REFUSE_GROUP_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

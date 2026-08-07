@@ -117,6 +117,15 @@ enum MsgTyp {
 
     REMOVE_GROUP_USER_NOTIFY_MSG = 75;
     REMOVE_GROUP_USER_NOTIFY_MSG_ACK = 76;
+
+    REFUSE_GROUP_MSG = 77;
+    REFUSE_GROUP_MSG_ACK = 78;
+
+    REFUSE_GROUP_NOTIFY_MSG = 79;
+    REFUSE_GROUP_NOTIFY_MSG_ACK = 80;
+
+    GROUP_FILE_NOTIFY_MSG = 81;
+    GROUP_FILE_NOTIFY_MSG_ACK = 82;
 }
 
 message OfflineMsg {
@@ -141,6 +150,7 @@ message LoginRes {
     repeated Group groups = 6;
     repeated OfflineGroupMsg offlinegroupmsg = 7;
     repeated OfflineFile offlinefiles = 8;
+    repeated GroupFileNotify offlinegroupfiles = 9;
 }
 
 message RegisterReq {
@@ -346,6 +356,7 @@ message FileStartReq {
     string filename = 3;
     uint64 filesize = 4;
     string fileid = 5;
+    int32 groupid = 6;
 }
 
 message FileStartRes {
@@ -553,4 +564,30 @@ message RemoveGroupUserRes {
 message RemoveGroupUserNotify {
     int32 groupid = 1;
     string groupname = 2;
+}
+
+message RefuseGroupReq {
+    int32 userid = 1;
+    int32 groupid = 2;
+    int32 targetid = 3;
+}
+
+message RefuseGroupRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message RefuseGroupNotify {
+    int32 groupid = 1;
+    string groupname = 2;
+}
+
+message GroupFileNotify {
+    int32 fromid = 1;
+    string fromname = 2;
+    int32 groupid = 3;
+    string groupname = 4;
+    string fileid = 5;
+    string filename = 6;
+    uint64 filesize = 7;
 }

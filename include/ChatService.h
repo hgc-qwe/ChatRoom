@@ -17,6 +17,7 @@
 struct FileInfo {
     int fromid;
     int toid;
+    int groupid;
     std::string filename;
     std::string fileid;
     uint64_t filesize;
@@ -89,6 +90,8 @@ public:
     void removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupAdminReq& req, chat::RemoveGroupAdminRes& res);
 
     void removeGroupUser(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupUserReq& req, chat::RemoveGroupUserRes& res);
+
+    void refuseGroup(std::shared_ptr<TcpConnection> conn, const chat::RefuseGroupReq& req, chat::RefuseGroupRes& res);
 
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 

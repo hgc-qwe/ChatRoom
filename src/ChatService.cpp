@@ -81,6 +81,25 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
                 }
             }
 
+            std::string groupFileKey = "offline:groupfile:" + std::to_string(req.id());
+            std::vector<std::string> groupFiles;
+
+            redis.getList(groupFileKey, groupFiles);
+            for (auto& data : groupFiles) {
+                chat::GroupFileNotify file;
+                if (!file.ParseFromString(data)) continue;
+
+                auto item = res.add_offlinegroupfiles();
+                item->set_fromid(file.fromid());
+                item->set_fromname(file.fromname());
+                item->set_groupid(file.groupid());
+                item->set_groupname(file.groupname());
+                item->set_fileid(file.fileid());
+                item->set_filename(file.filename());
+                item->set_filesize(file.filesize());
+            }
+            if (!groupFiles.empty()) redis.del(groupFileKey);
+
             std::string groupkey = "offline:group:" + std::to_string(req.id());
             std::vector<std::string> groupMsg;
             redis.getList(groupkey, groupMsg);
@@ -482,13 +501,22 @@ void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::Fil
         FileInfo info;
         info.fromid = req.fromid();
         info.toid = req.toid();
+        info.groupid = req.groupid();
         info.filename = req.filename();
         info.filesize = req.filesize();
         info.fileid = req.fileid();
         info.path = path;
         fileInfoMap[req.fileid()] = info;
     }
-
+    //
+    LOG_INFO(
+        "file start: fileid={}, fromid={}, toid={}, groupid={}, filename={}",
+        req.fileid(),
+        req.fromid(),
+        req.toid(),
+        req.groupid(),
+        req.filename()
+    );
     LOG_INFO("start receive file {} size {}", req.filename(), req.filesize());
     res.set_err(0);
     res.set_errmsg("start success");
@@ -524,28 +552,85 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
     }
     LOG_INFO("receive file {} finish", req.fileid());
 
-    auto target = getUserConn(info.toid);
-    if (target) sendFile(target, info);
-    else {
+    if (info.groupid == 0) {
+        auto target = getUserConn(info.toid);
+        if (target) sendFile(target, info);
+        else {
+            File file;
+            User user = userModel.query(info.fromid);
+            file.setFromname(user.getName());
+            file.setFromid(info.fromid);
+            file.setToid(info.toid);
+            file.setFilename(info.filename);
+            file.setFilesize(info.filesize);
+            file.setFileid(info.fileid);
+            file.setStatus(0);
+            file.setType(0);
+            file.setGroupid(0);
+            fileModel.insert(file);
+
+            chat::OfflineFile offline;
+            offline.set_fromid(info.fromid);
+            offline.set_toid(info.toid);
+            offline.set_filename(info.filename);
+            offline.set_filesize(info.filesize);
+            offline.set_fileid(info.fileid);
+
+            std::string data;
+            offline.SerializeToString(&data);
+            redis.pushList("offline:file:" + std::to_string(info.toid), data);
+        }
+    } else {
+        Group group = groupModel.query(info.groupid);
+        User user = userModel.query(info.fromid);
+        int groupid = info.groupid;
+
         File file;
+        file.setFromname(user.getName());
         file.setFromid(info.fromid);
         file.setToid(info.toid);
         file.setFilename(info.filename);
         file.setFilesize(info.filesize);
         file.setFileid(info.fileid);
         file.setStatus(0);
-        fileModel.insert(file);
+        file.setType(1);
+        file.setGroupid(info.groupid);
 
-        chat::OfflineFile offline;
-        offline.set_fromid(info.fromid);
-        offline.set_toid(info.toid);
-        offline.set_filename(info.filename);
-        offline.set_filesize(info.filesize);
-        offline.set_fileid(info.fileid);
+        if (!fileModel.insert(file)) LOG_INFO("save group file {} failed", info.fileid);
 
-        std::string data;
-        offline.SerializeToString(&data);
-        redis.pushList("offline:file:" + std::to_string(info.toid), data);
+        auto members = groupModel.queryGroupUsers(info.fromid, info.groupid);
+        for (int memberid : members) {
+            auto target = getUserConn(memberid);
+            if (target) {
+                chat::GroupFileNotify notify;
+                notify.set_fromid(info.fromid);
+                notify.set_fromname(user.getName());
+                notify.set_groupid(info.groupid);
+                notify.set_groupname(group.getName());
+                notify.set_fileid(info.fileid);
+                notify.set_filename(info.filename);
+                notify.set_filesize(info.filesize);
+
+                std::string data;
+                notify.SerializeToString(&data);
+
+                target->sendMessage(MessageCodec::encode(chat::GROUP_FILE_NOTIFY_MSG, data));
+            } else {
+                chat::GroupFileNotify notify;
+                notify.set_fromid(info.fromid);
+                notify.set_fromname(user.getName());
+                notify.set_groupid(info.groupid);
+                notify.set_groupname(group.getName());
+                notify.set_fileid(info.fileid);
+                notify.set_filename(info.filename);
+                notify.set_filesize(info.filesize);
+
+                std::string data;
+                notify.SerializeToString(&data);
+                
+                redis.pushList("offline:groupfile:" + std::to_string(memberid), data);
+            }
+        }
     }
 
     res.set_err(0);
@@ -1169,4 +1254,49 @@ void ChatService::removeGroupUser(std::shared_ptr<TcpConnection> conn, const cha
         res.set_err(1);
         res.set_errmsg("remove user failed");
     }
+}
+
+void ChatService::refuseGroup(std::shared_ptr<TcpConnection> conn, const chat::RefuseGroupReq& req, chat::RefuseGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int adminid = conn->getUserId();
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isManager(adminid, req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you arenot admin");
+        return;
+    }
+    if (!groupReqModel.isApplied(req.targetid(), req.groupid())) {
+    res.set_err(1);
+    res.set_errmsg("application not exist");
+    return;
+    }
+    if (!groupReqModel.update(req.groupid(), req.targetid(), 2)) {
+        res.set_err(1);
+        res.set_errmsg("refuse failed");
+        return;
+    }
+
+    res.set_err(0);
+    res.set_errmsg("refuse success");
+
+    auto target = getUserConn(req.targetid());
+    if (target) {
+        chat::RefuseGroupNotify notify;
+        notify.set_groupid(req.groupid());
+        Group group = groupModel.query(req.groupid());
+        notify.set_groupname(group.getName());
+        std::string data;
+        notify.SerializeToString(&data);
+        target->sendMessage(MessageCodec::encode(chat::REFUSE_GROUP_NOTIFY_MSG, data));
+    }
+    
+    LOG_INFO("admin {} refuse user {} join group {}", adminid, req.targetid(), req.groupid());
 }

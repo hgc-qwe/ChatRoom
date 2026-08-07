@@ -7,10 +7,12 @@ private:
     std::string fileid;
     int fromid;
     int toid;
+    int groupid;
     std::string filename;
     uint64_t filesize;
     int status;
     std::string fromname;
+    int type;
 public:
     File(std::string fileid, int fromid, int toid, std::string filename, uint64_t filesize, int status, std::string fromname): fileid(fileid), fromid(fromid), toid(toid), filename(filename), filesize(filesize), status(status), fromname(fromname) {}
     File() = default;
@@ -62,5 +64,19 @@ public:
     }
     void setFromname(const std::string& fromname) {
         this->fromname = fromname;
+    }
+
+    int getType() const {
+        return type;
+    }
+    void setType(int type) {
+        this->type = type;
+    }
+
+    int getGroupid() const {
+        return groupid;
+    }
+    void setGroupid(int groupid) {
+        this->groupid = groupid;
     }
 };
