@@ -4,3 +4,5 @@
 int setNonBlock(int fd);
 
 std::string getCurrentTime();
+
+std::string inputPassword();

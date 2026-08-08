@@ -126,6 +126,12 @@ enum MsgTyp {
 
     GROUP_FILE_NOTIFY_MSG = 81;
     GROUP_FILE_NOTIFY_MSG_ACK = 82;
+
+    BLACKLIST_ADD_MSG = 83;
+    BLACKLIST_ADD_MSG_ACK = 84;
+
+    BLACKLIST_REMOVE_MSG = 85;
+    BLACKLIST_REMOVE_MSG_ACK = 86;
 }
 
 message OfflineMsg {
@@ -151,6 +157,7 @@ message LoginRes {
     repeated OfflineGroupMsg offlinegroupmsg = 7;
     repeated OfflineFile offlinefiles = 8;
     repeated GroupFileNotify offlinegroupfiles = 9;
+    repeated FriendRequest offlinefriendrequests = 10;
 }
 
 message RegisterReq {
@@ -167,8 +174,7 @@ message RegisterRes {
 
 message AddFriendReq {
     MsgTyp msgid = 1;
-    int32 fromid = 2;
-    int32 toid = 3;
+    int32 toid = 2;
 }
 
 message AddFriendRes {
@@ -179,11 +185,9 @@ message AddFriendRes {
 
 message OneChatReq {
     MsgTyp msgid = 1;
-    int32 fromid = 2;
-    int32 toid = 3;
-    string msg = 4;
-    string time = 5;
-    string fromname = 6;
+    int32 toid = 2;
+    string msg = 3;
+    string time = 4;
 }
 
 message OneChatRes {
@@ -194,9 +198,8 @@ message OneChatRes {
 
 message CreateGroupReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
-    string groupname = 3;
-    string groupdesc = 4;
+    string groupname = 2;
+    string groupdesc = 3;
 }
 
 message CreateGroupRes {
@@ -208,9 +211,7 @@ message CreateGroupRes {
 
 message AddGroupReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
-    int32 groupid = 3;
-    string role = 4;
+    int32 groupid = 2;
 }
 
 message AddGroupRes {
@@ -222,10 +223,8 @@ message AddGroupRes {
 message GroupChatReq {
     MsgTyp msgid = 1;
     int32 groupid = 2;
-    int32 userid = 3;
-    string msg = 4;
-    string time = 5;
-    string username = 6;
+    string msg = 3;
+    string time = 4;
 }
 
 message GroupChatRes {
@@ -236,7 +235,6 @@ message GroupChatRes {
 
 message LogoutReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
 }
 
 message LogoutRes {
@@ -265,23 +263,27 @@ message Group {
     string role = 5;
 }
 
-message HistoryMsgReq {
+message HistoryMsg {
     int32 fromid = 1;
     int32 toid = 2;
     string msg = 3;
     string time = 4;
+    string fromname = 5;
+}
+
+message HistoryMsgReq {
+    int32 friendid = 1;
 }
 
 message HistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
-    repeated HistoryMsgReq msgs = 3;
+    repeated HistoryMsg msgs = 3;
 }
 
 message AcceptFriendReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
-    int32 friendid = 3;
+    int32 friendid = 2;
 }
 
 message AcceptFriendRes {
@@ -296,7 +298,6 @@ message FriendRequest {
 
 message QueryFriendReqReq {
     MsgTyp msgid = 1;
-    int32 userid = 2;
 }
 
 message QueryFriendReqRes {
@@ -311,7 +312,7 @@ message FriendAcceptNotify {
 }
 
 message QueryFriendReq {
-    int32 userid = 1;
+    MsgTyp msgid = 1;
 }
 
 message QueryFriendRes {
@@ -321,8 +322,7 @@ message QueryFriendRes {
 }
 
 message DeleteFriendReq {
-    int32 userid = 1;
-    int32 friendid = 2;
+    int32 friendid = 1;
 }
 
 message DeleteFriendRes {
@@ -330,17 +330,21 @@ message DeleteFriendRes {
     string errmsg = 2;
 }
 
-message GroupHistoryMsgReq {
+message GroupHistoryMsg {
     int32 groupid = 1;
     int32 userid = 2;
     string msg = 3;
     string time = 4;
 }
 
+message GroupHistoryMsgReq {
+    int32 groupid = 1;
+}
+
 message GroupHistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
-    repeated GroupHistoryMsgReq msgs = 3;
+    repeated GroupHistoryMsg msgs = 3;
 }
 
 message OfflineGroupMsg {
@@ -351,12 +355,11 @@ message OfflineGroupMsg {
 }
 
 message FileStartReq {
-    int32 fromid = 1;
-    int32 toid = 2;
-    string filename = 3;
-    uint64 filesize = 4;
-    string fileid = 5;
-    int32 groupid = 6;
+    int32 toid = 1;
+    string filename = 2;
+    uint64 filesize = 3;
+    string fileid = 4;
+    int32 groupid = 5;
 }
 
 message FileStartRes {
@@ -395,7 +398,6 @@ message OfflineFile {
 
 message DownloadFileReq {
     string fileid = 1;
-    int32 userid = 2;
 }
 
 message DownloadFileRes {
@@ -420,7 +422,7 @@ message DownloadEnd {
 }
 
 message CancelAccountReq {
-    int32 userid = 1;
+    MsgTyp msgid = 1;
 }
 
 message CancelAccountRes {
@@ -429,8 +431,7 @@ message CancelAccountRes {
 }
 
 message ApplyGroupReq {
-    int32 userid = 1;
-    int32 groupid = 2;
+    int32 groupid = 1;
 }
 
 message ApplyGroupRes {
@@ -457,7 +458,7 @@ message QueryGroupReqRes {
 
 message AcceptGroupReq {
     int32 groupid = 1;
-    int32 userid = 2;
+    int32 targetid = 2;
 }
 
 message AcceptGroupRes {
@@ -466,7 +467,7 @@ message AcceptGroupRes {
 }
 
 message QueryGroupReq {
-    int32 userid = 1;
+    MsgTyp msgid = 1;
 }
 
 message QueryGroupRes {
@@ -481,8 +482,7 @@ message GroupAcceptNotify {
 }
 
 message LeaveGroupReq {
-    int32 userid = 1;
-    int32 groupid = 2;
+    int32 groupid = 1;
 }
 
 message LeaveGroupRes {
@@ -491,9 +491,8 @@ message LeaveGroupRes {
 }
 
 message TransferOwnerReq {
-    int32 oldownerid = 1;
-    int32 newownerid = 2;
-    int32 groupid = 3;
+    int32 newownerid = 1;
+    int32 groupid = 2;
 }
 
 message TransferOwnerRes {
@@ -502,8 +501,7 @@ message TransferOwnerRes {
 }
 
 message DissolveGroupReq {
-    int32 userid = 1;
-    int32 groupid = 2;
+    int32 groupid = 1;
 }
 
 message DissolveGroupRes {
@@ -512,8 +510,7 @@ message DissolveGroupRes {
 }
 
 message QueryGroupUserReq {
-    int32 userid = 1;
-    int32 groupid = 2;
+    int32 groupid = 1;
 }
 
 message QueryGroupUserRes {
@@ -529,9 +526,8 @@ message GroupUserInfo {
 }
 
 message SetGroupAdminReq {
-    int32 userid = 1;
-    int32 groupid = 2;
-    int32 targetid = 3;
+    int32 groupid = 1;
+    int32 targetid = 2;
 }
 
 message SetGroupAdminRes {
@@ -540,9 +536,8 @@ message SetGroupAdminRes {
 }
 
 message RemoveGroupAdminReq {
-    int32 userid = 1;
-    int32 groupid = 2;
-    int32 targetid = 3;
+    int32 groupid = 1;
+    int32 targetid = 2;
 }
 
 message RemoveGroupAdminRes {
@@ -551,9 +546,8 @@ message RemoveGroupAdminRes {
 }
 
 message RemoveGroupUserReq {
-    int32 userid = 1;
-    int32 groupid = 2;
-    int32 targetid = 3;
+    int32 groupid = 1;
+    int32 targetid = 2;
 }
 
 message RemoveGroupUserRes {
@@ -567,9 +561,8 @@ message RemoveGroupUserNotify {
 }
 
 message RefuseGroupReq {
-    int32 userid = 1;
-    int32 groupid = 2;
-    int32 targetid = 3;
+    int32 groupid = 1;
+    int32 targetid = 2;
 }
 
 message RefuseGroupRes {
@@ -590,4 +583,37 @@ message GroupFileNotify {
     string fileid = 5;
     string filename = 6;
     uint64 filesize = 7;
+}
+
+message BlacklistAddReq {
+    int32 blackid = 1;
+}
+
+message BlacklistAddRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message BlacklistRemoveReq {
+    int32 blackid = 1;
+}
+
+message BlacklistRemoveRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message OneChatNotify {
+    int32 fromid = 1;
+    string fromname = 2;
+    string msg = 3;
+    string time = 4;
+}
+
+message GroupChatNotify {
+    int32 groupid = 1;
+    int32 userid = 2;
+    string username = 3;
+    string msg = 4;
+    string time = 5;
 }

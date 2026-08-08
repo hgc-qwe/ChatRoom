@@ -2,6 +2,8 @@
 #include <fcntl.h>
 #include <iostream>
 #include <string>
+#include <unistd.h>
+#include <termios.h>
 
 int setNonBlock(int fd) {
     int flag = fcntl(fd, F_GETFL, 0);
@@ -27,4 +29,20 @@ std::string getCurrentTime()
     strftime(buf, sizeof(buf), "%F %T", localtime(&now));
 
     return buf;
+}
+
+std::string inputPassword() {
+    termios oldt{};
+    termios newt{};
+    tcgetattr(STDIN_FILENO, &oldt);
+
+    newt = oldt;
+    newt.c_lflag &= ~ECHO;
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    std::string password;
+    std::getline(std::cin, password);
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    std::cout << std::endl;
+    return password;
 }

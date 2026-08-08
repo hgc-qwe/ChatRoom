@@ -373,6 +373,30 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::REFUSE_GROUP_MSG_ACK, response);
         }
+        case chat::BLACKLIST_ADD_MSG: {
+            chat::BlacklistAddReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("BlacklistAddReq parse failed");
+                return "";
+            }
+            chat::BlacklistAddRes res;
+            ChatService::instance()->addBlacklist(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::BLACKLIST_ADD_MSG_ACK, response);
+        }
+        case chat::BLACKLIST_REMOVE_MSG: {
+            chat::BlacklistRemoveReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("BlacklistRemoveReq parse failed");
+                return "";
+            }
+            chat::BlacklistRemoveRes res;
+            ChatService::instance()->removeBlacklist(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::BLACKLIST_REMOVE_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

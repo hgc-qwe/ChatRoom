@@ -2,17 +2,18 @@
 #include <string>
 
 class FriendRequest {
-public:
-    FriendRequest(int userid, int friendid): userid(userid), friendid(friendid) {}
-
-    int getUserid() {
-        return userid;
-    }
-
-    int getFriendid() {
-        return friendid;
-    }
 private:
-    int userid;
-    int friendid;
+    int fromid;
+    int toid;
+
+public:
+    FriendRequest(int fromid, int toid) : fromid(fromid), toid(toid) {}
+
+    int getFromid() const {
+        return fromid;
+    }
+
+    int getToid() const {
+        return toid;
+    }
 };

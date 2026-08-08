@@ -13,6 +13,7 @@
 #include "GroupMessageModel.h"
 #include "GroupReqModel.h"
 #include "FileModel.h"
+#include "BlacklistModel.h"
 
 struct FileInfo {
     int fromid;
@@ -93,6 +94,10 @@ public:
 
     void refuseGroup(std::shared_ptr<TcpConnection> conn, const chat::RefuseGroupReq& req, chat::RefuseGroupRes& res);
 
+    void addBlacklist(std::shared_ptr<TcpConnection> conn, const chat::BlacklistAddReq& req, chat::BlacklistAddRes& res);
+
+    void removeBlacklist(std::shared_ptr<TcpConnection> conn, const chat::BlacklistRemoveReq& req, chat::BlacklistRemoveRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);
@@ -107,6 +112,7 @@ private:
     GroupReqModel groupReqModel;
     FileModel fileModel;
     Redis redis;
+    BlacklistModel blacklistModel;
 
     std::unordered_map<std::string, FILE*> fileMap;
     std::unordered_map<std::string, FileInfo> fileInfoMap;

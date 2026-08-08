@@ -24,8 +24,7 @@ std::vector<FriendRequest> FriendReqModel::query(int userid) {
     MYSQL_ROW row;
     while ((row = mysql_fetch_row(res)) != nullptr) {
         int fromid = atoi(row[0]);
-        int toid = atoi(row[1]);
-        requests.emplace_back(fromid, toid);
+        requests.emplace_back(fromid, userid);
     }
     mysql_free_result(res);
     return requests;

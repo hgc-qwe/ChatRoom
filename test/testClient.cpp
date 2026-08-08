@@ -12,6 +12,7 @@
 #include "Buffer.h"
 #include "MessageCodec.h"
 #include "chat.pb.h"
+#include "Util.h"
 
 using namespace std;
 
@@ -23,11 +24,11 @@ std::ofstream downloadFile;
 std::string downloadFileId;
 std::string downloadFilePath;
 
-void queryFriend(int sockfd, int userid)
+void queryFriend(int sockfd)
 {
     chat::QueryFriendReq req;
 
-    req.set_userid(userid);
+    req.set_msgid(chat::QUERY_FRIEND_MSG);
 
 
     string data;
@@ -77,7 +78,7 @@ bool sendAll(int sockfd,
     return true;
 }
 
-void sendFile(int sockfd, int fromid, int toid, int groupid, const std::string& path)
+void sendFile(int sockfd, int toid, int groupid, const std::string& path)
 {
     namespace fs = std::filesystem;
 
@@ -96,7 +97,6 @@ void sendFile(int sockfd, int fromid, int toid, int groupid, const std::string& 
 
     // 生成一个简单 fileid
     std::string fileid =
-        std::to_string(fromid) + "_" +
         std::to_string(
             std::chrono::system_clock::now()
             .time_since_epoch()
@@ -106,7 +106,6 @@ void sendFile(int sockfd, int fromid, int toid, int groupid, const std::string& 
     // 1. FileStart
     //-----------------------------
     chat::FileStartReq startReq;
-    startReq.set_fromid(fromid);
     startReq.set_toid(toid);
     startReq.set_filename(filename);
     startReq.set_filesize(filesize);
@@ -317,6 +316,19 @@ void recvMessage(int sockfd)
                         cout << "================================" << endl;
                     }
                 }
+
+                if (res.offlinefriendrequests_size() > 0) {
+                    for (const auto& request : res.offlinefriendrequests())
+                    {
+                        cout << "\n========== 离线好友申请 ==========" << endl;
+                        std::cout
+                            << "userid："
+                            << request.userid()
+                            << " username："
+                            << request.username()
+                            << std::endl;
+                    }
+                }
             }
 
 
@@ -415,7 +427,7 @@ void recvMessage(int sockfd)
 
                 cout << endl;
 
-                queryFriend(sockfd, currentUserid);
+                queryFriend(sockfd);
             }
 
             else if(msgid == chat::QUERY_FRIEND_MSG_ACK)
@@ -497,37 +509,44 @@ void recvMessage(int sockfd)
 
             else if(msgid == chat::ONE_CHAT_MSG)
             {
-                chat::OneChatReq req;
+                chat::OneChatNotify notify;
 
-                req.ParseFromString(body);
+                if (!notify.ParseFromString(body)) {
+                    cout << "OneChatNotify parse failed" << endl;
+                    continue;
+                }
 
 
                 cout
                 <<"收到消息:"
                 <<"from="
-                <<req.fromid()
+                <<notify.fromname()
+                <<" fromid="
+                <<notify.fromid()
                 <<" msg="
-                <<req.msg()
+                <<notify.msg()
                 <<endl;
             }
 
 
             else if(msgid == chat::GROUP_CHAT_MSG)
             {
-                chat::GroupChatReq req;
+                chat::GroupChatNotify notify;
 
-                req.ParseFromString(body);
+                notify.ParseFromString(body);
 
 
                 cout
                 <<"group "
-                <<req.groupid()
+                <<notify.groupid()
                 <<" "
                 <<"收到消息:"
-                <<"from user="
-                <<req.userid()
+                <<"from="
+                <<notify.username()
+                <<" fromid="
+                <<notify.userid()
                 <<" msg="
-                <<req.msg()
+                <<notify.msg()
                 <<endl;
             }
 
@@ -975,6 +994,30 @@ void recvMessage(int sockfd)
                 cout << "================================" << endl;
             }
 
+            else if (msgid == chat::BLACKLIST_ADD_MSG_ACK)
+            {
+                chat::BlacklistAddRes res;
+
+                res.ParseFromString(body);
+
+                cout << "err:" << res.err()
+                    << " "
+                    << res.errmsg()
+                    << endl;
+            }
+
+            else if (msgid == chat::BLACKLIST_REMOVE_MSG_ACK)
+            {
+                chat::BlacklistRemoveRes res;
+
+                res.ParseFromString(body);
+
+                cout << "err:" << res.err()
+                    << " "
+                    << res.errmsg()
+                    << endl;
+            }
+
             cout<<"\n";
         }
 
@@ -1058,6 +1101,8 @@ int main()
         cout<<"23 remove group user\n";
         cout<<"24 refuse group\n";
         cout<<"25 send group file\n";
+        cout<<"26 add blacklist\n";
+        cout<<"27 remove blacklist\n";
         cout<<"0 exit\n";
 
 
@@ -1088,7 +1133,8 @@ int main()
             currentUserid = id;
 
             cout<<"password:";
-            cin>>pwd;
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            pwd = inputPassword();
 
 
 
@@ -1123,21 +1169,11 @@ int main()
             }
             chat::AddFriendReq req;
 
-
-            int fromid;
             int toid;
-
-
-            cout<<"fromid:";
-            cin>>fromid;
 
 
             cout<<"toid:";
             cin>>toid;
-
-
-
-            req.set_fromid(fromid);
 
             req.set_toid(toid);
 
@@ -1169,19 +1205,6 @@ int main()
             }
             chat::QueryFriendReqReq req;
 
-
-            int userid;
-
-
-            cout<<"userid:";
-            cin>>userid;
-
-
-
-            req.set_userid(userid);
-
-
-
             req.SerializeToString(
                 &data
             );
@@ -1208,21 +1231,11 @@ int main()
             chat::AcceptFriendReq req;
 
 
-            int userid;
             int friendid;
-
-
-
-            cout<<"userid:";
-            cin>>userid;
-
 
             cout<<"friendid:";
             cin>>friendid;
 
-
-
-            req.set_userid(userid);
 
             req.set_friendid(friendid);
 
@@ -1259,20 +1272,13 @@ int main()
             }
             chat::DeleteFriendReq req;
 
-
-            int userid;
             int friendid;
-
-
-            cout<<"userid:";
-            cin>>userid;
 
 
             cout<<"friendid:";
             cin>>friendid;
 
 
-            req.set_userid(userid);
             req.set_friendid(friendid);
 
 
@@ -1295,13 +1301,11 @@ int main()
             }
             chat::OneChatReq req;
 
-            int fromid;
             int toid;
             string msg;
 
 
-            cout<<"fromid:";
-            cin>>fromid;
+          
 
 
             cout<<"toid:";
@@ -1312,8 +1316,6 @@ int main()
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, msg);
 
-
-            req.set_fromid(fromid);
             req.set_toid(toid);
             req.set_msg(msg);
 
@@ -1338,20 +1340,12 @@ int main()
             chat::HistoryMsgReq req;
 
 
-            int fromid;
-            int toid;
+            int friendid;
 
+            cout<<"friendid:";
+            cin>>friendid;
 
-            cout<<"fromid:";
-            cin>>fromid;
-
-            cout<<"toid:";
-            cin>>toid;
-
-
-
-            req.set_fromid(fromid);
-            req.set_toid(toid);
+            req.set_friendid(friendid);
 
 
 
@@ -1379,17 +1373,11 @@ int main()
             chat::GroupChatReq req;
 
             int groupid;
-            int userid;
             string msg;
 
 
             cout<<"groupid:";
             cin>>groupid;
-
-
-            cout<<"userid:";
-            cin>>userid;
-
 
             cout<<"msg:";
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -1397,7 +1385,6 @@ int main()
 
 
             req.set_groupid(groupid);
-            req.set_userid(userid);
             req.set_msg(msg);
 
 
@@ -1456,12 +1443,8 @@ int main()
                 cout << "please login first" << endl;
                 continue;
             }
-            int fromid,toid;
+            int toid;
             string path;
-
-
-            cout<<"fromid:";
-            cin>>fromid;
 
             cout<<"toid:";
             cin>>toid;
@@ -1474,7 +1457,6 @@ int main()
             thread t(
                 sendFile,
                 sockfd,
-                fromid,
                 toid,
                 0,
                 path
@@ -1500,7 +1482,6 @@ int main()
             chat::DownloadFileReq req;
 
             req.set_fileid(fileid);
-            req.set_userid(currentUserid);
 
             req.SerializeToString(
                 &data
@@ -1524,11 +1505,6 @@ int main()
             }
 
             chat::CancelAccountReq req;
-
-            req.set_userid(currentUserid);
-
-
-
 
             req.SerializeToString(
                 &data
@@ -1555,7 +1531,8 @@ int main()
             cin >> name;
 
             cout << "password:";
-            cin >> pwd;
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            pwd = inputPassword();
 
             req.set_name(name);
             req.set_password(pwd);
@@ -1570,19 +1547,12 @@ int main()
         {
             chat::ApplyGroupReq req;
 
-            int userid;
             int groupid;
-
-
-            cout<<"userid:";
-            cin>>userid;
 
 
             cout<<"groupid:";
             cin>>groupid;
 
-
-            req.set_userid(userid);
             req.set_groupid(groupid);
 
 
@@ -1625,19 +1595,12 @@ int main()
             chat::AcceptGroupReq req;
 
 
-            int userid;
             int groupid;
-
-
-            cout<<"apply userid:";
-            cin>>userid;
 
 
             cout<<"groupid:";
             cin>>groupid;
 
-
-            req.set_userid(userid);
             req.set_groupid(groupid);
 
 
@@ -1655,16 +1618,12 @@ int main()
         {
             chat::LeaveGroupReq req;
 
-            int userid;
+           
             int groupid;
-
-            cout << "userid:";
-            cin >> userid;
 
             cout << "groupid:";
             cin >> groupid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
 
             req.SerializeToString(&data);
@@ -1679,12 +1638,9 @@ int main()
         {
             chat::TransferOwnerReq req;
 
-            int oldownerid;
             int newownerid;
             int groupid;
 
-            cout << "old owner:";
-            cin >> oldownerid;
 
             cout << "new owner:";
             cin >> newownerid;
@@ -1692,7 +1648,6 @@ int main()
             cout << "groupid:";
             cin >> groupid;
 
-            req.set_oldownerid(oldownerid);
             req.set_newownerid(newownerid);
             req.set_groupid(groupid);
 
@@ -1708,16 +1663,11 @@ int main()
         {
             chat::DissolveGroupReq req;
 
-            int userid;
             int groupid;
-
-            cout << "userid:";
-            cin >> userid;
 
             cout << "groupid:";
             cin >> groupid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
 
             req.SerializeToString(&data);
@@ -1731,16 +1681,11 @@ int main()
         else if (op == 20) {
             chat::QueryGroupUserReq req;
 
-            int userid;
             int groupid;
-
-            cout<<"userid:";
-            cin>>userid;
 
             cout<<"groupid:";
             cin>>groupid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
 
             req.SerializeToString(&data);
@@ -1755,12 +1700,8 @@ int main()
         else if (op == 21) {
             chat::SetGroupAdminReq req;
 
-            int userid;
             int groupid;
             int targetid;
-
-            cout<<"userid:";
-            cin>>userid;
 
             cout<<"groupid:";
             cin>>groupid;
@@ -1768,7 +1709,6 @@ int main()
             cout<<"targetid:";
             cin>>targetid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
             req.set_targetid(targetid);
 
@@ -1784,12 +1724,8 @@ int main()
         else if (op == 22) {
             chat::RemoveGroupAdminReq req;
 
-            int userid;
             int groupid;
             int targetid;
-
-            cout<<"userid:";
-            cin>>userid;
 
             cout<<"groupid:";
             cin>>groupid;
@@ -1797,7 +1733,6 @@ int main()
             cout<<"targetid:";
             cin>>targetid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
             req.set_targetid(targetid);
 
@@ -1813,12 +1748,8 @@ int main()
         else if (op == 23) {
             chat::RemoveGroupUserReq req;
 
-            int userid;
             int groupid;
             int targetid;
-
-            cout<<"userid:";
-            cin>>userid;
 
             cout<<"groupid:";
             cin>>groupid;
@@ -1826,7 +1757,6 @@ int main()
             cout<<"targetid:";
             cin>>targetid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
             req.set_targetid(targetid);
 
@@ -1843,12 +1773,8 @@ int main()
         {
             chat::RefuseGroupReq req;
 
-            int userid;
             int groupid;
             int targetid;
-
-            cout << "userid:";
-            cin >> userid;
 
             cout << "groupid:";
             cin >> groupid;
@@ -1856,7 +1782,6 @@ int main()
             cout << "targetid:";
             cin >> targetid;
 
-            req.set_userid(userid);
             req.set_groupid(groupid);
             req.set_targetid(targetid);
 
@@ -1883,13 +1808,68 @@ int main()
             thread t(
                 sendFile,
                 sockfd,
-                currentUserid,
                 0,
                 groupid,
                 filepath
             );
 
             t.detach();
+        }
+
+        else if (op == 26)
+        {
+            if (currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
+
+            int blackid;
+
+            cout << "blackid:";
+            cin >> blackid;
+
+            chat::BlacklistAddReq req;
+            req.set_blackid(blackid);
+
+            std::string data;
+            req.SerializeToString(&data);
+
+            std::string packet =
+                MessageCodec::encode(
+                    chat::BLACKLIST_ADD_MSG,
+                    data
+                );
+
+            sendAll(sockfd, packet.data(), packet.size());
+        }
+
+        else if (op == 27)
+        {
+            if (currentUserid == -1)
+            {
+                cout << "please login first" << endl;
+                continue;
+            }
+
+            int blackid;
+
+            cout << "blackid:";
+            cin >> blackid;
+
+            chat::BlacklistRemoveReq req;
+            req.set_blackid(blackid);
+
+            std::string data;
+            req.SerializeToString(&data);
+
+            std::string packet =
+                MessageCodec::encode(
+                    chat::BLACKLIST_REMOVE_MSG,
+                    data
+                );
+
+            sendAll(sockfd, packet.data(), packet.size());
         }
 
         else
