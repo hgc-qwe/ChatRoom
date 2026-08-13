@@ -104,6 +104,8 @@ public:
 
     void verifyCode(std::shared_ptr<TcpConnection> conn, const chat::VerifyCodeReq& req, chat::VerifyCodeRes& res);
 
+    void resetPassword(std::shared_ptr<TcpConnection> conn, const chat::ResetPasswordReq& req, chat::ResetPasswordRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);

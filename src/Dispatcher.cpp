@@ -435,6 +435,19 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::VERIFY_CODE_MSG_ACK, response);
         }
+        case chat::RESET_PASSWORD_MSG: {
+            chat::ResetPasswordReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("ResetPasswordReq parse failed");
+                return "";
+            }
+
+            chat::ResetPasswordRes res;
+            ChatService::instance()->resetPassword(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::RESET_PASSWORD_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

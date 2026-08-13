@@ -1350,7 +1350,6 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR ResetPasswordReq::ResetPasswordReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.email_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.code_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.newpassword_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ResetPasswordReqDefaultTypeInternal {
@@ -2198,7 +2197,6 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::chat::ResetPasswordReq, _impl_.email_),
-  PROTOBUF_FIELD_OFFSET(::chat::ResetPasswordReq, _impl_.code_),
   PROTOBUF_FIELD_OFFSET(::chat::ResetPasswordReq, _impl_.newpassword_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::ResetPasswordRes, _internal_metadata_),
@@ -2319,9 +2317,9 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 762, -1, -1, sizeof(::chat::CodeLoginReq)},
   { 770, -1, -1, sizeof(::chat::CodeLoginRes)},
   { 780, -1, -1, sizeof(::chat::ResetPasswordReq)},
-  { 789, -1, -1, sizeof(::chat::ResetPasswordRes)},
-  { 797, -1, -1, sizeof(::chat::VerifyCodeReq)},
-  { 806, -1, -1, sizeof(::chat::VerifyCodeRes)},
+  { 788, -1, -1, sizeof(::chat::ResetPasswordRes)},
+  { 796, -1, -1, sizeof(::chat::VerifyCodeReq)},
+  { 805, -1, -1, sizeof(::chat::VerifyCodeRes)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -2569,75 +2567,75 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\016\n\006errmsg\030\002 \001(\t\"+\n\014CodeLoginReq\022\r\n\005email"
   "\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\"I\n\014CodeLoginRes\022\013\n\003"
   "err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\016\n\006userid\030\003 \001("
-  "\005\022\014\n\004name\030\004 \001(\t\"D\n\020ResetPasswordReq\022\r\n\005e"
-  "mail\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\023\n\013newpassword\030"
-  "\003 \001(\t\"/\n\020ResetPasswordRes\022\013\n\003err\030\001 \001(\005\022\016"
-  "\n\006errmsg\030\002 \001(\t\";\n\rVerifyCodeReq\022\r\n\005email"
-  "\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\",\n\rV"
-  "erifyCodeRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001("
-  "\t*\247\022\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_M"
-  "SG\020\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013"
-  "REG_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD"
-  "_FRIEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020O"
-  "NE_CHAT_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022"
-  "\030\n\024CREATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_M"
-  "SG\020\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHA"
-  "T_MSG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOU"
-  "T_MSG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_M"
-  "SG\020\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTI"
-  "FY_MSG\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024Q"
-  "UERY_FRIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_RE"
-  "Q_MSG_ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025AC"
-  "CEPT_FRIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_N"
-  "OTIFY_MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_"
-  "ACK\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRI"
-  "END_MSG_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025"
-  "DELETE_FRIEND_MSG_ACK\020\036\022\025\n\021GROUP_HISTORY"
-  "_MSG\020\037\022\031\n\025GROUP_HISTORY_MSG_ACK\020 \022\022\n\016FIL"
-  "E_START_MSG\020!\022\026\n\022FILE_START_MSG_ACK\020\"\022\022\n"
-  "\016FILE_CHUNK_MSG\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020"
-  "$\022\020\n\014FILE_END_MSG\020%\022\024\n\020FILE_END_MSG_ACK\020"
-  "&\022\025\n\021DOWNLOAD_FILE_MSG\020\'\022\031\n\025DOWNLOAD_FIL"
-  "E_MSG_ACK\020(\022\026\n\022DOWNLOAD_START_MSG\020)\022\032\n\026D"
-  "OWNLOAD_START_MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUN"
-  "K_MSG\020+\022\032\n\026DOWNLOAD_CHUNK_MSG_ACK\020,\022\024\n\020D"
-  "OWNLOAD_END_MSG\020-\022\030\n\024DOWNLOAD_END_MSG_AC"
-  "K\020.\022\026\n\022CANCEL_ACCOUNT_MSG\020/\022\032\n\026CANCEL_AC"
-  "COUNT_MSG_ACK\0200\022\023\n\017APPLY_GROUP_MSG\0201\022\027\n\023"
-  "APPLY_GROUP_MSG_ACK\0202\022\027\n\023QUERY_GROUP_REQ"
-  "_MSG\0203\022\033\n\027QUERY_GROUP_REQ_MSG_ACK\0204\022\024\n\020A"
-  "CCEPT_GROUP_MSG\0205\022\030\n\024ACCEPT_GROUP_MSG_AC"
-  "K\0206\022\024\n\020GROUP_NOTIFY_MSG\0207\022\030\n\024GROUP_NOTIF"
-  "Y_MSG_ACK\0208\022\033\n\027GROUP_ACCEPT_NOTIFY_MSG\0209"
-  "\022\037\n\033GROUP_ACCEPT_NOTIFY_MSG_ACK\020:\022\023\n\017QUE"
-  "RY_GROUP_MSG\020;\022\027\n\023QUERY_GROUP_MSG_ACK\020<\022"
-  "\023\n\017LEAVE_GROUP_MSG\020=\022\027\n\023LEAVE_GROUP_MSG_"
-  "ACK\020>\022\026\n\022TRANSFER_OWNER_MSG\020\?\022\032\n\026TRANSFE"
-  "R_OWNER_MSG_ACK\020@\022\026\n\022DISSOLVE_GROUP_MSG\020"
-  "A\022\032\n\026DISSOLVE_GROUP_MSG_ACK\020B\022\030\n\024QUERY_G"
-  "ROUP_USER_MSG\020C\022\034\n\030QUERY_GROUP_USER_MSG_"
-  "ACK\020D\022\027\n\023SET_GROUP_ADMIN_MSG\020E\022\033\n\027SET_GR"
-  "OUP_ADMIN_MSG_ACK\020F\022\032\n\026REMOVE_GROUP_ADMI"
-  "N_MSG\020G\022\036\n\032REMOVE_GROUP_ADMIN_MSG_ACK\020H\022"
-  "\031\n\025REMOVE_GROUP_USER_MSG\020I\022\035\n\031REMOVE_GRO"
-  "UP_USER_MSG_ACK\020J\022 \n\034REMOVE_GROUP_USER_N"
-  "OTIFY_MSG\020K\022$\n REMOVE_GROUP_USER_NOTIFY_"
-  "MSG_ACK\020L\022\024\n\020REFUSE_GROUP_MSG\020M\022\030\n\024REFUS"
-  "E_GROUP_MSG_ACK\020N\022\033\n\027REFUSE_GROUP_NOTIFY"
-  "_MSG\020O\022\037\n\033REFUSE_GROUP_NOTIFY_MSG_ACK\020P\022"
-  "\031\n\025GROUP_FILE_NOTIFY_MSG\020Q\022\035\n\031GROUP_FILE"
-  "_NOTIFY_MSG_ACK\020R\022\025\n\021BLACKLIST_ADD_MSG\020S"
-  "\022\031\n\025BLACKLIST_ADD_MSG_ACK\020T\022\030\n\024BLACKLIST"
-  "_REMOVE_MSG\020U\022\034\n\030BLACKLIST_REMOVE_MSG_AC"
-  "K\020V\022\021\n\rSEND_CODE_MSG\020W\022\025\n\021SEND_CODE_MSG_"
-  "ACK\020X\022\022\n\016CODE_LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_"
-  "MSG_ACK\020Z\022\026\n\022RESET_PASSWORD_MSG\020[\022\032\n\026RES"
-  "ET_PASSWORD_MSG_ACK\020\\\022\023\n\017VERIFY_CODE_MSG"
-  "\020]\022\027\n\023VERIFY_CODE_MSG_ACK\020^b\006proto3"
+  "\005\022\014\n\004name\030\004 \001(\t\"6\n\020ResetPasswordReq\022\r\n\005e"
+  "mail\030\001 \001(\t\022\023\n\013newpassword\030\002 \001(\t\"/\n\020Reset"
+  "PasswordRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t"
+  "\";\n\rVerifyCodeReq\022\r\n\005email\030\001 \001(\t\022\014\n\004code"
+  "\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\",\n\rVerifyCodeRes\022\013"
+  "\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\247\022\n\006MsgTyp\022\017"
+  "\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_"
+  "MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022"
+  "\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEND_MSG_AC"
+  "K\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_CHAT_MSG_AC"
+  "K\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024CREATE_GROU"
+  "P_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025\n\021ADD_GR"
+  "OUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020\r\022\026\n\022GRO"
+  "UP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOG"
+  "OUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023\n\017HISTOR"
+  "Y_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_MSG\020\023\022\031\n\025FR"
+  "IEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUERY_FRIEND_RE"
+  "Q_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_MSG_ACK\020\026\022\025\n"
+  "\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEPT_FRIEND_MS"
+  "G_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTIFY_MSG\020\031\022 \n"
+  "\034FRIEND_ACCEPT_NOTIFY_MSG_ACK\020\032\022\024\n\020QUERY"
+  "_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND_MSG_ACK\020\034\022"
+  "\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DELETE_FRIEND_"
+  "MSG_ACK\020\036\022\025\n\021GROUP_HISTORY_MSG\020\037\022\031\n\025GROU"
+  "P_HISTORY_MSG_ACK\020 \022\022\n\016FILE_START_MSG\020!\022"
+  "\026\n\022FILE_START_MSG_ACK\020\"\022\022\n\016FILE_CHUNK_MS"
+  "G\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020$\022\020\n\014FILE_END_"
+  "MSG\020%\022\024\n\020FILE_END_MSG_ACK\020&\022\025\n\021DOWNLOAD_"
+  "FILE_MSG\020\'\022\031\n\025DOWNLOAD_FILE_MSG_ACK\020(\022\026\n"
+  "\022DOWNLOAD_START_MSG\020)\022\032\n\026DOWNLOAD_START_"
+  "MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUNK_MSG\020+\022\032\n\026DOW"
+  "NLOAD_CHUNK_MSG_ACK\020,\022\024\n\020DOWNLOAD_END_MS"
+  "G\020-\022\030\n\024DOWNLOAD_END_MSG_ACK\020.\022\026\n\022CANCEL_"
+  "ACCOUNT_MSG\020/\022\032\n\026CANCEL_ACCOUNT_MSG_ACK\020"
+  "0\022\023\n\017APPLY_GROUP_MSG\0201\022\027\n\023APPLY_GROUP_MS"
+  "G_ACK\0202\022\027\n\023QUERY_GROUP_REQ_MSG\0203\022\033\n\027QUER"
+  "Y_GROUP_REQ_MSG_ACK\0204\022\024\n\020ACCEPT_GROUP_MS"
+  "G\0205\022\030\n\024ACCEPT_GROUP_MSG_ACK\0206\022\024\n\020GROUP_N"
+  "OTIFY_MSG\0207\022\030\n\024GROUP_NOTIFY_MSG_ACK\0208\022\033\n"
+  "\027GROUP_ACCEPT_NOTIFY_MSG\0209\022\037\n\033GROUP_ACCE"
+  "PT_NOTIFY_MSG_ACK\020:\022\023\n\017QUERY_GROUP_MSG\020;"
+  "\022\027\n\023QUERY_GROUP_MSG_ACK\020<\022\023\n\017LEAVE_GROUP"
+  "_MSG\020=\022\027\n\023LEAVE_GROUP_MSG_ACK\020>\022\026\n\022TRANS"
+  "FER_OWNER_MSG\020\?\022\032\n\026TRANSFER_OWNER_MSG_AC"
+  "K\020@\022\026\n\022DISSOLVE_GROUP_MSG\020A\022\032\n\026DISSOLVE_"
+  "GROUP_MSG_ACK\020B\022\030\n\024QUERY_GROUP_USER_MSG\020"
+  "C\022\034\n\030QUERY_GROUP_USER_MSG_ACK\020D\022\027\n\023SET_G"
+  "ROUP_ADMIN_MSG\020E\022\033\n\027SET_GROUP_ADMIN_MSG_"
+  "ACK\020F\022\032\n\026REMOVE_GROUP_ADMIN_MSG\020G\022\036\n\032REM"
+  "OVE_GROUP_ADMIN_MSG_ACK\020H\022\031\n\025REMOVE_GROU"
+  "P_USER_MSG\020I\022\035\n\031REMOVE_GROUP_USER_MSG_AC"
+  "K\020J\022 \n\034REMOVE_GROUP_USER_NOTIFY_MSG\020K\022$\n"
+  " REMOVE_GROUP_USER_NOTIFY_MSG_ACK\020L\022\024\n\020R"
+  "EFUSE_GROUP_MSG\020M\022\030\n\024REFUSE_GROUP_MSG_AC"
+  "K\020N\022\033\n\027REFUSE_GROUP_NOTIFY_MSG\020O\022\037\n\033REFU"
+  "SE_GROUP_NOTIFY_MSG_ACK\020P\022\031\n\025GROUP_FILE_"
+  "NOTIFY_MSG\020Q\022\035\n\031GROUP_FILE_NOTIFY_MSG_AC"
+  "K\020R\022\025\n\021BLACKLIST_ADD_MSG\020S\022\031\n\025BLACKLIST_"
+  "ADD_MSG_ACK\020T\022\030\n\024BLACKLIST_REMOVE_MSG\020U\022"
+  "\034\n\030BLACKLIST_REMOVE_MSG_ACK\020V\022\021\n\rSEND_CO"
+  "DE_MSG\020W\022\025\n\021SEND_CODE_MSG_ACK\020X\022\022\n\016CODE_"
+  "LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_MSG_ACK\020Z\022\026\n\022R"
+  "ESET_PASSWORD_MSG\020[\022\032\n\026RESET_PASSWORD_MS"
+  "G_ACK\020\\\022\023\n\017VERIFY_CODE_MSG\020]\022\027\n\023VERIFY_C"
+  "ODE_MSG_ACK\020^b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 8435, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 8421, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
     &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 95,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
@@ -25556,7 +25554,6 @@ ResetPasswordReq::ResetPasswordReq(const ResetPasswordReq& from)
   ResetPasswordReq* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.email_){}
-    , decltype(_impl_.code_){}
     , decltype(_impl_.newpassword_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -25567,14 +25564,6 @@ ResetPasswordReq::ResetPasswordReq(const ResetPasswordReq& from)
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_email().empty()) {
     _this->_impl_.email_.Set(from._internal_email(), 
-      _this->GetArenaForAllocation());
-  }
-  _impl_.code_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.code_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_code().empty()) {
-    _this->_impl_.code_.Set(from._internal_code(), 
       _this->GetArenaForAllocation());
   }
   _impl_.newpassword_.InitDefault();
@@ -25594,17 +25583,12 @@ inline void ResetPasswordReq::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.email_){}
-    , decltype(_impl_.code_){}
     , decltype(_impl_.newpassword_){}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.email_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
     _impl_.email_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.code_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.code_.Set("", GetArenaForAllocation());
   #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.newpassword_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
@@ -25624,7 +25608,6 @@ ResetPasswordReq::~ResetPasswordReq() {
 inline void ResetPasswordReq::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.email_.Destroy();
-  _impl_.code_.Destroy();
   _impl_.newpassword_.Destroy();
 }
 
@@ -25639,7 +25622,6 @@ void ResetPasswordReq::Clear() {
   (void) cached_has_bits;
 
   _impl_.email_.ClearToEmpty();
-  _impl_.code_.ClearToEmpty();
   _impl_.newpassword_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -25660,19 +25642,9 @@ const char* ResetPasswordReq::_InternalParse(const char* ptr, ::_pbi::ParseConte
         } else
           goto handle_unusual;
         continue;
-      // string code = 2;
+      // string newpassword = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_code();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "chat.ResetPasswordReq.code"));
-        } else
-          goto handle_unusual;
-        continue;
-      // string newpassword = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_newpassword();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -25719,24 +25691,14 @@ uint8_t* ResetPasswordReq::_InternalSerialize(
         1, this->_internal_email(), target);
   }
 
-  // string code = 2;
-  if (!this->_internal_code().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_code().data(), static_cast<int>(this->_internal_code().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "chat.ResetPasswordReq.code");
-    target = stream->WriteStringMaybeAliased(
-        2, this->_internal_code(), target);
-  }
-
-  // string newpassword = 3;
+  // string newpassword = 2;
   if (!this->_internal_newpassword().empty()) {
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
       this->_internal_newpassword().data(), static_cast<int>(this->_internal_newpassword().length()),
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
       "chat.ResetPasswordReq.newpassword");
     target = stream->WriteStringMaybeAliased(
-        3, this->_internal_newpassword(), target);
+        2, this->_internal_newpassword(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -25762,14 +25724,7 @@ size_t ResetPasswordReq::ByteSizeLong() const {
         this->_internal_email());
   }
 
-  // string code = 2;
-  if (!this->_internal_code().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_code());
-  }
-
-  // string newpassword = 3;
+  // string newpassword = 2;
   if (!this->_internal_newpassword().empty()) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
@@ -25797,9 +25752,6 @@ void ResetPasswordReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
   if (!from._internal_email().empty()) {
     _this->_internal_set_email(from._internal_email());
   }
-  if (!from._internal_code().empty()) {
-    _this->_internal_set_code(from._internal_code());
-  }
   if (!from._internal_newpassword().empty()) {
     _this->_internal_set_newpassword(from._internal_newpassword());
   }
@@ -25825,10 +25777,6 @@ void ResetPasswordReq::InternalSwap(ResetPasswordReq* other) {
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.email_, lhs_arena,
       &other->_impl_.email_, rhs_arena
-  );
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.code_, lhs_arena,
-      &other->_impl_.code_, rhs_arena
   );
   ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
       &_impl_.newpassword_, lhs_arena,

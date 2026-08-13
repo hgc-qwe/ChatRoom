@@ -1519,3 +1519,40 @@ void ChatService::verifyCode(std::shared_ptr<TcpConnection> conn, const chat::Ve
     res.set_err(0);
     res.set_errmsg("verify success");
 }
+
+void ChatService::resetPassword(std::shared_ptr<TcpConnection> conn, const chat::ResetPasswordReq& req, chat::ResetPasswordRes& res) {
+    if (req.email().empty() || req.newpassword().empty()) {
+        res.set_err(1);
+        res.set_errmsg("email or newpassword empty");
+        return;
+    }
+
+    Redis redis;
+    if (!redis.connect()) {
+        res.set_err(1);
+        res.set_errmsg("redis connect failed");
+        return;
+    }
+    std::string verifiedKey = "verified:email:" + req.email() + ":3";
+    std::string value;
+    if (!redis.get(verifiedKey, value)) {
+        res.set_err(1);
+        res.set_errmsg("please verify code first");
+        return;
+    }
+    redis.del(verifiedKey);
+
+    User user = userModel.queryByEmail(req.email());
+    if (user.getId() == -1) {
+        res.set_err(1);
+        res.set_errmsg("account not exist");
+        return;
+    }
+    if (!userModel.updatePassword(user.getId(), req.newpassword())) {
+        res.set_err(1);
+        res.set_errmsg("reset password failed");
+        return;
+    }
+    res.set_err(0);
+    res.set_errmsg("reset password success");
+}

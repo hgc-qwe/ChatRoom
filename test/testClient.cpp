@@ -1114,6 +1114,17 @@ void recvMessage(int sockfd)
                 cout << "username: " << res.name() << endl;
             }
 
+            else if (msgid == chat::RESET_PASSWORD_MSG_ACK)
+            {
+                chat::ResetPasswordRes res;
+
+                res.ParseFromString(body);
+
+                cout << "reset password: "
+                    << res.errmsg()
+                    << endl;
+            }
+
             cout<<"\n";
         }
 
@@ -1200,6 +1211,7 @@ int main()
         cout<<"26 add blacklist\n";
         cout<<"27 remove blacklist\n";
         cout<<"28 login by code\n";
+        cout<<"29 reset password\n";
         cout<<"0 exit\n";
 
 
@@ -2053,6 +2065,67 @@ int main()
 
             packet = MessageCodec::encode(chat::CODE_LOGIN_MSG, data);
 
+        }
+
+        else if (op == 29)
+        {
+            string email;
+
+            cout << "email:";
+            cin >> email;
+
+            sendCode(sockfd, email, 3);
+
+            cout << "验证码已发送" << endl;
+
+            string code;
+
+            cout << "code:";
+            cin >> code;
+
+            verifyCodeFinished = false;
+            verifyCodeSuccess = false;
+
+            verifyCode(
+                sockfd,
+                email,
+                code,
+                3
+            );
+
+            while (!verifyCodeFinished)
+            {
+                usleep(10000);
+            }
+
+            if (!verifyCodeSuccess)
+            {
+                cout << "验证码错误，密码找回结束" << endl;
+                continue;
+            }
+
+            cout << "验证码正确，请输入新密码" << endl;
+
+            string password;
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            password = inputPassword();
+
+            chat::ResetPasswordReq req;
+
+            //
+            cout << "email = [" << email << "]" << endl;
+            cout << "password = [" << password << "]" << endl;
+            cout << "password size = " << password.size() << endl;
+            
+            req.set_email(email);
+            req.set_newpassword(password);
+
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(
+                chat::RESET_PASSWORD_MSG,
+                data
+            );
         }
 
         else

@@ -15,4 +15,6 @@ public:
     bool remove(int userid);
 
     User queryByEmail(const std::string& email);
+
+    bool updatePassword(int userid, const std::string& password);
 };

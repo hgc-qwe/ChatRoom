@@ -87,3 +87,12 @@ User UserModel::queryByEmail(const std::string& email) {
     }
     return User();
 }
+
+bool UserModel::updatePassword(int userid, const std::string& password) {
+    std::string sql = "update user set password='" + password + "' where id=" + std::to_string(userid) + ";";
+    Mysql mysql;
+    if (! mysql.connect()) {
+        return false;
+    }
+    return mysql.update(sql);
+}

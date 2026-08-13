@@ -16348,8 +16348,7 @@ class ResetPasswordReq final :
 
   enum : int {
     kEmailFieldNumber = 1,
-    kCodeFieldNumber = 2,
-    kNewpasswordFieldNumber = 3,
+    kNewpasswordFieldNumber = 2,
   };
   // string email = 1;
   void clear_email();
@@ -16365,21 +16364,7 @@ class ResetPasswordReq final :
   std::string* _internal_mutable_email();
   public:
 
-  // string code = 2;
-  void clear_code();
-  const std::string& code() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_code(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_code();
-  PROTOBUF_NODISCARD std::string* release_code();
-  void set_allocated_code(std::string* code);
-  private:
-  const std::string& _internal_code() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_code(const std::string& value);
-  std::string* _internal_mutable_code();
-  public:
-
-  // string newpassword = 3;
+  // string newpassword = 2;
   void clear_newpassword();
   const std::string& newpassword() const;
   template <typename ArgT0 = const std::string&, typename... ArgT>
@@ -16402,7 +16387,6 @@ class ResetPasswordReq final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr email_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr code_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr newpassword_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -25332,57 +25316,7 @@ inline void ResetPasswordReq::set_allocated_email(std::string* email) {
   // @@protoc_insertion_point(field_set_allocated:chat.ResetPasswordReq.email)
 }
 
-// string code = 2;
-inline void ResetPasswordReq::clear_code() {
-  _impl_.code_.ClearToEmpty();
-}
-inline const std::string& ResetPasswordReq::code() const {
-  // @@protoc_insertion_point(field_get:chat.ResetPasswordReq.code)
-  return _internal_code();
-}
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void ResetPasswordReq::set_code(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.code_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:chat.ResetPasswordReq.code)
-}
-inline std::string* ResetPasswordReq::mutable_code() {
-  std::string* _s = _internal_mutable_code();
-  // @@protoc_insertion_point(field_mutable:chat.ResetPasswordReq.code)
-  return _s;
-}
-inline const std::string& ResetPasswordReq::_internal_code() const {
-  return _impl_.code_.Get();
-}
-inline void ResetPasswordReq::_internal_set_code(const std::string& value) {
-  
-  _impl_.code_.Set(value, GetArenaForAllocation());
-}
-inline std::string* ResetPasswordReq::_internal_mutable_code() {
-  
-  return _impl_.code_.Mutable(GetArenaForAllocation());
-}
-inline std::string* ResetPasswordReq::release_code() {
-  // @@protoc_insertion_point(field_release:chat.ResetPasswordReq.code)
-  return _impl_.code_.Release();
-}
-inline void ResetPasswordReq::set_allocated_code(std::string* code) {
-  if (code != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.code_.SetAllocated(code, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.code_.IsDefault()) {
-    _impl_.code_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:chat.ResetPasswordReq.code)
-}
-
-// string newpassword = 3;
+// string newpassword = 2;
 inline void ResetPasswordReq::clear_newpassword() {
   _impl_.newpassword_.ClearToEmpty();
 }
