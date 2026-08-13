@@ -2,25 +2,29 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ChatRoom)
 
+configure_file(
+    ${PROJECT_SOURCE_DIR}/config.json
+    ${PROJECT_BINARY_DIR}/config.json
+    COPYONLY
+)
+
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Protobuf REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(CURL REQUIRED)
+find_package(nlohmann_json REQUIRED)
 set(HIREDIS_LIB /usr/lib/x86_64-linux-gnu/libhiredis.so)
 
 # ============================================
 # 公共源文件（Server 和 Client 共享的部分）
 # ============================================
 set(COMMON_SRC
-    # base
+
     src/Buffer.cpp
     src/Util.cpp
     src/Logger.cpp
-
-    # codec
     src/MessageCodec.cpp
-    src/Logger.cpp
-    # protobuf
     proto/chat.pb.cc
 )
 
@@ -32,7 +36,7 @@ add_executable(
 
     test/testServer.cpp
 
-    # network
+
     src/TcpServer.cpp
     src/TcpConnection.cpp
     src/EventLoop.cpp
@@ -40,12 +44,8 @@ add_executable(
     src/EventLoopThreadPool.cpp
     src/Epoll.cpp
     src/Channel.cpp
-
-    # dispatcher/service
     src/Dispatcher.cpp
     src/ChatService.cpp
-
-    # model
     src/UserModel.cpp
     src/FriendModel.cpp
     src/GroupModel.cpp
@@ -58,16 +58,12 @@ add_executable(
     src/FileModel.cpp
     src/GroupReqModel.cpp
     src/BlacklistModel.cpp
-
-    # entity
     src/User.cpp
     src/Group.cpp
-
-    # database
     src/Mysql.cpp
     src/Redis.cpp
+    src/EmailSender.cpp
 
-    # 公共文件
     ${COMMON_SRC}
 )
 
@@ -85,6 +81,8 @@ target_link_libraries(
     protobuf::libprotobuf
     spdlog::spdlog
     ${HIREDIS_LIB}
+    CURL::libcurl
+    nlohmann_json::nlohmann_json
 )
 
 # ============================================
@@ -95,7 +93,6 @@ add_executable(
 
     test/testClient.cpp
 
-    # 客户端需要的源文件（根据你的项目调整）
     src/TcpConnection.cpp
     src/EventLoop.cpp
     src/EventLoopThread.cpp
@@ -103,7 +100,7 @@ add_executable(
     src/Epoll.cpp
     src/Channel.cpp
 
-    # 公共文件
+
     ${COMMON_SRC}
 )
 
@@ -119,4 +116,6 @@ target_link_libraries(
     pthread
     protobuf::libprotobuf
     spdlog::spdlog
+    CURL::libcurl
+    nlohmann_json::nlohmann_json
 )

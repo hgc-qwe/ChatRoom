@@ -12,13 +12,15 @@ public:
 
     bool set(const std::string& key, const std::string& value);
 
-    bool get(const std::string& key, std::string value);
+    bool get(const std::string& key, std::string& value);
 
     bool del(const std::string& key);
 
     bool pushList(const std::string& key, const std::string& value);
 
     bool getList(const std::string& key, std::vector<std::string>& values);
+
+    bool setex(std::string& key, int seconds, std::string& value);
 private:
     void* context;
 };

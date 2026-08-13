@@ -13,6 +13,8 @@
 #include "TcpConnection.h"
 #include "FileModel.h"
 #include "BlacklistModel.h"
+#include "VerifyCode.h"
+#include "EmailSender.h"
 
 ChatService* ChatService::instance() {
     static ChatService service;
@@ -158,23 +160,55 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
     if (req.name().empty() || req.password().empty()) {
         res.set_err(1);
         res.set_errmsg("register failed");
-        LOG_WARN("register failed name={}", req.name());
-    } else {
-        User user;
-        user.setName(req.name());
-        user.setPassword(req.password());
-        user.setState("offline");
+        LOG_WARN("register failed name = {}", req.name());
+        return;
+    }
 
-        if (userModel.insert(user)) {
-            res.set_err(0);
-            res.set_userid(user.getId());
-            res.set_errmsg("register success");
-            LOG_INFO("register success userid={}", user.getId());
-        } else {
-            res.set_err(1);
-            res.set_errmsg("register failed");
-            LOG_WARN("register failed name={}", req.name());
-        }
+    std::string verifiedKey;
+    if (req.email().empty()) {
+        res.set_err(1);
+        res.set_errmsg("email empty");
+        return;
+    }
+    verifiedKey = "verified:email:" + req.email() + ":1";
+
+    Redis redis;
+    if (!redis.connect()) {
+        res.set_err(1);
+        res.set_errmsg("redis error");
+        return;
+    }
+
+    std::string verified;
+    if (!redis.get(verifiedKey, verified)) {
+        res.set_err(1);
+        res.set_errmsg("please verify code first");
+        return;
+    }
+
+    User exist = userModel.queryByEmail(req.email());
+    if (exist.getId() != -1) {
+        res.set_err(1);
+        res.set_errmsg("account exists");
+        return;
+    }
+
+    User user;
+    user.setName(req.name());
+    user.setPassword(req.password());
+    user.setState("offline");
+    user.setEmail(req.email());
+
+    if (userModel.insert(user)) {
+        redis.del(verifiedKey);
+        res.set_err(0);
+        res.set_userid(user.getId());
+        res.set_errmsg("register success");
+        LOG_INFO("register success userid = {}", user.getId());
+    } else {
+        res.set_err(1);
+        res.set_errmsg("register failed");
+        LOG_WARN("register failed name = {}", req.name());
     }
 }
 
@@ -1358,4 +1392,130 @@ void ChatService::removeBlacklist(std::shared_ptr<TcpConnection> conn, const cha
     }
     res.set_err(1);
     res.set_errmsg("remove black failed");
+}
+
+void ChatService::sendCode(std::shared_ptr<TcpConnection> conn, const chat::SendCodeReq& req, chat::SendCodeRes& res) {
+    std::string key;
+
+    if (req.email().empty()) {
+        res.set_err(1);
+        res.set_errmsg("email empty");
+        return;
+    }
+    key = "verify:email:" + req.email();
+    std::string code = VerifyCode::generate();
+    
+    Redis redis;
+    if (!redis.connect()) {
+        res.set_err(1);
+        res.set_errmsg("redis error");
+        return;
+    }
+
+    
+    if (!redis.setex(key, 300, code)) {
+        res.set_err(1);
+        res.set_errmsg("save code failed");
+        return;
+    }
+   
+   
+    EmailSender sender;
+    if (!sender.sendCode(req.email(), code)) {
+        redis.del(key);
+        res.set_err(1);     
+        res.set_errmsg("email send failed");
+        return;
+    }
+
+    res.set_err(0);
+    res.set_errmsg("send code success");
+}
+
+void ChatService::codeLogin(std::shared_ptr<TcpConnection> conn, const chat::CodeLoginReq& req, chat::CodeLoginRes& res) {
+    if (req.email().empty()) {
+        res.set_err(1);
+        res.set_errmsg("email empty");
+        return;
+    }
+        
+    Redis redis;
+    if(!redis.connect()) {
+        res.set_err(1);
+        res.set_errmsg("redis connect failed");
+        return;
+    }
+
+    std::string verifiedKey = "verified:email:" + req.email() + ":2";
+    std::string value;
+    if (!redis.get(verifiedKey, value)) {
+        res.set_err(1);
+        res.set_errmsg("please verify code first");
+        return;
+    }
+    redis.del(verifiedKey);
+
+    User user = userModel.queryByEmail(req.email());
+    if (user.getId() == -1) {
+        res.set_err(1);
+        res.set_errmsg("account not exist");
+        return;
+    }
+
+    user.setState("online");
+    if (!userModel.updateState(user)) {
+        res.set_err(1);
+        res.set_errmsg("login failed");
+        return;
+    }
+
+    addUserConn(conn, user.getId());
+    conn->setUserId(user.getId());
+    
+    res.set_err(0);
+    res.set_errmsg("login success");
+    res.set_userid(user.getId());
+    res.set_name(user.getName());
+}
+
+void ChatService::verifyCode(std::shared_ptr<TcpConnection> conn, const chat::VerifyCodeReq& req, chat::VerifyCodeRes& res) {
+    if (req.email().empty()) {
+        res.set_err(1);
+        res.set_errmsg("email empty");
+        return;
+    }
+    std::string key = "verify:email:" + req.email();
+
+    Redis redis;
+    if (!redis.connect()) {
+        res.set_err(1);
+        res.set_errmsg("redis error");
+        return;
+    }
+
+    std::string realCode;
+   
+    if (!redis.get(key, realCode)) {
+        res.set_err(1);
+        res.set_errmsg("code expired");
+        return;
+    }
+    
+    if (realCode != req.code()) {
+        res.set_err(1);
+        res.set_errmsg("wrong code");
+        return;
+    }
+    redis.del(key);
+
+    std::string verifiedKey = "verified:email:" + req.email() + ":" + std::to_string(req.scene());
+    std::string value = "1";
+    if (!redis.setex(verifiedKey, 600, value)) {
+        res.set_err(1);
+        res.set_errmsg("save verify status failed");
+        return;
+    }
+
+    res.set_err(0);
+    res.set_errmsg("verify success");
 }

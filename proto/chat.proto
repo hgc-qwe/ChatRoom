@@ -132,6 +132,18 @@ enum MsgTyp {
 
     BLACKLIST_REMOVE_MSG = 85;
     BLACKLIST_REMOVE_MSG_ACK = 86;
+
+    SEND_CODE_MSG = 87;
+    SEND_CODE_MSG_ACK = 88;
+
+    CODE_LOGIN_MSG = 89;
+    CODE_LOGIN_MSG_ACK = 90;
+
+    RESET_PASSWORD_MSG = 91;
+    RESET_PASSWORD_MSG_ACK = 92;
+
+    VERIFY_CODE_MSG = 93;
+    VERIFY_CODE_MSG_ACK = 94;
 }
 
 message OfflineMsg {
@@ -164,6 +176,7 @@ message RegisterReq {
     MsgTyp msgid = 1;
     string name = 2;
     string password = 3;
+    string email = 4;
 }
 
 message RegisterRes {
@@ -616,4 +629,48 @@ message GroupChatNotify {
     string username = 3;
     string msg = 4;
     string time = 5;
+}
+
+message SendCodeReq {
+    string email = 1;
+    int32 scene = 2;
+}
+
+message SendCodeRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message CodeLoginReq {
+    string email = 1;
+    string code = 2;
+}
+
+message CodeLoginRes {
+    int32 err = 1;
+    string errmsg = 2;
+    int32 userid = 3;
+    string name = 4;
+}
+
+message ResetPasswordReq {
+    string email = 1;
+    string code = 2;
+    string newpassword = 3;
+}
+
+message ResetPasswordRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message VerifyCodeReq {
+    string email = 1;
+    string code = 2;
+    int32 scene = 3;
+}
+
+message VerifyCodeRes {
+    int32 err = 1;
+    string errmsg = 2;
 }

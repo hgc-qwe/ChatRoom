@@ -5,8 +5,8 @@
 #include "Mysql.h"
 
 bool UserModel::insert(User& user) {
-    std::string sql = "insert into user (name, password, state) values ('" 
-         + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "');";
+    std::string sql = "insert into user (name, password, state, email) values ('" 
+         + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "','" + user.getEmail() + "');";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;
@@ -68,4 +68,22 @@ bool UserModel::remove(int userid) {
         return false;
     }
     return mysql.update(sql);
+}
+
+User UserModel::queryByEmail(const std::string& email) {
+    std::string sql = "select id, name from user where email='" + email +"';";
+    Mysql mysql;
+    if (!mysql.connect()) return User();
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res) {
+        MYSQL_ROW row = mysql_fetch_row(res);
+        if (row) {
+            User user;
+            user.setId(atoi(row[0]));
+            user.setName(row[1]);
+            return user;
+        }
+    }
+    return User();
 }

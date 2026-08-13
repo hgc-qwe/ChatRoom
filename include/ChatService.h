@@ -98,6 +98,12 @@ public:
 
     void removeBlacklist(std::shared_ptr<TcpConnection> conn, const chat::BlacklistRemoveReq& req, chat::BlacklistRemoveRes& res);
 
+    void sendCode(std::shared_ptr<TcpConnection> conn, const chat::SendCodeReq& req, chat::SendCodeRes& res);
+
+    void codeLogin(std::shared_ptr<TcpConnection> conn, const chat::CodeLoginReq& req, chat::CodeLoginRes& res);
+
+    void verifyCode(std::shared_ptr<TcpConnection> conn, const chat::VerifyCodeReq& req, chat::VerifyCodeRes& res);
+
     std::shared_ptr<TcpConnection> getUserConn(int userid);
 
     void removeUser(int userid);

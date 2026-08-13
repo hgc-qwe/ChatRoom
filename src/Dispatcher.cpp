@@ -397,6 +397,44 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             res.SerializeToString(&response);
             return MessageCodec::encode(chat::BLACKLIST_REMOVE_MSG_ACK, response);
         }
+        case chat::SEND_CODE_MSG: {
+            chat::SendCodeReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("SendCodeReq parse failed");
+                return "";
+            }
+            chat::SendCodeRes res;
+            ChatService::instance()->sendCode(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::SEND_CODE_MSG_ACK, response);
+        }
+        case chat::CODE_LOGIN_MSG: {
+            chat::CodeLoginReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("CodeLoginReq parse failed");
+                return "";
+            }
+
+            chat::CodeLoginRes res;
+            ChatService::instance()->codeLogin(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::CODE_LOGIN_MSG_ACK, response);
+        }
+        case chat::VERIFY_CODE_MSG: {
+            chat::VerifyCodeReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("VerifyCodeReq parse failed");
+                return "";
+            }
+
+            chat::VerifyCodeRes res;
+            ChatService::instance()->verifyCode(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::VERIFY_CODE_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

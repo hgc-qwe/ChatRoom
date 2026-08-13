@@ -33,14 +33,18 @@ bool Redis::set(const std::string& key, const std::string& value) {
     return true;
 }
 
-bool Redis::get(const std::string& key, std::string value) {
+bool Redis::get(const std::string& key, std::string& value) {
     redisReply* reply = (redisReply*)redisCommand((redisContext*)context, "GET %s", key.c_str());
 
     if(reply == nullptr) return false;
-    if(reply->type == REDIS_REPLY_STRING) value = reply->str;
+    if(reply->type == REDIS_REPLY_STRING) {
+        value = reply->str;
+        freeReplyObject(reply);
+        return true;
+    }
 
     freeReplyObject(reply);
-    return true;
+    return false;
 }
 
 bool Redis::del(const std::string& key) {
@@ -74,4 +78,15 @@ bool Redis::getList(const std::string& key, std::vector<std::string>& values) {
 
     freeReplyObject(reply);
     return true;
+}
+
+bool Redis::setex(std::string& key, int seconds, std::string& value) {
+    redisReply* reply = (redisReply*)redisCommand((redisContext*)context, "SETEX %s %d %s", key.c_str(), seconds, value.c_str());
+
+    if (reply == nullptr) return false;
+
+    bool success = reply->type == REDIS_REPLY_STATUS;
+
+    freeReplyObject(reply);
+    return success;
 }

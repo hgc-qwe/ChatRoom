@@ -23,33 +23,8 @@ uint64_t recvFileSize = 0;
 std::ofstream downloadFile;
 std::string downloadFileId;
 std::string downloadFilePath;
-
-void queryFriend(int sockfd)
-{
-    chat::QueryFriendReq req;
-
-    req.set_msgid(chat::QUERY_FRIEND_MSG);
-
-
-    string data;
-
-    req.SerializeToString(&data);
-
-
-    string packet =
-        MessageCodec::encode(
-            chat::QUERY_FRIEND_MSG,
-            data
-        );
-
-
-    send(
-        sockfd,
-        packet.data(),
-        packet.size(),
-        0
-    );
-}
+bool verifyCodeFinished = false;
+bool verifyCodeSuccess = false;
 
 bool sendAll(int sockfd,
              const char* data,
@@ -76,6 +51,74 @@ bool sendAll(int sockfd,
 
 
     return true;
+}
+
+void verifyCode(
+    int sockfd,
+    const std::string& email,
+    const std::string& code,
+    int scene)
+{
+    chat::VerifyCodeReq req;
+
+    req.set_email(email);
+    req.set_code(code);
+    req.set_scene(scene);
+
+    std::string data;
+    req.SerializeToString(&data);
+
+    std::string packet =
+        MessageCodec::encode(
+            chat::VERIFY_CODE_MSG,
+            data
+        );
+
+    sendAll(
+        sockfd,
+        packet.data(),
+        packet.size()
+    );
+}
+
+void sendCode(int sockfd, string email, int scene) {
+    chat::SendCodeReq req;
+
+    req.set_email(email);
+    req.set_scene(scene);
+
+    string data;
+    req.SerializeToString(&data);
+    string packet = MessageCodec::encode(chat::SEND_CODE_MSG, data);
+
+    sendAll(sockfd, packet.data(), packet.size());
+}
+
+void queryFriend(int sockfd)
+{
+    chat::QueryFriendReq req;
+
+    req.set_msgid(chat::QUERY_FRIEND_MSG);
+
+
+    string data;
+
+    req.SerializeToString(&data);
+
+
+    string packet =
+        MessageCodec::encode(
+            chat::QUERY_FRIEND_MSG,
+            data
+        );
+
+
+    send(
+        sockfd,
+        packet.data(),
+        packet.size(),
+        0
+    );
 }
 
 void sendFile(int sockfd, int toid, int groupid, const std::string& path)
@@ -1018,6 +1061,59 @@ void recvMessage(int sockfd)
                     << endl;
             }
 
+
+            else if(msgid == chat::SEND_CODE_MSG_ACK)
+            {
+
+                chat::SendCodeRes res;
+
+                res.ParseFromString(body);
+
+
+                cout
+                <<"send code:"
+                <<res.errmsg()
+                <<endl;
+
+            }
+
+            else if(msgid == chat::VERIFY_CODE_MSG_ACK)
+            {
+                chat::VerifyCodeRes res;
+
+                res.ParseFromString(body);
+
+                cout << res.errmsg() << endl;
+
+                if(res.err() == 0)
+                {
+                    verifyCodeSuccess = true;
+                }
+                else
+                {
+                    verifyCodeSuccess = false;
+                }
+
+                verifyCodeFinished = true;
+            }
+
+            else if (msgid == chat::CODE_LOGIN_MSG_ACK)
+            {
+                chat::CodeLoginRes res;
+
+                res.ParseFromString(body);
+
+                if (res.err() != 0)
+                {
+                    cout << "登录失败：" << res.errmsg() << endl;
+                    continue;
+                }
+
+                cout << "登录成功" << endl;
+                cout << "userid: " << res.userid() << endl;
+                cout << "username: " << res.name() << endl;
+            }
+
             cout<<"\n";
         }
 
@@ -1103,6 +1199,7 @@ int main()
         cout<<"25 send group file\n";
         cout<<"26 add blacklist\n";
         cout<<"27 remove blacklist\n";
+        cout<<"28 login by code\n";
         cout<<"0 exit\n";
 
 
@@ -1524,6 +1621,42 @@ int main()
 
             chat::RegisterReq req;
 
+            string email = "";
+
+            
+            cout<<"email:";
+            cin>>email;
+
+            sendCode(sockfd, email, 1);
+            cout<<"验证码已发送" << endl;
+
+            string code;
+            cout<<"code:";
+            cin>>code;
+
+            verifyCodeFinished = false;
+            verifyCodeSuccess = false;
+
+            verifyCode(
+                sockfd,
+                email,
+                code,
+                1
+            );
+
+            while(!verifyCodeFinished)
+            {
+                usleep(10000);
+            }
+
+            if(!verifyCodeSuccess)
+            {
+                cout << "验证码错误，注册结束" << endl;
+                continue;
+            }
+
+            cout << "验证码正确，请继续输入用户名和密码" << endl;
+
             string name;
             string pwd;
 
@@ -1536,6 +1669,7 @@ int main()
 
             req.set_name(name);
             req.set_password(pwd);
+            req.set_email(email);
 
             req.SerializeToString(&data);
 
@@ -1870,6 +2004,55 @@ int main()
                 );
 
             sendAll(sockfd, packet.data(), packet.size());
+        }
+
+        else if(op==28)
+        {
+
+            chat::CodeLoginReq req;
+
+            string email = "";
+
+            
+            cout<<"email:";
+            cin>>email;
+
+            sendCode(sockfd, email, 2);
+            cout<<"验证码已发送" << endl;
+
+            string code;
+            cout<<"code:";
+            cin>>code;
+
+            verifyCodeFinished = false;
+            verifyCodeSuccess = false;
+
+            verifyCode(
+                sockfd,
+                email,
+                code,
+                2
+            );
+
+            while(!verifyCodeFinished)
+            {
+                usleep(10000);
+            }
+
+            if(!verifyCodeSuccess)
+            {
+                cout << "验证码错误，登录结束" << endl;
+                continue;
+            }
+
+            cout << "验证码正确，正在登录..." << endl;
+
+            req.set_email(email);
+            req.set_code(code);
+            req.SerializeToString(&data);
+
+            packet = MessageCodec::encode(chat::CODE_LOGIN_MSG, data);
+
         }
 
         else

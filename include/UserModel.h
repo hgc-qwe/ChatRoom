@@ -13,4 +13,6 @@ public:
     bool restState();
 
     bool remove(int userid);
+
+    User queryByEmail(const std::string& email);
 };
