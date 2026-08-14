@@ -14,6 +14,7 @@
 #include <atomic>
 #include <poll.h>
 #include <cerrno>
+#include <mutex>
 #include "Logger.h"
 #include "Buffer.h"
 #include "MessageCodec.h"
@@ -35,12 +36,14 @@ std::atomic<bool> running{true};
 SSL* ssl = nullptr;
 SSL_CTX* sslCtx = nullptr;
 std::vector<std::thread> fileThreads;
+mutex sslWriteMutex;
 
 bool sendAll(
     SSL* ssl,
     const char* data,
     size_t len)
 {
+    lock_guard<mutex> lock(sslWriteMutex);
     size_t sent = 0;
 
     while (sent < len)
