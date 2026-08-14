@@ -1181,7 +1181,7 @@ void recvMessage(SSL* ssl)
                     packet.size()
                 );
 
-                cout << "[Client] recv PING, not send PONG" << endl;
+                cout << "[Client] recv PING, send PONG" << endl;
             }
 
             cout<<"\n";
@@ -1192,7 +1192,7 @@ void recvMessage(SSL* ssl)
 
 
 
-int main()
+int main(int argc, char* argv[])
 {
 
     int sockfd = socket(
@@ -1200,17 +1200,47 @@ int main()
         SOCK_STREAM,
         0
     );
+    if (sockfd < 0) {
+        perror("socket");
+        return -1;
+    }
 
+    std::string serverIp = "127.0.0.1";
+    int serverPort = 8000;
 
-    sockaddr_in server;
+    if (argc >= 2) serverIp = argv[1];
+    if (argc == 3) {
+        try {
+            serverPort = std::stoi(argv[2]);
+        }   catch (...) {
+            std::cerr << " invalid port:" << argv[2] << std::endl;
+            close(sockfd);
+            return -1;
+        }
+    }
+    if (argc >= 4) {
+        std::cerr << " invalid ip : port" << std::endl;
+        close(sockfd);
+        return -1;
+    }
+    
+    if (serverPort < 1 || serverPort > 65535) {
+        std::cerr << "invalid port: " << serverPort << std::endl;
+        close(sockfd);
+        return -1;
+    }
 
-
+    sockaddr_in server{};
     server.sin_family = AF_INET;
-    server.sin_port = htons(8080);
-    server.sin_addr.s_addr =
-        inet_addr("127.0.0.1");
+    server.sin_port = htons(serverPort);
 
+    if (inet_pton(AF_INET, serverIp.c_str(), &server.sin_addr) <= 0) {
+        std::cerr << "invalid server ip: " << serverIp << std::endl;
+        close(sockfd);
+        return -1;
+    }
 
+    std::cout << "server address: " << serverIp << ":" << serverPort << std::endl;
 
     if(connect(
         sockfd,
@@ -1224,7 +1254,6 @@ int main()
 
 
     cout<<"connect success"<<endl;
-
     sslCtx = SSL_CTX_new(TLS_client_method());
     if (!sslCtx) {
         ERR_print_errors_fp(stderr);
@@ -1239,7 +1268,6 @@ int main()
     }
 
     SSL_set_fd(ssl, sockfd);
-
     if (SSL_connect(ssl) <= 0) {
         ERR_print_errors_fp(stderr);
         SSL_free(ssl);
@@ -1247,7 +1275,6 @@ int main()
         close(sockfd);
         return -1;
     }
-
     cout << "TLS handshake success" << endl;
     running = true;
 

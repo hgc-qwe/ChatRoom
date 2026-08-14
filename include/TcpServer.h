@@ -18,6 +18,7 @@ private:
     SSL_CTX* sslCtx{nullptr};
     int listenfd{-1};
     int port;
+    std::string ip;
     EventLoop loop;
     std::mutex connMutex;
     EventLoopThreadPool threadPool;
@@ -37,7 +38,7 @@ private:
 
     void removeConnection(std::shared_ptr<TcpConnection> conn);
 public:
-    TcpServer(int port);
+    TcpServer(const std::string& ip, int port);
     ~TcpServer();
     bool init();
     void start();

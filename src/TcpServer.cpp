@@ -1,5 +1,6 @@
 #include <iostream>
 #include <arpa/inet.h>
+#include <cstring>
 #include <unistd.h>
 #include <fcntl.h>
 #include <openssl/ssl.h>
@@ -10,8 +11,7 @@
 #include "Util.h"
 #include "Logger.h"
 
-TcpServer::TcpServer(int port) : threadPool(&loop, 3) {
-    this->port = port;
+TcpServer::TcpServer(const std::string& ip, int port) : ip(ip), port(port), threadPool(&loop, 3) {
     listenfd = -1;
 }
 
@@ -27,9 +27,13 @@ bool TcpServer::init() {
     if (!initSSL()) return false;
     if (!createListenFd()) return false;
 
+    memset(&listen_addr, 0, sizeof(listen_addr));
     listen_addr.sin_family = AF_INET;
     listen_addr.sin_port = htons(port);
-    listen_addr.sin_addr.s_addr = INADDR_ANY;
+    if (inet_pton(AF_INET, ip.c_str(), &listen_addr.sin_addr) <= 0) {
+        LOG_ERROR("invalid server ip: {}", ip);
+        return false;
+    }
 
     if (!bind()) {
         return false;
@@ -59,9 +63,23 @@ void TcpServer::start() {
 bool TcpServer::createListenFd() {
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if (listenfd == -1) {
+        LOG_ERROR("socket failed");
         return false;
     }
-    if (setNonBlock(listenfd) == -1) return false;
+
+    int opt = 1;
+    if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+        LOG_ERROR("setsockopt SO_REUSEADDR failed");
+        close(listenfd);
+        listenfd = -1;
+        return false;
+    }
+    if (setNonBlock(listenfd) == -1) {
+        LOG_ERROR("setNonBlock failed");
+        close(listenfd);
+        listenfd = -1;
+        return false;
+    }
     return true;
 }
 
