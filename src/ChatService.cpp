@@ -719,7 +719,6 @@ void ChatService::sendFile(std::shared_ptr<TcpConnection> conn, const FileInfo& 
         if (n <= 0) break;
         chat::FileChunkReq chunk;
         chunk.set_fileid(info.fileid);
-        chunk.set_offset(offset);
         chunk.set_data(buffer, n);
         data.clear();
         chunk.SerializeToString(&data);
@@ -766,7 +765,6 @@ void ChatService::downloadFile(std::shared_ptr<TcpConnection> conn, const chat::
         if (n <= 0) break;
         chat::DownloadChunk chunk;
         chunk.set_fileid(req.fileid());
-        chunk.set_offset(offset);
         chunk.set_data(buffer, n);
         data.clear();
         chunk.SerializeToString(&data);

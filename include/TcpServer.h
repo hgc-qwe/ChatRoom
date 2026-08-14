@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <memory>
 #include <mutex>
+#include <openssl/ssl.h>
 #include "TcpConnection.h"
 #include "Epoll.h"
 #include "EventLoop.h"
@@ -14,6 +15,7 @@
 
 class TcpServer {
 private:
+    SSL_CTX* sslCtx{nullptr};
     int listenfd{-1};
     int port;
     EventLoop loop;
@@ -31,6 +33,7 @@ private:
     void handleRead(int fd);
     void handleWrite(int fd);
     void closeConnection(int fd);
+    bool initSSL();
 
     void removeConnection(std::shared_ptr<TcpConnection> conn);
 public:

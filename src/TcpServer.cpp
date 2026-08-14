@@ -2,6 +2,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 #include "TcpServer.h"
 #include "MessageCodec.h"
 #include "Channel.h"
@@ -15,9 +17,14 @@ TcpServer::TcpServer(int port) : threadPool(&loop, 3) {
 
 TcpServer::~TcpServer() {
     if (listenfd != -1) close(listenfd);
+    if (sslCtx != nullptr) {
+        SSL_CTX_free(sslCtx);
+        sslCtx = nullptr;
+    }
 }
 
 bool TcpServer::init() {
+    if (!initSSL()) return false;
     if (!createListenFd()) return false;
 
     listen_addr.sin_family = AF_INET;
@@ -85,7 +92,7 @@ void TcpServer::acceptConnection() {
 
         EventLoop* ioLoop = threadPool.getNextLoop();
         ioLoop->runInLoop([this, clientfd, ioLoop]() {
-            auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop);
+            auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop, sslCtx);
             {
                 std::lock_guard<std::mutex> lock(connMutex);
                 connections[clientfd] = conn;
@@ -125,4 +132,47 @@ void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
         connections.erase(fd);
     }
     conn->close();
+}
+
+bool TcpServer::initSSL() {
+    SSL_library_init();
+    SSL_load_error_strings();
+    OpenSSL_add_ssl_algorithms();
+
+    const SSL_METHOD* method = TLS_server_method();
+    sslCtx = SSL_CTX_new(method);
+    if (sslCtx == nullptr) {
+        LOG_ERROR("SSL_CTX_new failed");
+        ERR_print_errors_fp(stderr);
+        return false;
+    }
+
+    SSL_CTX_set_min_proto_version(sslCtx, TLS1_2_VERSION);
+
+    if (SSL_CTX_use_certificate_file(sslCtx, "../cert/server.crt", SSL_FILETYPE_PEM) <= 0) {
+        LOG_ERROR("load server certificate failed");
+        ERR_print_errors_fp(stderr);
+        SSL_CTX_free(sslCtx);
+        sslCtx = nullptr;
+        return false;
+    }
+
+    if (SSL_CTX_use_PrivateKey_file(sslCtx, "../cert/server.key", SSL_FILETYPE_PEM) <= 0) {
+        LOG_ERROR("load server private key failed");
+        ERR_print_errors_fp(stderr);
+        SSL_CTX_free(sslCtx);
+        sslCtx = nullptr;
+        return false;
+    }
+
+    if (!SSL_CTX_check_private_key(sslCtx)) {
+        LOG_ERROR("certificate and private key do not match");
+        ERR_print_errors_fp(stderr);
+        SSL_CTX_free(sslCtx);
+        sslCtx = nullptr;
+        return false;
+    }
+
+    LOG_INFO("TLS initialization success");
+    return true;
 }

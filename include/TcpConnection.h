@@ -2,6 +2,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <openssl/ssl.h>
 #include "Channel.h"
 #include "Buffer.h"
 
@@ -9,7 +10,7 @@ class EventLoop;
 
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>{
 public:
-    TcpConnection(int fd, EventLoop* loop);
+    TcpConnection(int fd, EventLoop* loop, SSL_CTX* sslctx);
     ~TcpConnection();
 
     bool sendMessage(const std::string& msg);
@@ -42,8 +43,12 @@ private:
     Buffer readBuffer;
     Buffer writeBuffer;
     std::shared_ptr<Channel> channel;
+    SSL* ssl{nullptr};
 
     ConnectionCallback connectionCallback;
     MessageCallback messageCallback;
     CloseCallback closeCallback;
+
+    bool tlsEstablished{false};
+    bool tlsHandshake();
 };

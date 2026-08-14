@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <thread>
@@ -8,6 +9,11 @@
 #include <unordered_map>
 #include <chrono>
 #include <limits>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
+#include <atomic>
+#include <poll.h>
+#include <cerrno>
 #include "Logger.h"
 #include "Buffer.h"
 #include "MessageCodec.h"
@@ -25,36 +31,48 @@ std::string downloadFileId;
 std::string downloadFilePath;
 bool verifyCodeFinished = false;
 bool verifyCodeSuccess = false;
+std::atomic<bool> running{true};
+SSL* ssl = nullptr;
+SSL_CTX* sslCtx = nullptr;
+std::vector<std::thread> fileThreads;
 
-bool sendAll(int sockfd,
-             const char* data,
-             size_t len)
+bool sendAll(
+    SSL* ssl,
+    const char* data,
+    size_t len)
 {
     size_t sent = 0;
 
-    while(sent < len)
+    while (sent < len)
     {
-        int n = send(
-            sockfd,
+        int n = SSL_write(
+            ssl,
             data + sent,
-            len - sent,
-            0
+            len - sent
         );
 
+        if (n <= 0)
+        {
+            int err = SSL_get_error(ssl, n);
 
-        if(n <= 0)
+            if (err == SSL_ERROR_WANT_READ ||
+                err == SSL_ERROR_WANT_WRITE)
+            {
+                continue;
+            }
+
+            ERR_print_errors_fp(stderr);
             return false;
-
+        }
 
         sent += n;
     }
-
 
     return true;
 }
 
 void verifyCode(
-    int sockfd,
+    SSL* ssl,
     const std::string& email,
     const std::string& code,
     int scene)
@@ -75,13 +93,13 @@ void verifyCode(
         );
 
     sendAll(
-        sockfd,
+        ssl,
         packet.data(),
         packet.size()
     );
 }
 
-void sendCode(int sockfd, string email, int scene) {
+void sendCode(SSL* ssl, string email, int scene) {
     chat::SendCodeReq req;
 
     req.set_email(email);
@@ -91,10 +109,10 @@ void sendCode(int sockfd, string email, int scene) {
     req.SerializeToString(&data);
     string packet = MessageCodec::encode(chat::SEND_CODE_MSG, data);
 
-    sendAll(sockfd, packet.data(), packet.size());
+    sendAll(ssl, packet.data(), packet.size());
 }
 
-void queryFriend(int sockfd)
+void queryFriend(SSL* ssl)
 {
     chat::QueryFriendReq req;
 
@@ -113,15 +131,14 @@ void queryFriend(int sockfd)
         );
 
 
-    send(
-        sockfd,
+    sendAll(
+        ssl,
         packet.data(),
-        packet.size(),
-        0
+        packet.size()
     );
 }
 
-void sendFile(int sockfd, int toid, int groupid, const std::string& path)
+void sendFile(SSL* ssl, int toid, int groupid, const std::string& path)
 {
     namespace fs = std::filesystem;
 
@@ -163,7 +180,7 @@ void sendFile(int sockfd, int toid, int groupid, const std::string& path)
             chat::FILE_START_MSG,
             data);
 
-    sendAll(sockfd,
+    sendAll(ssl,
          packet.data(),
          packet.size());
 
@@ -186,7 +203,6 @@ void sendFile(int sockfd, int toid, int groupid, const std::string& path)
 
         chat::FileChunkReq chunkReq;
         chunkReq.set_fileid(fileid);
-        chunkReq.set_offset(offset);
         chunkReq.set_data(buffer, len);
 
         data.clear();
@@ -197,7 +213,7 @@ void sendFile(int sockfd, int toid, int groupid, const std::string& path)
                 chat::FILE_CHUNK_MSG,
                 data);
 
-        sendAll(sockfd,
+        sendAll(ssl,
              packet.data(),
              packet.size());
 
@@ -218,7 +234,7 @@ void sendFile(int sockfd, int toid, int groupid, const std::string& path)
             chat::FILE_END_MSG,
             data);
 
-    sendAll(sockfd,
+    sendAll(ssl,
          packet.data(),
          packet.size());
 
@@ -227,35 +243,57 @@ void sendFile(int sockfd, int toid, int groupid, const std::string& path)
 
 
 // 接收服务器消息线程
-void recvMessage(int sockfd)
+void recvMessage(SSL* ssl)
 {
     Buffer buf;
+    int fd = SSL_get_fd(ssl);
 
-    while(true)
+    while(running)
     {
+        struct pollfd pfd;
+        pfd.fd = fd;
+        pfd.events = POLLIN;
+        pfd.revents = 0;
+
+        int ret = poll(&pfd, 1, 100);
+        if (ret < 0) {
+            if (errno == EINTR) continue;
+            perror("poll");
+            break;
+        }
+        if (ret == 0) continue;
+
+        if (pfd.revents & (POLLERR | POLLHUP | POLLNVAL)) {
+            cout << "socket cose or error" << endl;
+            break;
+        }
+        if (!pfd.revents & POLLIN) continue;
+
         char buffer[64 * 1024] = {0};
 
 
-        int n = recv(
-            sockfd,
+        int n = SSL_read(
+            ssl,
             buffer,
-            sizeof(buffer),
-            0
+            sizeof(buffer)
         );
 
 
-        if(n <= 0)
-        {
-            cout<<"server close"<<endl;
+        if (n > 0) {
+            buf.append(buffer, n);
+        } else {
+            int err = SSL_get_error(ssl, n);
+            if (err == SSL_ERROR_ZERO_RETURN) {
+                cout << "server close" << endl;
+                break;
+            }
+            if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE) continue;
+
+            ERR_print_errors_fp(stderr);
+            cout << "SSL_read failed" << endl;
+            running = false;
             break;
         }
-
-
-        buf.append(
-            buffer,
-            n
-        );
-
 
         int msgid;
         string body;
@@ -470,7 +508,7 @@ void recvMessage(int sockfd)
 
                 cout << endl;
 
-                queryFriend(sockfd);
+                queryFriend(ssl);
             }
 
             else if(msgid == chat::QUERY_FRIEND_MSG_ACK)
@@ -827,7 +865,8 @@ void recvMessage(int sockfd)
 
                 if(res.err() == 0)
                 {
-                    close(sockfd);
+                    running = false;
+                    SSL_shutdown(ssl);
                     return;
                 }
             }
@@ -1166,16 +1205,39 @@ int main()
 
     cout<<"connect success"<<endl;
 
+    sslCtx = SSL_CTX_new(TLS_client_method());
+    if (!sslCtx) {
+        ERR_print_errors_fp(stderr);
+        return -1;
+    }
 
+    ssl = SSL_new(sslCtx);
+    if (!ssl) {
+        ERR_print_errors_fp(stderr);
+        SSL_CTX_free(sslCtx);
+        return -1;
+    }
+
+    SSL_set_fd(ssl, sockfd);
+
+    if (SSL_connect(ssl) <= 0) {
+        ERR_print_errors_fp(stderr);
+        SSL_free(ssl);
+        SSL_CTX_free(sslCtx);
+        close(sockfd);
+        return -1;
+    }
+
+    cout << "TLS handshake success" << endl;
+    running = true;
 
     // 开启接收线程
     thread recvThread(
         recvMessage,
-        sockfd
+        ssl
     );
 
 
-    recvThread.detach();
 
 
 
@@ -1368,7 +1430,70 @@ int main()
 
         else if(op == 0)
         {
+            cout << "waiting file threads..." << endl;
+
+            // 1. 等待所有文件发送线程结束
+            for(auto& t : fileThreads)
+            {
+                if(t.joinable())
+                {
+                    t.join();
+                }
+            }
+
+            cout << "all file threads finished" << endl;
+
+
+            // 2. 通知接收线程退出
+            running = false;
+
+
+            // 3. 等待接收线程退出
+            if(recvThread.joinable())
+            {
+                recvThread.join();
+            }
+
+            cout << "recv thread finished" << endl;
+
+
+            // 4. 正常关闭 TLS
+            if (ssl)
+            {
+                int ret = SSL_shutdown(ssl);
+
+                if (ret == 0)
+                {
+                    ret = SSL_shutdown(ssl);
+                }
+
+                if (ret < 0)
+                {
+                    int err = SSL_get_error(ssl, ret);
+
+                    cout << "SSL_shutdown failed, error = "
+                        << err
+                        << endl;
+                }
+
+                SSL_free(ssl);
+                ssl = nullptr;
+            }
+
+
+            // 5. 释放 SSL_CTX
+            if(sslCtx)
+            {
+                SSL_CTX_free(sslCtx);
+                sslCtx = nullptr;
+            }
+
+
+            // 6. 最后关闭 TCP socket
             close(sockfd);
+
+            cout << "client exit" << endl;
+
             break;
         }
 
@@ -1563,16 +1688,16 @@ int main()
             getline(cin,path);
 
 
-            thread t(
+            fileThreads.emplace_back(
                 sendFile,
-                sockfd,
+                ssl,
                 toid,
                 0,
                 path
             );
 
 
-            t.detach();
+           
         }
 
         else if(op == 11)
@@ -1639,7 +1764,7 @@ int main()
             cout<<"email:";
             cin>>email;
 
-            sendCode(sockfd, email, 1);
+            sendCode(ssl, email, 1);
             cout<<"验证码已发送" << endl;
 
             string code;
@@ -1650,7 +1775,7 @@ int main()
             verifyCodeSuccess = false;
 
             verifyCode(
-                sockfd,
+                ssl,
                 email,
                 code,
                 1
@@ -1951,15 +2076,15 @@ int main()
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, filepath);
 
-            thread t(
+            fileThreads.emplace_back(
                 sendFile,
-                sockfd,
+                ssl,
                 0,
                 groupid,
                 filepath
             );
 
-            t.detach();
+            
         }
 
         else if (op == 26)
@@ -1987,7 +2112,7 @@ int main()
                     data
                 );
 
-            sendAll(sockfd, packet.data(), packet.size());
+            sendAll(ssl, packet.data(), packet.size());
         }
 
         else if (op == 27)
@@ -2015,7 +2140,7 @@ int main()
                     data
                 );
 
-            sendAll(sockfd, packet.data(), packet.size());
+            sendAll(ssl, packet.data(), packet.size());
         }
 
         else if(op==28)
@@ -2029,7 +2154,7 @@ int main()
             cout<<"email:";
             cin>>email;
 
-            sendCode(sockfd, email, 2);
+            sendCode(ssl, email, 2);
             cout<<"验证码已发送" << endl;
 
             string code;
@@ -2040,7 +2165,7 @@ int main()
             verifyCodeSuccess = false;
 
             verifyCode(
-                sockfd,
+                ssl,
                 email,
                 code,
                 2
@@ -2074,7 +2199,7 @@ int main()
             cout << "email:";
             cin >> email;
 
-            sendCode(sockfd, email, 3);
+            sendCode(ssl, email, 3);
 
             cout << "验证码已发送" << endl;
 
@@ -2087,7 +2212,7 @@ int main()
             verifyCodeSuccess = false;
 
             verifyCode(
-                sockfd,
+                ssl,
                 email,
                 code,
                 3
@@ -2135,7 +2260,7 @@ int main()
 
 
 
-        sendAll(sockfd, packet.data(), packet.size());
+        sendAll(ssl, packet.data(), packet.size());
 
 
         cout

@@ -14,6 +14,7 @@ find_package(Protobuf REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(CURL REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(OpenSSL REQUIRED)
 set(HIREDIS_LIB /usr/lib/x86_64-linux-gnu/libhiredis.so)
 
 # ============================================
@@ -83,6 +84,8 @@ target_link_libraries(
     ${HIREDIS_LIB}
     CURL::libcurl
     nlohmann_json::nlohmann_json
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )
 
 # ============================================
@@ -118,4 +121,6 @@ target_link_libraries(
     spdlog::spdlog
     CURL::libcurl
     nlohmann_json::nlohmann_json
+    OpenSSL::SSL
+    OpenSSL::Crypto
 )

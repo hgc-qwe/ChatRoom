@@ -7646,7 +7646,6 @@ class FileChunkReq final :
   enum : int {
     kFileidFieldNumber = 1,
     kDataFieldNumber = 2,
-    kOffsetFieldNumber = 3,
   };
   // string fileid = 1;
   void clear_fileid();
@@ -7676,15 +7675,6 @@ class FileChunkReq final :
   std::string* _internal_mutable_data();
   public:
 
-  // uint64 offset = 3;
-  void clear_offset();
-  uint64_t offset() const;
-  void set_offset(uint64_t value);
-  private:
-  uint64_t _internal_offset() const;
-  void _internal_set_offset(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:chat.FileChunkReq)
  private:
   class _Internal;
@@ -7695,7 +7685,6 @@ class FileChunkReq final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fileid_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
-    uint64_t offset_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -9022,7 +9011,6 @@ class DownloadChunk final :
   enum : int {
     kFileidFieldNumber = 1,
     kDataFieldNumber = 2,
-    kOffsetFieldNumber = 3,
   };
   // string fileid = 1;
   void clear_fileid();
@@ -9052,15 +9040,6 @@ class DownloadChunk final :
   std::string* _internal_mutable_data();
   public:
 
-  // uint64 offset = 3;
-  void clear_offset();
-  uint64_t offset() const;
-  void set_offset(uint64_t value);
-  private:
-  uint64_t _internal_offset() const;
-  void _internal_set_offset(uint64_t value);
-  public:
-
   // @@protoc_insertion_point(class_scope:chat.DownloadChunk)
  private:
   class _Internal;
@@ -9071,7 +9050,6 @@ class DownloadChunk final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr fileid_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr data_;
-    uint64_t offset_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -21168,26 +21146,6 @@ inline void FileChunkReq::set_allocated_data(std::string* data) {
   // @@protoc_insertion_point(field_set_allocated:chat.FileChunkReq.data)
 }
 
-// uint64 offset = 3;
-inline void FileChunkReq::clear_offset() {
-  _impl_.offset_ = uint64_t{0u};
-}
-inline uint64_t FileChunkReq::_internal_offset() const {
-  return _impl_.offset_;
-}
-inline uint64_t FileChunkReq::offset() const {
-  // @@protoc_insertion_point(field_get:chat.FileChunkReq.offset)
-  return _internal_offset();
-}
-inline void FileChunkReq::_internal_set_offset(uint64_t value) {
-  
-  _impl_.offset_ = value;
-}
-inline void FileChunkReq::set_offset(uint64_t value) {
-  _internal_set_offset(value);
-  // @@protoc_insertion_point(field_set:chat.FileChunkReq.offset)
-}
-
 // -------------------------------------------------------------------
 
 // FileChunkRes
@@ -21958,26 +21916,6 @@ inline void DownloadChunk::set_allocated_data(std::string* data) {
   }
 #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:chat.DownloadChunk.data)
-}
-
-// uint64 offset = 3;
-inline void DownloadChunk::clear_offset() {
-  _impl_.offset_ = uint64_t{0u};
-}
-inline uint64_t DownloadChunk::_internal_offset() const {
-  return _impl_.offset_;
-}
-inline uint64_t DownloadChunk::offset() const {
-  // @@protoc_insertion_point(field_get:chat.DownloadChunk.offset)
-  return _internal_offset();
-}
-inline void DownloadChunk::_internal_set_offset(uint64_t value) {
-  
-  _impl_.offset_ = value;
-}
-inline void DownloadChunk::set_offset(uint64_t value) {
-  _internal_set_offset(value);
-  // @@protoc_insertion_point(field_set:chat.DownloadChunk.offset)
 }
 
 // -------------------------------------------------------------------

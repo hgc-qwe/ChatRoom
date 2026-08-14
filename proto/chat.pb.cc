@@ -610,7 +610,6 @@ PROTOBUF_CONSTEXPR FileChunkReq::FileChunkReq(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.fileid_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.data_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.offset_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct FileChunkReqDefaultTypeInternal {
   PROTOBUF_CONSTEXPR FileChunkReqDefaultTypeInternal()
@@ -726,7 +725,6 @@ PROTOBUF_CONSTEXPR DownloadChunk::DownloadChunk(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.fileid_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
   , /*decltype(_impl_.data_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.offset_)*/uint64_t{0u}
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct DownloadChunkDefaultTypeInternal {
   PROTOBUF_CONSTEXPR DownloadChunkDefaultTypeInternal()
@@ -1769,7 +1767,6 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::chat::FileChunkReq, _impl_.fileid_),
   PROTOBUF_FIELD_OFFSET(::chat::FileChunkReq, _impl_.data_),
-  PROTOBUF_FIELD_OFFSET(::chat::FileChunkReq, _impl_.offset_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::FileChunkRes, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -1837,7 +1834,6 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::chat::DownloadChunk, _impl_.fileid_),
   PROTOBUF_FIELD_OFFSET(::chat::DownloadChunk, _impl_.data_),
-  PROTOBUF_FIELD_OFFSET(::chat::DownloadChunk, _impl_.offset_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::chat::DownloadEnd, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -2265,61 +2261,61 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 332, -1, -1, sizeof(::chat::FileStartReq)},
   { 343, -1, -1, sizeof(::chat::FileStartRes)},
   { 351, -1, -1, sizeof(::chat::FileChunkReq)},
-  { 360, -1, -1, sizeof(::chat::FileChunkRes)},
-  { 368, -1, -1, sizeof(::chat::FileEndReq)},
-  { 375, -1, -1, sizeof(::chat::FileEndRes)},
-  { 383, -1, -1, sizeof(::chat::OfflineFile)},
-  { 395, -1, -1, sizeof(::chat::DownloadFileReq)},
-  { 402, -1, -1, sizeof(::chat::DownloadFileRes)},
-  { 410, -1, -1, sizeof(::chat::DownloadStart)},
-  { 419, -1, -1, sizeof(::chat::DownloadChunk)},
-  { 428, -1, -1, sizeof(::chat::DownloadEnd)},
-  { 435, -1, -1, sizeof(::chat::CancelAccountReq)},
-  { 442, -1, -1, sizeof(::chat::CancelAccountRes)},
-  { 450, -1, -1, sizeof(::chat::ApplyGroupReq)},
-  { 457, -1, -1, sizeof(::chat::ApplyGroupRes)},
-  { 465, -1, -1, sizeof(::chat::QueryGroupReqReq)},
-  { 472, -1, -1, sizeof(::chat::GroupRequest)},
-  { 482, -1, -1, sizeof(::chat::QueryGroupReqRes)},
-  { 491, -1, -1, sizeof(::chat::AcceptGroupReq)},
-  { 499, -1, -1, sizeof(::chat::AcceptGroupRes)},
-  { 507, -1, -1, sizeof(::chat::QueryGroupReq)},
-  { 514, -1, -1, sizeof(::chat::QueryGroupRes)},
-  { 523, -1, -1, sizeof(::chat::GroupAcceptNotify)},
-  { 531, -1, -1, sizeof(::chat::LeaveGroupReq)},
-  { 538, -1, -1, sizeof(::chat::LeaveGroupRes)},
-  { 546, -1, -1, sizeof(::chat::TransferOwnerReq)},
-  { 554, -1, -1, sizeof(::chat::TransferOwnerRes)},
-  { 562, -1, -1, sizeof(::chat::DissolveGroupReq)},
-  { 569, -1, -1, sizeof(::chat::DissolveGroupRes)},
-  { 577, -1, -1, sizeof(::chat::QueryGroupUserReq)},
-  { 584, -1, -1, sizeof(::chat::QueryGroupUserRes)},
-  { 593, -1, -1, sizeof(::chat::GroupUserInfo)},
-  { 602, -1, -1, sizeof(::chat::SetGroupAdminReq)},
-  { 610, -1, -1, sizeof(::chat::SetGroupAdminRes)},
-  { 618, -1, -1, sizeof(::chat::RemoveGroupAdminReq)},
-  { 626, -1, -1, sizeof(::chat::RemoveGroupAdminRes)},
-  { 634, -1, -1, sizeof(::chat::RemoveGroupUserReq)},
-  { 642, -1, -1, sizeof(::chat::RemoveGroupUserRes)},
-  { 650, -1, -1, sizeof(::chat::RemoveGroupUserNotify)},
-  { 658, -1, -1, sizeof(::chat::RefuseGroupReq)},
-  { 666, -1, -1, sizeof(::chat::RefuseGroupRes)},
-  { 674, -1, -1, sizeof(::chat::RefuseGroupNotify)},
-  { 682, -1, -1, sizeof(::chat::GroupFileNotify)},
-  { 695, -1, -1, sizeof(::chat::BlacklistAddReq)},
-  { 702, -1, -1, sizeof(::chat::BlacklistAddRes)},
-  { 710, -1, -1, sizeof(::chat::BlacklistRemoveReq)},
-  { 717, -1, -1, sizeof(::chat::BlacklistRemoveRes)},
-  { 725, -1, -1, sizeof(::chat::OneChatNotify)},
-  { 735, -1, -1, sizeof(::chat::GroupChatNotify)},
-  { 746, -1, -1, sizeof(::chat::SendCodeReq)},
-  { 754, -1, -1, sizeof(::chat::SendCodeRes)},
-  { 762, -1, -1, sizeof(::chat::CodeLoginReq)},
-  { 770, -1, -1, sizeof(::chat::CodeLoginRes)},
-  { 780, -1, -1, sizeof(::chat::ResetPasswordReq)},
-  { 788, -1, -1, sizeof(::chat::ResetPasswordRes)},
-  { 796, -1, -1, sizeof(::chat::VerifyCodeReq)},
-  { 805, -1, -1, sizeof(::chat::VerifyCodeRes)},
+  { 359, -1, -1, sizeof(::chat::FileChunkRes)},
+  { 367, -1, -1, sizeof(::chat::FileEndReq)},
+  { 374, -1, -1, sizeof(::chat::FileEndRes)},
+  { 382, -1, -1, sizeof(::chat::OfflineFile)},
+  { 394, -1, -1, sizeof(::chat::DownloadFileReq)},
+  { 401, -1, -1, sizeof(::chat::DownloadFileRes)},
+  { 409, -1, -1, sizeof(::chat::DownloadStart)},
+  { 418, -1, -1, sizeof(::chat::DownloadChunk)},
+  { 426, -1, -1, sizeof(::chat::DownloadEnd)},
+  { 433, -1, -1, sizeof(::chat::CancelAccountReq)},
+  { 440, -1, -1, sizeof(::chat::CancelAccountRes)},
+  { 448, -1, -1, sizeof(::chat::ApplyGroupReq)},
+  { 455, -1, -1, sizeof(::chat::ApplyGroupRes)},
+  { 463, -1, -1, sizeof(::chat::QueryGroupReqReq)},
+  { 470, -1, -1, sizeof(::chat::GroupRequest)},
+  { 480, -1, -1, sizeof(::chat::QueryGroupReqRes)},
+  { 489, -1, -1, sizeof(::chat::AcceptGroupReq)},
+  { 497, -1, -1, sizeof(::chat::AcceptGroupRes)},
+  { 505, -1, -1, sizeof(::chat::QueryGroupReq)},
+  { 512, -1, -1, sizeof(::chat::QueryGroupRes)},
+  { 521, -1, -1, sizeof(::chat::GroupAcceptNotify)},
+  { 529, -1, -1, sizeof(::chat::LeaveGroupReq)},
+  { 536, -1, -1, sizeof(::chat::LeaveGroupRes)},
+  { 544, -1, -1, sizeof(::chat::TransferOwnerReq)},
+  { 552, -1, -1, sizeof(::chat::TransferOwnerRes)},
+  { 560, -1, -1, sizeof(::chat::DissolveGroupReq)},
+  { 567, -1, -1, sizeof(::chat::DissolveGroupRes)},
+  { 575, -1, -1, sizeof(::chat::QueryGroupUserReq)},
+  { 582, -1, -1, sizeof(::chat::QueryGroupUserRes)},
+  { 591, -1, -1, sizeof(::chat::GroupUserInfo)},
+  { 600, -1, -1, sizeof(::chat::SetGroupAdminReq)},
+  { 608, -1, -1, sizeof(::chat::SetGroupAdminRes)},
+  { 616, -1, -1, sizeof(::chat::RemoveGroupAdminReq)},
+  { 624, -1, -1, sizeof(::chat::RemoveGroupAdminRes)},
+  { 632, -1, -1, sizeof(::chat::RemoveGroupUserReq)},
+  { 640, -1, -1, sizeof(::chat::RemoveGroupUserRes)},
+  { 648, -1, -1, sizeof(::chat::RemoveGroupUserNotify)},
+  { 656, -1, -1, sizeof(::chat::RefuseGroupReq)},
+  { 664, -1, -1, sizeof(::chat::RefuseGroupRes)},
+  { 672, -1, -1, sizeof(::chat::RefuseGroupNotify)},
+  { 680, -1, -1, sizeof(::chat::GroupFileNotify)},
+  { 693, -1, -1, sizeof(::chat::BlacklistAddReq)},
+  { 700, -1, -1, sizeof(::chat::BlacklistAddRes)},
+  { 708, -1, -1, sizeof(::chat::BlacklistRemoveReq)},
+  { 715, -1, -1, sizeof(::chat::BlacklistRemoveRes)},
+  { 723, -1, -1, sizeof(::chat::OneChatNotify)},
+  { 733, -1, -1, sizeof(::chat::GroupChatNotify)},
+  { 744, -1, -1, sizeof(::chat::SendCodeReq)},
+  { 752, -1, -1, sizeof(::chat::SendCodeRes)},
+  { 760, -1, -1, sizeof(::chat::CodeLoginReq)},
+  { 768, -1, -1, sizeof(::chat::CodeLoginRes)},
+  { 778, -1, -1, sizeof(::chat::ResetPasswordReq)},
+  { 786, -1, -1, sizeof(::chat::ResetPasswordRes)},
+  { 794, -1, -1, sizeof(::chat::VerifyCodeReq)},
+  { 803, -1, -1, sizeof(::chat::VerifyCodeRes)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -2494,148 +2490,147 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\001(\t\"a\n\014FileStartReq\022\014\n\004toid\030\001 \001(\005\022\020\n\010fil"
   "ename\030\002 \001(\t\022\020\n\010filesize\030\003 \001(\004\022\016\n\006fileid\030"
   "\004 \001(\t\022\017\n\007groupid\030\005 \001(\005\"+\n\014FileStartRes\022\013"
-  "\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"<\n\014FileChunk"
-  "Req\022\016\n\006fileid\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\022\016\n\006off"
-  "set\030\003 \001(\004\"+\n\014FileChunkRes\022\013\n\003err\030\001 \001(\005\022\016"
-  "\n\006errmsg\030\002 \001(\t\"\034\n\nFileEndReq\022\016\n\006fileid\030\001"
-  " \001(\t\")\n\nFileEndRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errms"
-  "g\030\002 \001(\t\"q\n\013OfflineFile\022\016\n\006fromid\030\001 \001(\005\022\014"
-  "\n\004toid\030\002 \001(\005\022\020\n\010filename\030\003 \001(\t\022\020\n\010filesi"
-  "ze\030\004 \001(\004\022\016\n\006fileid\030\005 \001(\t\022\020\n\010fromname\030\006 \001"
-  "(\t\"!\n\017DownloadFileReq\022\016\n\006fileid\030\001 \001(\t\".\n"
-  "\017DownloadFileRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030"
-  "\002 \001(\t\"C\n\rDownloadStart\022\016\n\006fileid\030\001 \001(\t\022\020"
-  "\n\010filename\030\002 \001(\t\022\020\n\010filesize\030\003 \001(\004\"=\n\rDo"
-  "wnloadChunk\022\016\n\006fileid\030\001 \001(\t\022\014\n\004data\030\002 \001("
-  "\014\022\016\n\006offset\030\003 \001(\004\"\035\n\013DownloadEnd\022\016\n\006file"
-  "id\030\001 \001(\t\"/\n\020CancelAccountReq\022\033\n\005msgid\030\001 "
-  "\001(\0162\014.chat.MsgTyp\"/\n\020CancelAccountRes\022\013\n"
-  "\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\" \n\rApplyGroup"
-  "Req\022\017\n\007groupid\030\001 \001(\005\",\n\rApplyGroupRes\022\013\n"
-  "\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"#\n\020QueryGroup"
-  "ReqReq\022\017\n\007groupid\030\001 \001(\005\"T\n\014GroupRequest\022"
-  "\016\n\006userid\030\001 \001(\005\022\020\n\010username\030\002 \001(\t\022\017\n\007gro"
-  "upid\030\003 \001(\005\022\021\n\tgroupname\030\004 \001(\t\"U\n\020QueryGr"
-  "oupReqRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022$"
-  "\n\010requests\030\003 \003(\0132\022.chat.GroupRequest\"3\n\016"
-  "AcceptGroupReq\022\017\n\007groupid\030\001 \001(\005\022\020\n\010targe"
-  "tid\030\002 \001(\005\"-\n\016AcceptGroupRes\022\013\n\003err\030\001 \001(\005"
-  "\022\016\n\006errmsg\030\002 \001(\t\",\n\rQueryGroupReq\022\033\n\005msg"
-  "id\030\001 \001(\0162\014.chat.MsgTyp\"I\n\rQueryGroupRes\022"
-  "\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\006groups\030\003"
-  " \003(\0132\013.chat.Group\"7\n\021GroupAcceptNotify\022\017"
-  "\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001(\t\" \n\rLe"
-  "aveGroupReq\022\017\n\007groupid\030\001 \001(\005\",\n\rLeaveGro"
-  "upRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"7\n\020Tr"
-  "ansferOwnerReq\022\022\n\nnewownerid\030\001 \001(\005\022\017\n\007gr"
-  "oupid\030\002 \001(\005\"/\n\020TransferOwnerRes\022\013\n\003err\030\001"
-  " \001(\005\022\016\n\006errmsg\030\002 \001(\t\"#\n\020DissolveGroupReq"
-  "\022\017\n\007groupid\030\001 \001(\005\"/\n\020DissolveGroupRes\022\013\n"
-  "\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"$\n\021QueryGroup"
-  "UserReq\022\017\n\007groupid\030\001 \001(\005\"T\n\021QueryGroupUs"
-  "erRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\"\n\005us"
-  "ers\030\003 \003(\0132\023.chat.GroupUserInfo\"\?\n\rGroupU"
-  "serInfo\022\016\n\006userid\030\001 \001(\005\022\020\n\010username\030\002 \001("
-  "\t\022\014\n\004role\030\003 \001(\t\"5\n\020SetGroupAdminReq\022\017\n\007g"
-  "roupid\030\001 \001(\005\022\020\n\010targetid\030\002 \001(\005\"/\n\020SetGro"
-  "upAdminRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\""
-  "8\n\023RemoveGroupAdminReq\022\017\n\007groupid\030\001 \001(\005\022"
-  "\020\n\010targetid\030\002 \001(\005\"2\n\023RemoveGroupAdminRes"
-  "\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"7\n\022RemoveG"
-  "roupUserReq\022\017\n\007groupid\030\001 \001(\005\022\020\n\010targetid"
-  "\030\002 \001(\005\"1\n\022RemoveGroupUserRes\022\013\n\003err\030\001 \001("
-  "\005\022\016\n\006errmsg\030\002 \001(\t\";\n\025RemoveGroupUserNoti"
-  "fy\022\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001(\t\"3"
-  "\n\016RefuseGroupReq\022\017\n\007groupid\030\001 \001(\005\022\020\n\010tar"
-  "getid\030\002 \001(\005\"-\n\016RefuseGroupRes\022\013\n\003err\030\001 \001"
-  "(\005\022\016\n\006errmsg\030\002 \001(\t\"7\n\021RefuseGroupNotify\022"
-  "\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001(\t\"\213\001\n\017"
-  "GroupFileNotify\022\016\n\006fromid\030\001 \001(\005\022\020\n\010fromn"
-  "ame\030\002 \001(\t\022\017\n\007groupid\030\003 \001(\005\022\021\n\tgroupname\030"
-  "\004 \001(\t\022\016\n\006fileid\030\005 \001(\t\022\020\n\010filename\030\006 \001(\t\022"
-  "\020\n\010filesize\030\007 \001(\004\"\"\n\017BlacklistAddReq\022\017\n\007"
-  "blackid\030\001 \001(\005\".\n\017BlacklistAddRes\022\013\n\003err\030"
-  "\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"%\n\022BlacklistRemove"
-  "Req\022\017\n\007blackid\030\001 \001(\005\"1\n\022BlacklistRemoveR"
-  "es\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"L\n\rOneCh"
-  "atNotify\022\016\n\006fromid\030\001 \001(\005\022\020\n\010fromname\030\002 \001"
-  "(\t\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 \001(\t\"_\n\017GroupCh"
-  "atNotify\022\017\n\007groupid\030\001 \001(\005\022\016\n\006userid\030\002 \001("
-  "\005\022\020\n\010username\030\003 \001(\t\022\013\n\003msg\030\004 \001(\t\022\014\n\004time"
-  "\030\005 \001(\t\"+\n\013SendCodeReq\022\r\n\005email\030\001 \001(\t\022\r\n\005"
-  "scene\030\002 \001(\005\"*\n\013SendCodeRes\022\013\n\003err\030\001 \001(\005\022"
-  "\016\n\006errmsg\030\002 \001(\t\"+\n\014CodeLoginReq\022\r\n\005email"
-  "\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\"I\n\014CodeLoginRes\022\013\n\003"
-  "err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\016\n\006userid\030\003 \001("
-  "\005\022\014\n\004name\030\004 \001(\t\"6\n\020ResetPasswordReq\022\r\n\005e"
-  "mail\030\001 \001(\t\022\023\n\013newpassword\030\002 \001(\t\"/\n\020Reset"
-  "PasswordRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t"
-  "\";\n\rVerifyCodeReq\022\r\n\005email\030\001 \001(\t\022\014\n\004code"
-  "\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\",\n\rVerifyCodeRes\022\013"
-  "\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\247\022\n\006MsgTyp\022\017"
-  "\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_"
-  "MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022"
-  "\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEND_MSG_AC"
-  "K\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_CHAT_MSG_AC"
-  "K\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024CREATE_GROU"
-  "P_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025\n\021ADD_GR"
-  "OUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020\r\022\026\n\022GRO"
-  "UP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOG"
-  "OUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023\n\017HISTOR"
-  "Y_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_MSG\020\023\022\031\n\025FR"
-  "IEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUERY_FRIEND_RE"
-  "Q_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_MSG_ACK\020\026\022\025\n"
-  "\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEPT_FRIEND_MS"
-  "G_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTIFY_MSG\020\031\022 \n"
-  "\034FRIEND_ACCEPT_NOTIFY_MSG_ACK\020\032\022\024\n\020QUERY"
-  "_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND_MSG_ACK\020\034\022"
-  "\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DELETE_FRIEND_"
-  "MSG_ACK\020\036\022\025\n\021GROUP_HISTORY_MSG\020\037\022\031\n\025GROU"
-  "P_HISTORY_MSG_ACK\020 \022\022\n\016FILE_START_MSG\020!\022"
-  "\026\n\022FILE_START_MSG_ACK\020\"\022\022\n\016FILE_CHUNK_MS"
-  "G\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020$\022\020\n\014FILE_END_"
-  "MSG\020%\022\024\n\020FILE_END_MSG_ACK\020&\022\025\n\021DOWNLOAD_"
-  "FILE_MSG\020\'\022\031\n\025DOWNLOAD_FILE_MSG_ACK\020(\022\026\n"
-  "\022DOWNLOAD_START_MSG\020)\022\032\n\026DOWNLOAD_START_"
-  "MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUNK_MSG\020+\022\032\n\026DOW"
-  "NLOAD_CHUNK_MSG_ACK\020,\022\024\n\020DOWNLOAD_END_MS"
-  "G\020-\022\030\n\024DOWNLOAD_END_MSG_ACK\020.\022\026\n\022CANCEL_"
-  "ACCOUNT_MSG\020/\022\032\n\026CANCEL_ACCOUNT_MSG_ACK\020"
-  "0\022\023\n\017APPLY_GROUP_MSG\0201\022\027\n\023APPLY_GROUP_MS"
-  "G_ACK\0202\022\027\n\023QUERY_GROUP_REQ_MSG\0203\022\033\n\027QUER"
-  "Y_GROUP_REQ_MSG_ACK\0204\022\024\n\020ACCEPT_GROUP_MS"
-  "G\0205\022\030\n\024ACCEPT_GROUP_MSG_ACK\0206\022\024\n\020GROUP_N"
-  "OTIFY_MSG\0207\022\030\n\024GROUP_NOTIFY_MSG_ACK\0208\022\033\n"
-  "\027GROUP_ACCEPT_NOTIFY_MSG\0209\022\037\n\033GROUP_ACCE"
-  "PT_NOTIFY_MSG_ACK\020:\022\023\n\017QUERY_GROUP_MSG\020;"
-  "\022\027\n\023QUERY_GROUP_MSG_ACK\020<\022\023\n\017LEAVE_GROUP"
-  "_MSG\020=\022\027\n\023LEAVE_GROUP_MSG_ACK\020>\022\026\n\022TRANS"
-  "FER_OWNER_MSG\020\?\022\032\n\026TRANSFER_OWNER_MSG_AC"
-  "K\020@\022\026\n\022DISSOLVE_GROUP_MSG\020A\022\032\n\026DISSOLVE_"
-  "GROUP_MSG_ACK\020B\022\030\n\024QUERY_GROUP_USER_MSG\020"
-  "C\022\034\n\030QUERY_GROUP_USER_MSG_ACK\020D\022\027\n\023SET_G"
-  "ROUP_ADMIN_MSG\020E\022\033\n\027SET_GROUP_ADMIN_MSG_"
-  "ACK\020F\022\032\n\026REMOVE_GROUP_ADMIN_MSG\020G\022\036\n\032REM"
-  "OVE_GROUP_ADMIN_MSG_ACK\020H\022\031\n\025REMOVE_GROU"
-  "P_USER_MSG\020I\022\035\n\031REMOVE_GROUP_USER_MSG_AC"
-  "K\020J\022 \n\034REMOVE_GROUP_USER_NOTIFY_MSG\020K\022$\n"
-  " REMOVE_GROUP_USER_NOTIFY_MSG_ACK\020L\022\024\n\020R"
-  "EFUSE_GROUP_MSG\020M\022\030\n\024REFUSE_GROUP_MSG_AC"
-  "K\020N\022\033\n\027REFUSE_GROUP_NOTIFY_MSG\020O\022\037\n\033REFU"
-  "SE_GROUP_NOTIFY_MSG_ACK\020P\022\031\n\025GROUP_FILE_"
-  "NOTIFY_MSG\020Q\022\035\n\031GROUP_FILE_NOTIFY_MSG_AC"
-  "K\020R\022\025\n\021BLACKLIST_ADD_MSG\020S\022\031\n\025BLACKLIST_"
-  "ADD_MSG_ACK\020T\022\030\n\024BLACKLIST_REMOVE_MSG\020U\022"
-  "\034\n\030BLACKLIST_REMOVE_MSG_ACK\020V\022\021\n\rSEND_CO"
-  "DE_MSG\020W\022\025\n\021SEND_CODE_MSG_ACK\020X\022\022\n\016CODE_"
-  "LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_MSG_ACK\020Z\022\026\n\022R"
-  "ESET_PASSWORD_MSG\020[\022\032\n\026RESET_PASSWORD_MS"
-  "G_ACK\020\\\022\023\n\017VERIFY_CODE_MSG\020]\022\027\n\023VERIFY_C"
-  "ODE_MSG_ACK\020^b\006proto3"
+  "\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\",\n\014FileChunk"
+  "Req\022\016\n\006fileid\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\"+\n\014Fil"
+  "eChunkRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"\034"
+  "\n\nFileEndReq\022\016\n\006fileid\030\001 \001(\t\")\n\nFileEndR"
+  "es\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"q\n\013Offli"
+  "neFile\022\016\n\006fromid\030\001 \001(\005\022\014\n\004toid\030\002 \001(\005\022\020\n\010"
+  "filename\030\003 \001(\t\022\020\n\010filesize\030\004 \001(\004\022\016\n\006file"
+  "id\030\005 \001(\t\022\020\n\010fromname\030\006 \001(\t\"!\n\017DownloadFi"
+  "leReq\022\016\n\006fileid\030\001 \001(\t\".\n\017DownloadFileRes"
+  "\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"C\n\rDownloa"
+  "dStart\022\016\n\006fileid\030\001 \001(\t\022\020\n\010filename\030\002 \001(\t"
+  "\022\020\n\010filesize\030\003 \001(\004\"-\n\rDownloadChunk\022\016\n\006f"
+  "ileid\030\001 \001(\t\022\014\n\004data\030\002 \001(\014\"\035\n\013DownloadEnd"
+  "\022\016\n\006fileid\030\001 \001(\t\"/\n\020CancelAccountReq\022\033\n\005"
+  "msgid\030\001 \001(\0162\014.chat.MsgTyp\"/\n\020CancelAccou"
+  "ntRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\" \n\rAp"
+  "plyGroupReq\022\017\n\007groupid\030\001 \001(\005\",\n\rApplyGro"
+  "upRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"#\n\020Qu"
+  "eryGroupReqReq\022\017\n\007groupid\030\001 \001(\005\"T\n\014Group"
+  "Request\022\016\n\006userid\030\001 \001(\005\022\020\n\010username\030\002 \001("
+  "\t\022\017\n\007groupid\030\003 \001(\005\022\021\n\tgroupname\030\004 \001(\t\"U\n"
+  "\020QueryGroupReqRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg"
+  "\030\002 \001(\t\022$\n\010requests\030\003 \003(\0132\022.chat.GroupReq"
+  "uest\"3\n\016AcceptGroupReq\022\017\n\007groupid\030\001 \001(\005\022"
+  "\020\n\010targetid\030\002 \001(\005\"-\n\016AcceptGroupRes\022\013\n\003e"
+  "rr\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\",\n\rQueryGroupRe"
+  "q\022\033\n\005msgid\030\001 \001(\0162\014.chat.MsgTyp\"I\n\rQueryG"
+  "roupRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\033\n\006"
+  "groups\030\003 \003(\0132\013.chat.Group\"7\n\021GroupAccept"
+  "Notify\022\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001"
+  "(\t\" \n\rLeaveGroupReq\022\017\n\007groupid\030\001 \001(\005\",\n\r"
+  "LeaveGroupRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001"
+  "(\t\"7\n\020TransferOwnerReq\022\022\n\nnewownerid\030\001 \001"
+  "(\005\022\017\n\007groupid\030\002 \001(\005\"/\n\020TransferOwnerRes\022"
+  "\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"#\n\020Dissolve"
+  "GroupReq\022\017\n\007groupid\030\001 \001(\005\"/\n\020DissolveGro"
+  "upRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"$\n\021Qu"
+  "eryGroupUserReq\022\017\n\007groupid\030\001 \001(\005\"T\n\021Quer"
+  "yGroupUserRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001"
+  "(\t\022\"\n\005users\030\003 \003(\0132\023.chat.GroupUserInfo\"\?"
+  "\n\rGroupUserInfo\022\016\n\006userid\030\001 \001(\005\022\020\n\010usern"
+  "ame\030\002 \001(\t\022\014\n\004role\030\003 \001(\t\"5\n\020SetGroupAdmin"
+  "Req\022\017\n\007groupid\030\001 \001(\005\022\020\n\010targetid\030\002 \001(\005\"/"
+  "\n\020SetGroupAdminRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errms"
+  "g\030\002 \001(\t\"8\n\023RemoveGroupAdminReq\022\017\n\007groupi"
+  "d\030\001 \001(\005\022\020\n\010targetid\030\002 \001(\005\"2\n\023RemoveGroup"
+  "AdminRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"7\n"
+  "\022RemoveGroupUserReq\022\017\n\007groupid\030\001 \001(\005\022\020\n\010"
+  "targetid\030\002 \001(\005\"1\n\022RemoveGroupUserRes\022\013\n\003"
+  "err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\";\n\025RemoveGroup"
+  "UserNotify\022\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname"
+  "\030\002 \001(\t\"3\n\016RefuseGroupReq\022\017\n\007groupid\030\001 \001("
+  "\005\022\020\n\010targetid\030\002 \001(\005\"-\n\016RefuseGroupRes\022\013\n"
+  "\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"7\n\021RefuseGrou"
+  "pNotify\022\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 "
+  "\001(\t\"\213\001\n\017GroupFileNotify\022\016\n\006fromid\030\001 \001(\005\022"
+  "\020\n\010fromname\030\002 \001(\t\022\017\n\007groupid\030\003 \001(\005\022\021\n\tgr"
+  "oupname\030\004 \001(\t\022\016\n\006fileid\030\005 \001(\t\022\020\n\010filenam"
+  "e\030\006 \001(\t\022\020\n\010filesize\030\007 \001(\004\"\"\n\017BlacklistAd"
+  "dReq\022\017\n\007blackid\030\001 \001(\005\".\n\017BlacklistAddRes"
+  "\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"%\n\022Blackli"
+  "stRemoveReq\022\017\n\007blackid\030\001 \001(\005\"1\n\022Blacklis"
+  "tRemoveRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\""
+  "L\n\rOneChatNotify\022\016\n\006fromid\030\001 \001(\005\022\020\n\010from"
+  "name\030\002 \001(\t\022\013\n\003msg\030\003 \001(\t\022\014\n\004time\030\004 \001(\t\"_\n"
+  "\017GroupChatNotify\022\017\n\007groupid\030\001 \001(\005\022\016\n\006use"
+  "rid\030\002 \001(\005\022\020\n\010username\030\003 \001(\t\022\013\n\003msg\030\004 \001(\t"
+  "\022\014\n\004time\030\005 \001(\t\"+\n\013SendCodeReq\022\r\n\005email\030\001"
+  " \001(\t\022\r\n\005scene\030\002 \001(\005\"*\n\013SendCodeRes\022\013\n\003er"
+  "r\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"+\n\014CodeLoginReq\022"
+  "\r\n\005email\030\001 \001(\t\022\014\n\004code\030\002 \001(\t\"I\n\014CodeLogi"
+  "nRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\022\016\n\006use"
+  "rid\030\003 \001(\005\022\014\n\004name\030\004 \001(\t\"6\n\020ResetPassword"
+  "Req\022\r\n\005email\030\001 \001(\t\022\023\n\013newpassword\030\002 \001(\t\""
+  "/\n\020ResetPasswordRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errm"
+  "sg\030\002 \001(\t\";\n\rVerifyCodeReq\022\r\n\005email\030\001 \001(\t"
+  "\022\014\n\004code\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\",\n\rVerifyC"
+  "odeRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\247\022\n\006"
+  "MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021"
+  "\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MS"
+  "G_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEN"
+  "D_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_CHA"
+  "T_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024CRE"
+  "ATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020\013\022\025"
+  "\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_MSG\020"
+  "\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_MSG\020"
+  "\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020\021\022\023"
+  "\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_MSG"
+  "\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUERY_F"
+  "RIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_MSG_"
+  "ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEPT_F"
+  "RIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTIFY_"
+  "MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_ACK\020\032\022"
+  "\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND_MS"
+  "G_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DELETE"
+  "_FRIEND_MSG_ACK\020\036\022\025\n\021GROUP_HISTORY_MSG\020\037"
+  "\022\031\n\025GROUP_HISTORY_MSG_ACK\020 \022\022\n\016FILE_STAR"
+  "T_MSG\020!\022\026\n\022FILE_START_MSG_ACK\020\"\022\022\n\016FILE_"
+  "CHUNK_MSG\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020$\022\020\n\014F"
+  "ILE_END_MSG\020%\022\024\n\020FILE_END_MSG_ACK\020&\022\025\n\021D"
+  "OWNLOAD_FILE_MSG\020\'\022\031\n\025DOWNLOAD_FILE_MSG_"
+  "ACK\020(\022\026\n\022DOWNLOAD_START_MSG\020)\022\032\n\026DOWNLOA"
+  "D_START_MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUNK_MSG\020"
+  "+\022\032\n\026DOWNLOAD_CHUNK_MSG_ACK\020,\022\024\n\020DOWNLOA"
+  "D_END_MSG\020-\022\030\n\024DOWNLOAD_END_MSG_ACK\020.\022\026\n"
+  "\022CANCEL_ACCOUNT_MSG\020/\022\032\n\026CANCEL_ACCOUNT_"
+  "MSG_ACK\0200\022\023\n\017APPLY_GROUP_MSG\0201\022\027\n\023APPLY_"
+  "GROUP_MSG_ACK\0202\022\027\n\023QUERY_GROUP_REQ_MSG\0203"
+  "\022\033\n\027QUERY_GROUP_REQ_MSG_ACK\0204\022\024\n\020ACCEPT_"
+  "GROUP_MSG\0205\022\030\n\024ACCEPT_GROUP_MSG_ACK\0206\022\024\n"
+  "\020GROUP_NOTIFY_MSG\0207\022\030\n\024GROUP_NOTIFY_MSG_"
+  "ACK\0208\022\033\n\027GROUP_ACCEPT_NOTIFY_MSG\0209\022\037\n\033GR"
+  "OUP_ACCEPT_NOTIFY_MSG_ACK\020:\022\023\n\017QUERY_GRO"
+  "UP_MSG\020;\022\027\n\023QUERY_GROUP_MSG_ACK\020<\022\023\n\017LEA"
+  "VE_GROUP_MSG\020=\022\027\n\023LEAVE_GROUP_MSG_ACK\020>\022"
+  "\026\n\022TRANSFER_OWNER_MSG\020\?\022\032\n\026TRANSFER_OWNE"
+  "R_MSG_ACK\020@\022\026\n\022DISSOLVE_GROUP_MSG\020A\022\032\n\026D"
+  "ISSOLVE_GROUP_MSG_ACK\020B\022\030\n\024QUERY_GROUP_U"
+  "SER_MSG\020C\022\034\n\030QUERY_GROUP_USER_MSG_ACK\020D\022"
+  "\027\n\023SET_GROUP_ADMIN_MSG\020E\022\033\n\027SET_GROUP_AD"
+  "MIN_MSG_ACK\020F\022\032\n\026REMOVE_GROUP_ADMIN_MSG\020"
+  "G\022\036\n\032REMOVE_GROUP_ADMIN_MSG_ACK\020H\022\031\n\025REM"
+  "OVE_GROUP_USER_MSG\020I\022\035\n\031REMOVE_GROUP_USE"
+  "R_MSG_ACK\020J\022 \n\034REMOVE_GROUP_USER_NOTIFY_"
+  "MSG\020K\022$\n REMOVE_GROUP_USER_NOTIFY_MSG_AC"
+  "K\020L\022\024\n\020REFUSE_GROUP_MSG\020M\022\030\n\024REFUSE_GROU"
+  "P_MSG_ACK\020N\022\033\n\027REFUSE_GROUP_NOTIFY_MSG\020O"
+  "\022\037\n\033REFUSE_GROUP_NOTIFY_MSG_ACK\020P\022\031\n\025GRO"
+  "UP_FILE_NOTIFY_MSG\020Q\022\035\n\031GROUP_FILE_NOTIF"
+  "Y_MSG_ACK\020R\022\025\n\021BLACKLIST_ADD_MSG\020S\022\031\n\025BL"
+  "ACKLIST_ADD_MSG_ACK\020T\022\030\n\024BLACKLIST_REMOV"
+  "E_MSG\020U\022\034\n\030BLACKLIST_REMOVE_MSG_ACK\020V\022\021\n"
+  "\rSEND_CODE_MSG\020W\022\025\n\021SEND_CODE_MSG_ACK\020X\022"
+  "\022\n\016CODE_LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_MSG_AC"
+  "K\020Z\022\026\n\022RESET_PASSWORD_MSG\020[\022\032\n\026RESET_PAS"
+  "SWORD_MSG_ACK\020\\\022\023\n\017VERIFY_CODE_MSG\020]\022\027\n\023"
+  "VERIFY_CODE_MSG_ACK\020^b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 8421, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 8389, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
     &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 95,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
@@ -13174,7 +13169,6 @@ FileChunkReq::FileChunkReq(const FileChunkReq& from)
   new (&_impl_) Impl_{
       decltype(_impl_.fileid_){}
     , decltype(_impl_.data_){}
-    , decltype(_impl_.offset_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -13194,7 +13188,6 @@ FileChunkReq::FileChunkReq(const FileChunkReq& from)
     _this->_impl_.data_.Set(from._internal_data(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.offset_ = from._impl_.offset_;
   // @@protoc_insertion_point(copy_constructor:chat.FileChunkReq)
 }
 
@@ -13205,7 +13198,6 @@ inline void FileChunkReq::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.fileid_){}
     , decltype(_impl_.data_){}
-    , decltype(_impl_.offset_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.fileid_.InitDefault();
@@ -13245,7 +13237,6 @@ void FileChunkReq::Clear() {
 
   _impl_.fileid_.ClearToEmpty();
   _impl_.data_.ClearToEmpty();
-  _impl_.offset_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -13270,14 +13261,6 @@ const char* FileChunkReq::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_data();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // uint64 offset = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -13327,12 +13310,6 @@ uint8_t* FileChunkReq::_InternalSerialize(
         2, this->_internal_data(), target);
   }
 
-  // uint64 offset = 3;
-  if (this->_internal_offset() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_offset(), target);
-  }
-
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -13363,11 +13340,6 @@ size_t FileChunkReq::ByteSizeLong() const {
         this->_internal_data());
   }
 
-  // uint64 offset = 3;
-  if (this->_internal_offset() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_offset());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -13391,9 +13363,6 @@ void FileChunkReq::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   }
   if (!from._internal_data().empty()) {
     _this->_internal_set_data(from._internal_data());
-  }
-  if (from._internal_offset() != 0) {
-    _this->_internal_set_offset(from._internal_offset());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -13422,7 +13391,6 @@ void FileChunkReq::InternalSwap(FileChunkReq* other) {
       &_impl_.data_, lhs_arena,
       &other->_impl_.data_, rhs_arena
   );
-  swap(_impl_.offset_, other->_impl_.offset_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata FileChunkReq::GetMetadata() const {
@@ -15212,7 +15180,6 @@ DownloadChunk::DownloadChunk(const DownloadChunk& from)
   new (&_impl_) Impl_{
       decltype(_impl_.fileid_){}
     , decltype(_impl_.data_){}
-    , decltype(_impl_.offset_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
@@ -15232,7 +15199,6 @@ DownloadChunk::DownloadChunk(const DownloadChunk& from)
     _this->_impl_.data_.Set(from._internal_data(), 
       _this->GetArenaForAllocation());
   }
-  _this->_impl_.offset_ = from._impl_.offset_;
   // @@protoc_insertion_point(copy_constructor:chat.DownloadChunk)
 }
 
@@ -15243,7 +15209,6 @@ inline void DownloadChunk::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.fileid_){}
     , decltype(_impl_.data_){}
-    , decltype(_impl_.offset_){uint64_t{0u}}
     , /*decltype(_impl_._cached_size_)*/{}
   };
   _impl_.fileid_.InitDefault();
@@ -15283,7 +15248,6 @@ void DownloadChunk::Clear() {
 
   _impl_.fileid_.ClearToEmpty();
   _impl_.data_.ClearToEmpty();
-  _impl_.offset_ = uint64_t{0u};
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -15308,14 +15272,6 @@ const char* DownloadChunk::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_data();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // uint64 offset = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.offset_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -15365,12 +15321,6 @@ uint8_t* DownloadChunk::_InternalSerialize(
         2, this->_internal_data(), target);
   }
 
-  // uint64 offset = 3;
-  if (this->_internal_offset() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_offset(), target);
-  }
-
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -15401,11 +15351,6 @@ size_t DownloadChunk::ByteSizeLong() const {
         this->_internal_data());
   }
 
-  // uint64 offset = 3;
-  if (this->_internal_offset() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_offset());
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -15429,9 +15374,6 @@ void DownloadChunk::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   }
   if (!from._internal_data().empty()) {
     _this->_internal_set_data(from._internal_data());
-  }
-  if (from._internal_offset() != 0) {
-    _this->_internal_set_offset(from._internal_offset());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -15460,7 +15402,6 @@ void DownloadChunk::InternalSwap(DownloadChunk* other) {
       &_impl_.data_, lhs_arena,
       &other->_impl_.data_, rhs_arena
   );
-  swap(_impl_.offset_, other->_impl_.offset_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DownloadChunk::GetMetadata() const {

@@ -383,7 +383,6 @@ message FileStartRes {
 message FileChunkReq {
     string fileid = 1;
     bytes data = 2;
-    uint64 offset = 3;
 }
 
 message FileChunkRes {
@@ -427,7 +426,6 @@ message DownloadStart {
 message DownloadChunk {
     string fileid = 1;
     bytes data = 2;
-    uint64 offset = 3;
 }
 
 message DownloadEnd {
