@@ -144,6 +144,9 @@ enum MsgTyp {
 
     VERIFY_CODE_MSG = 93;
     VERIFY_CODE_MSG_ACK = 94;
+
+    PING_MSG = 95;
+    PONG_MSG = 96;
 }
 
 message OfflineMsg {

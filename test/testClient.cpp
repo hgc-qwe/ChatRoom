@@ -1167,6 +1167,23 @@ void recvMessage(SSL* ssl)
                     << endl;
             }
 
+            else if (msgid == chat::PING_MSG)
+            {
+                std::string packet =
+                    MessageCodec::encode(
+                        chat::PONG_MSG,
+                        ""
+                    );
+
+                sendAll(
+                    ssl,
+                    packet.data(),
+                    packet.size()
+                );
+
+                cout << "[Client] recv PING, not send PONG" << endl;
+            }
+
             cout<<"\n";
         }
 

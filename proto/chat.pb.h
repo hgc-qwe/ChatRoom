@@ -527,12 +527,14 @@ enum MsgTyp : int {
   RESET_PASSWORD_MSG_ACK = 92,
   VERIFY_CODE_MSG = 93,
   VERIFY_CODE_MSG_ACK = 94,
+  PING_MSG = 95,
+  PONG_MSG = 96,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = VERIFY_CODE_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = PONG_MSG;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();

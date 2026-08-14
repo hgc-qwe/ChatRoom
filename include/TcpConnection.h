@@ -3,6 +3,7 @@
 #include <functional>
 #include <memory>
 #include <openssl/ssl.h>
+#include <chrono>
 #include "Channel.h"
 #include "Buffer.h"
 
@@ -36,6 +37,15 @@ public:
 
     void setUserId(int id);
     int getUserId();
+
+    void updateLastActiveTime();
+    bool isTimeout() const;
+
+    EventLoop* getLoop() const;
+
+    void sendPing();
+
+    void handleClose();
 private:
     int fd;
     EventLoop* loop;
@@ -51,4 +61,6 @@ private:
 
     bool tlsEstablished{false};
     bool tlsHandshake();
+
+    std::chrono::steady_clock::time_point lastActiveTime;
 };

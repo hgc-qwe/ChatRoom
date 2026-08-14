@@ -2567,7 +2567,7 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "/\n\020ResetPasswordRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errm"
   "sg\030\002 \001(\t\";\n\rVerifyCodeReq\022\r\n\005email\030\001 \001(\t"
   "\022\014\n\004code\030\002 \001(\t\022\r\n\005scene\030\003 \001(\005\",\n\rVerifyC"
-  "odeRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\247\022\n\006"
+  "odeRes\022\013\n\003err\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t*\303\022\n\006"
   "MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020\001\022\021"
   "\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG_MS"
   "G_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FRIEN"
@@ -2626,11 +2626,12 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\022\n\016CODE_LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_MSG_AC"
   "K\020Z\022\026\n\022RESET_PASSWORD_MSG\020[\022\032\n\026RESET_PAS"
   "SWORD_MSG_ACK\020\\\022\023\n\017VERIFY_CODE_MSG\020]\022\027\n\023"
-  "VERIFY_CODE_MSG_ACK\020^b\006proto3"
+  "VERIFY_CODE_MSG_ACK\020^\022\014\n\010PING_MSG\020_\022\014\n\010P"
+  "ONG_MSG\020`b\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 8389, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 8417, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
     &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 95,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
@@ -2745,6 +2746,8 @@ bool MsgTyp_IsValid(int value) {
     case 92:
     case 93:
     case 94:
+    case 95:
+    case 96:
       return true;
     default:
       return false;

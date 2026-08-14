@@ -93,6 +93,7 @@ void TcpServer::acceptConnection() {
         EventLoop* ioLoop = threadPool.getNextLoop();
         ioLoop->runInLoop([this, clientfd, ioLoop]() {
             auto conn = std::make_shared<TcpConnection>(clientfd, ioLoop, sslCtx);
+            ioLoop->addConnection(conn);
             {
                 std::lock_guard<std::mutex> lock(connMutex);
                 connections[clientfd] = conn;
@@ -131,6 +132,7 @@ void TcpServer::removeConnection(std::shared_ptr<TcpConnection> conn) {
         std::lock_guard<std::mutex> lock(connMutex);
         connections.erase(fd);
     }
+    conn->getLoop()->removeConnection(fd);
     conn->close();
 }
 

@@ -5,9 +5,12 @@
 #include <vector>
 #include <mutex>
 #include <thread>
+#include <cstdint>
 #include "Epoll.h"
 
 class Channel;
+
+class TcpConnection;
 
 class EventLoop {
 public:
@@ -30,12 +33,20 @@ public:
     void runInLoop(Functor cb);
 
     void queueInLoop(Functor cb);
+
+    void addConnection(std::shared_ptr<TcpConnection> conn);
+
+    void removeConnection(int fd);
 private:
     Epoll epoll;
 
     int wakeupFd;
 
     std::shared_ptr<Channel> wakeupChannel;
+
+    int timerFd;
+
+    std::shared_ptr<Channel> timerChannel;
 
     std::mutex mutex;
 
@@ -52,4 +63,10 @@ private:
     void doPendingFunctors();
 
     bool isInLoopThread();
+
+    void addTimer(int interval);
+
+    void handleTimer();
+
+    std::unordered_map<int, std::weak_ptr<TcpConnection>> connections;
 };

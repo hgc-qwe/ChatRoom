@@ -7,10 +7,16 @@
 #include <memory>
 #include <vector>
 #include <sys/eventfd.h>
+#include <sys/timerfd.h>
 #include "EventLoop.h"
 #include "Channel.h"
+#include "TcpConnection.h"
 
-EventLoop::EventLoop() {
+EventLoop::EventLoop() : wakeupFd(-1), timerFd(-1) {
+    std::cout
+        << "[EventLoop] create thread = "
+        << std::this_thread::get_id()
+        << std::endl;
     threadId = std::this_thread::get_id();
     wakeupFd = eventfd(0, EFD_NONBLOCK | EFD_CLOEXEC);
     wakeupChannel = std::make_shared<Channel>(this, wakeupFd);
@@ -19,10 +25,24 @@ EventLoop::EventLoop() {
         handleRead();
     });
     addChannel(wakeupChannel);
+
+    timerFd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+    if (timerFd == -1) {
+        perror("timerfd_create");
+        return;
+    }
+    timerChannel = std::make_shared<Channel>(this, timerFd);
+    timerChannel->setEvents(EPOLLIN);
+    timerChannel->setReadCallback([this]() {
+        handleTimer();
+    });
+    addChannel(timerChannel);
+    addTimer(10);
 }
 
 EventLoop::~EventLoop() {
-    close(wakeupFd);
+    if (wakeupFd != -1) close(wakeupFd);
+    if (timerFd != -1) close(timerFd);
 }
 
 void EventLoop::loop() {
@@ -99,4 +119,50 @@ void EventLoop::doPendingFunctors() {
 
 bool EventLoop::isInLoopThread() {
     return threadId == std::this_thread::get_id();
+}
+
+void EventLoop::addTimer(int interval) {
+    struct itimerspec newValue{};
+    newValue.it_value.tv_sec = interval;
+    newValue.it_interval.tv_sec = interval;
+    if (timerfd_settime(timerFd, 0, &newValue, nullptr) == -1) perror("timerfd_settime");
+}
+
+void EventLoop::handleTimer() {
+    uint64_t expirations;
+    ssize_t n = read(timerFd, &expirations, sizeof(expirations));
+    if (n != sizeof(expirations)) {
+        perror("timer read");
+        return;
+    }
+
+    std::vector<std::shared_ptr<TcpConnection>> timeoutConnections;
+    std::vector<std::shared_ptr<TcpConnection>> activeConnections;
+
+    for (auto it = connections.begin(); it != connections.end(); ) {
+        auto conn = it->second.lock();
+        if (!conn) {
+            it = connections.erase(it);
+            continue;
+        }
+        if (conn->isTimeout()) timeoutConnections.push_back(conn);
+        else activeConnections.push_back(conn);
+
+        ++it;
+    }
+
+    for (auto& conn : timeoutConnections) {
+        std::cout << "[Heartbeat] timeout fd = " << conn->getFd() << std::endl;
+        conn->handleClose();
+    }
+
+    for (auto& conn : activeConnections) conn->sendPing();
+}
+
+void EventLoop::addConnection(std::shared_ptr<TcpConnection> conn) {
+    connections[conn->getFd()] = conn;
+}
+
+void EventLoop::removeConnection(int fd) {
+    connections.erase(fd);
 }

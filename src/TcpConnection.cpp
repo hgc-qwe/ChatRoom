@@ -2,14 +2,20 @@
 #include <unistd.h>
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#include <iostream>
 #include "TcpServer.h"
 #include "Logger.h"
 #include "TcpConnection.h"
 #include "EventLoop.h"
+#include "MessageCodec.h"
+#include "chat.pb.h"
 
 TcpConnection::TcpConnection(int fd, EventLoop* loop, SSL_CTX* sslCtx) {
     this->fd = fd;
     this->loop = loop;
+
+    lastActiveTime = std::chrono::steady_clock::now();
+
     ssl = SSL_new(sslCtx);
     if (ssl == nullptr) {
         LOG_ERROR("SSL_new failed");
@@ -60,6 +66,7 @@ bool TcpConnection::recvMessage() {
     while (true) {
         int count = SSL_read(ssl, buf, sizeof(buf));
         if (count > 0) {
+            updateLastActiveTime();
             readBuffer.append(buf, count);
         } else {
             int error = SSL_get_error(ssl, count);
@@ -190,4 +197,29 @@ bool TcpConnection::tlsHandshake() {
     ERR_print_errors_fp(stderr);
     close();
     return false;
+}
+
+void TcpConnection::updateLastActiveTime() {
+    lastActiveTime = std::chrono::steady_clock::now();
+    std::cout << "[Heartbeat] update pong fd = " << fd << std::endl;
+}
+
+bool TcpConnection::isTimeout() const {
+    auto now = std::chrono::steady_clock::now();
+    auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - lastActiveTime).count();
+    return seconds > 30;
+}
+
+EventLoop* TcpConnection::getLoop() const {
+    return loop;
+}
+
+void TcpConnection::sendPing() {
+    std::string packet = MessageCodec::encode(chat::PING_MSG, "");
+    sendMessage(packet);
+}
+
+void TcpConnection::handleClose() {
+    auto self = shared_from_this();
+    if (closeCallback) closeCallback(self);
 }
