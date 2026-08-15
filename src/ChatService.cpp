@@ -360,6 +360,11 @@ void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const cha
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
+    if (!friendModel.isFriend(userid, friendid)) {
+        res.set_err(1);
+        res.set_errmsg("not friend");
+        return;
+    }
     
     std::vector<Message> message  = messageModel.queryHistory(userid, friendid);
     for (auto& msg : message) {
@@ -532,6 +537,17 @@ void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, cons
         res.set_errmsg("please login first");
         return;
     }
+    int userid = conn->getUserId();
+    if (!groupModel.isGroupExist(req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isInGroup(userid, req.groupid())) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    } 
 
     std::vector<GroupMessage> message  = groupMessageModel.query(req.groupid());
     for (auto& msg : message) {
