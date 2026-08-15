@@ -86,6 +86,23 @@ mysql -u root -p < sql/chatroom.sql
 - 数据库：chatroom
 - 端口：3306
 
+## 邮件配置
+
+- 如果需要使用注册验证码、验证码登录或密码找回功能：
+
+1. 复制配置文件：
+
+   cp config/email.conf.example config/email.conf
+
+2. 编辑 config/email.conf：
+
+   smtp_server=smtp.qq.com
+   smtp_port=465
+   email=你的邮箱@qq.com
+   auth_code=你的邮箱授权码
+
+3. 将其中的邮箱和授权码修改为自己的邮箱信息。
+
 ## 项目编译
 
 ```bash
