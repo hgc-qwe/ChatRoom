@@ -17,9 +17,7 @@ find_package(nlohmann_json REQUIRED)
 find_package(OpenSSL REQUIRED)
 set(HIREDIS_LIB /usr/lib/x86_64-linux-gnu/libhiredis.so)
 
-# ============================================
-# 公共源文件（Server 和 Client 共享的部分）
-# ============================================
+
 set(COMMON_SRC
 
     src/Buffer.cpp
@@ -29,14 +27,11 @@ set(COMMON_SRC
     proto/chat.pb.cc
 )
 
-# ============================================
-# testServer
-# ============================================
+
 add_executable(
-    testServer
+    Server
 
-    test/testServer.cpp
-
+    src/Server.cpp
 
     src/TcpServer.cpp
     src/TcpConnection.cpp
@@ -52,7 +47,6 @@ add_executable(
     src/GroupModel.cpp
     src/GroupMessageModel.cpp
     src/GroupUser.cpp
-    src/OfflineMsg.cpp
     src/FriendReqModel.cpp
     src/Message.cpp
     src/MessageModel.cpp
@@ -69,14 +63,14 @@ add_executable(
 )
 
 target_include_directories(
-    testServer
+    Server
     PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/proto
 )
 
 target_link_libraries(
-    testServer
+    Server
     pthread
     mysqlclient
     protobuf::libprotobuf
@@ -88,13 +82,11 @@ target_link_libraries(
     OpenSSL::Crypto
 )
 
-# ============================================
-# testClient
-# ============================================
-add_executable(
-    testClient
 
-    test/testClient.cpp
+add_executable(
+    Client
+
+    src/Client.cpp
 
     src/TcpConnection.cpp
     src/EventLoop.cpp
@@ -108,14 +100,14 @@ add_executable(
 )
 
 target_include_directories(
-    testClient
+    Client
     PRIVATE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/proto
 )
 
 target_link_libraries(
-    testClient
+    Client
     pthread
     protobuf::libprotobuf
     spdlog::spdlog

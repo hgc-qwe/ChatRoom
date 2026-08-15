@@ -33,7 +33,7 @@ bool EmailSender::sendCode(const std::string& email, const std::string& code) {
     mail += "Content-Type: text/plain; charset=utf-8\r\n";
     mail += "\r\n";
     mail += "你的验证码是: " + code + "\r\n";
-    mail += "5分钟内有效\r\n";
+    mail += ", 5分钟内有效\r\n";
 
     curl_easy_setopt(curl, CURLOPT_URL, smtpServer.c_str());
     curl_easy_setopt(curl, CURLOPT_PROXY, "");
