@@ -556,7 +556,15 @@ void recvMessage(SSL* ssl) {
 
                 // cout << "[Client] recv PING, send PONG" << endl;
             }
-            cout << endl;
+            else if(msgid == chat::QUERY_GROUP_MSG_ACK) {
+                chat::QueryGroupRes res;
+                res.ParseFromString(body);
+
+                cout << "err:" << res.err() << " " << res.errmsg() << endl;
+                for(auto& r:res.groups()) {
+                    cout << "groupid:" << r.id() << " groupname:" << r.name() << " groupdesc:" << r.desc() << " your role:" << r.role() << endl;
+                }
+            }
         }
     }
 }
@@ -645,12 +653,13 @@ int main(int argc, char* argv[]) {
         cout << "[好友管理]\n";
         cout << "2 添加好友             3 查看好友申请           4 同意好友申请  \n";
         cout << "5 删除好友             26 添加到黑名单          27 从黑名单移出\n";
+        cout << "30 查询好友\n";
         cout << "---------------------------------------------------------------\n";
         cout << "[群组管理]\n";
         cout << "14 申请加群            15 查看群申请            16 同意入群\n";
         cout << "17 退出群              18 转让群主              19 解散群 \n";
         cout << "20 查看群成员          21 设置管理员            22 删除管理员\n";
-        cout << "23 移除成员            24 拒绝入群\n";
+        cout << "23 移除成员            24 拒绝入群              31 查询所在群组\n";
         cout << "---------------------------------------------------------------\n";
         cout << "[聊天与文件]\n";
         cout << "6 私聊                 7 私聊历史               8 群聊\n";
@@ -1202,6 +1211,24 @@ int main(int argc, char* argv[]) {
             req.set_newpassword(password);
             req.SerializeToString(&data);
             packet = MessageCodec::encode(chat::RESET_PASSWORD_MSG, data);
+        }
+        else if(op == 30) {
+            if(currentUserid == -1) {
+                cout << "please login first" << endl;
+                continue;
+            }
+            chat::QueryFriendReq req;
+            req.SerializeToString(&data);
+            packet = MessageCodec::encode(chat::QUERY_FRIEND_MSG, data);
+        }
+        else if(op == 31) {
+            if(currentUserid == -1) {
+                cout << "please login first" << endl;
+                continue;
+            }
+            chat::QueryGroupReq req;
+            req.SerializeToString(&data);
+            packet = MessageCodec::encode(chat::QUERY_GROUP_MSG, data);
         }
         else continue;
 
