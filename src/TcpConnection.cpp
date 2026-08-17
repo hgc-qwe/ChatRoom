@@ -3,6 +3,8 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 #include <iostream>
+#include <cerrno>
+#include <algorithm>
 #include "TcpServer.h"
 #include "Logger.h"
 #include "TcpConnection.h"
@@ -119,9 +121,10 @@ void TcpConnection::sendBuffer() {
     }
 
     while (writeBuffer.readableBytes() > 0) {
-        int n = SSL_write(ssl, writeBuffer.beginRead(), writeBuffer.readableBytes());
+        int n = SSL_write(ssl, writeBuffer.beginRead(), static_cast<int>(writeBuffer.readableBytes()));
         if (n > 0) {
             writeBuffer.retrieve(n);
+            LOG_INFO("SSL_write fd={}, write={}, remian={}", fd, n, writeBuffer.readableBytes());
             continue;
         } 
         int error = SSL_get_error(ssl, n);
@@ -134,12 +137,23 @@ void TcpConnection::sendBuffer() {
             return;
         }
 
-        LOG_ERROR("SSL_write failed fd = {}", fd);
+        LOG_ERROR("SSL_write failed fd = {}， ret = {}, ssl_error = {}, errno = {}", fd, n, error, errno);
         ERR_print_errors_fp(stderr);
         close();
         return;
     }
-    channel->disableWriting();
+    if (downloadState.active) {
+        sendDownloadChunk();
+        if (writeBuffer.readableBytes() > 0) {
+            channel->enableWriting();
+            return;
+        }
+        if (!downloadState.active) {
+            channel->disableWriting();
+            return;
+        }
+    }
+    if (writeBuffer.readableBytes() == 0 && !downloadState.active) channel->disableWriting();
 }
 
 Buffer& TcpConnection::getReadBuffer() {
@@ -222,4 +236,81 @@ void TcpConnection::sendPing() {
 void TcpConnection::handleClose() {
     auto self = shared_from_this();
     if (closeCallback) closeCallback(self);
+}
+
+bool TcpConnection::startDownload(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize) {
+    if (downloadState.active) {
+        LOG_ERROR("connection already has a download");
+        return false;
+    }
+    downloadState.fileid = fileid;
+    downloadState.filename = filename;
+    downloadState.filepath = filepath;
+    downloadState.filesize = filesize;
+    downloadState.offset = 0;
+
+    downloadState.file.open(filepath, std::ios::binary);
+
+    if (!downloadState.file.is_open()) {
+        LOG_ERROR("open download file failed: {}", filepath);
+        return false;
+    }
+
+    downloadState.active = true;
+
+    chat::DownloadStart start;
+    start.set_fileid(fileid);
+    start.set_filename(filename);
+    start.set_filesize(filesize);
+
+    std::string data;
+    start.SerializeToString(&data);
+
+    writeBuffer.append(MessageCodec::encode(chat::DOWNLOAD_START_MSG, data));
+    channel->enableWriting();
+    return true;
+}
+
+void TcpConnection::sendDownloadChunk() {
+    if (!downloadState.active) return;
+
+    constexpr size_t CHUNK_SIZE = 64 * 1024;
+    char buf[CHUNK_SIZE];
+
+    downloadState.file.read(buf, CHUNK_SIZE);
+    std::streamsize n = downloadState.file.gcount();
+    if (n <= 0) {
+        finishDownload();
+        return;
+    }
+    chat::DownloadChunk chunk;
+    chunk.set_fileid(downloadState.fileid);
+    chunk.set_data(buf, n);
+    chunk.set_offset(downloadState.offset);
+
+    std::string body;
+    chunk.SerializeToString(&body);
+    std::string packet = MessageCodec::encode(chat::DOWNLOAD_CHUNK_MSG, body);
+
+    writeBuffer.append(packet);
+    downloadState.offset += n;
+}
+
+void TcpConnection::finishDownload() {
+    if (!downloadState.active) return;
+
+    chat::DownloadEnd end;
+    end.set_fileid(downloadState.fileid);
+
+    std::string data;
+    end.SerializeToString(&data);
+    writeBuffer.append(MessageCodec::encode(chat::DOWNLOAD_END_MSG, data));
+
+    downloadState.file.close();
+    downloadState.active = false;
+    downloadState.fileid.clear();
+    downloadState.filename.clear();
+    downloadState.filepath.clear();
+    downloadState.filesize = 0;
+    downloadState.offset = 0;
 }

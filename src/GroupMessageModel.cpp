@@ -28,9 +28,9 @@ std::vector<GroupMessage> GroupMessageModel::query(int groupid) {
         msg.setId(atoi(row[0]));
         msg.setGroupid(atoi(row[1]));
         msg.setUserid(atoi(row[2]));
-        msg.setMsg(row[3]);
-        msg.setTime(row[4]);
-        msg.setUsername(row[5]);
+        msg.setMsg(row[3] ? row[3] : "");
+        msg.setTime(row[4] ? row[4] : "");
+        msg.setUsername(row[5] ? row[5] : "");
         msgs.push_back(msg);
     }
     mysql_free_result(res);

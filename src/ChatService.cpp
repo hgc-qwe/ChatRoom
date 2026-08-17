@@ -226,6 +226,16 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
         res.set_errmsg("cannot add yourself");
         return;
     }
+    if (!userModel.isExist(toid)) {
+        res.set_err(1);
+        res.set_errmsg("toid not exist");
+        return;
+    }
+    if (friendModel.isFriend(fromid, toid)) {
+        res.set_err(1);
+        res.set_errmsg("you are friends");
+        return;
+    }
 
     if (friendReqModel.insert(fromid, toid)) {
         res.set_err(0);
@@ -284,6 +294,16 @@ void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
+    if (!userModel.isExist(friendid)) {
+        res.set_err(1);
+        res.set_errmsg("friendid not exist");
+        return;
+    }
+    if (friendModel.isFriend(userid, friendid)) {
+        res.set_err(1);
+        res.set_errmsg("you are friends");
+        return;
+    }
 
     if (!friendReqModel.updateStatus(friendid, userid, 1)) {
         res.set_err(1);
@@ -339,6 +359,16 @@ void ChatService::deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
+    if (!userModel.isExist(friendid)) {
+        res.set_err(1);
+        res.set_errmsg("friendid not exist");
+        return;
+    }
+    if (!friendModel.isFriend(userid, friendid)) {
+        res.set_err(1);
+        res.set_errmsg("not friend");
+        return;
+    }
 
     bool ret1 = friendModel.remove(userid, friendid);
     bool ret2 = friendModel.remove(friendid, userid);
@@ -360,6 +390,11 @@ void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const cha
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
+    if (!userModel.isExist(friendid)) {
+        res.set_err(1);
+        res.set_errmsg("friendid not exist");
+        return;
+    }
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
         res.set_errmsg("not friend");
@@ -367,12 +402,31 @@ void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const cha
     }
     
     std::vector<Message> message  = messageModel.queryHistory(userid, friendid);
+    if (message.empty()) {
+        res.set_err(1);
+        res.set_errmsg("no message");
+        return;
+    }
     for (auto& msg : message) {
         auto item = res.add_msgs();
         item->set_fromid(msg.getFromid());
         item->set_toid(msg.getToid());
         item->set_msg(msg.getMsg());
         item->set_time(msg.getTime());
+    }
+    std::vector<File> file = fileModel.queryFriendFile(userid, friendid);
+    if (file.empty()) {
+        res.set_err(1);
+        res.set_errmsg("no file");
+        return;
+    }
+    for (auto& f : file) {
+        auto item = res.add_files();
+        item->set_fileid(f.getFileid());
+        item->set_filename(f.getFilename());
+        item->set_filesize(f.getFilesize());
+        item->set_fromid(f.getFromid());
+        item->set_toid(f.getToid());
     }
     res.set_err(0);
     res.set_errmsg("query history success");
@@ -394,7 +448,11 @@ void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneCh
         res.set_errmsg("cannot chat with yourself");
         return;
     }
-
+    if (!userModel.isExist(toid)) {
+        res.set_err(1);
+        res.set_errmsg("friendid not exist");
+        return;
+    }
     if (!friendModel.isFriend(fromid, toid)) {
         res.set_err(1);
         res.set_errmsg("not friend");
@@ -459,7 +517,7 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
     } else {
         Group group(req.groupname(), req.groupdesc());
         if (groupModel.createGroup(group)) {
-            groupModel.addGroup(userid, group.getId(), "creator");
+            groupModel.addGroup(userid, group.getId(), "owner");
             res.set_groupid(group.getId());
             res.set_err(0);
             res.set_errmsg("createGroup success");
@@ -557,12 +615,28 @@ void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, cons
         item->set_msg(msg.getMsg());
         item->set_time(msg.getTime());
     }
+    std::vector<File> file = fileModel.queryGroupFile(req.groupid());
+    if (file.empty()) {
+        res.set_err(1);
+        res.set_errmsg("no file");
+        return;
+    }
+    for (auto& f : file) {
+        auto item = res.add_files();
+        item->set_groupid(f.getGroupid());
+        item->set_fileid(f.getFileid());
+        item->set_filename(f.getFilename());
+        item->set_filesize(f.getFilesize());
+        item->set_userid(f.getFromid());
+    }
     res.set_err(0);
     res.set_errmsg("query group history success");
     LOG_INFO("query group {} history message", req.groupid());
 }
 
 void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::FileStartReq& req, chat::FileStartRes& res) {
+    int fromid = conn->getUserId();
+    
     mkdir("./files", 0755);
     std::string path = "./files/" + req.fileid();
     FILE* fp = fopen(path.c_str(), "wb");
@@ -571,7 +645,6 @@ void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::Fil
         res.set_errmsg("open file failed");
         return;
     }
-    int fromid = conn->getUserId();
     {
         std::lock_guard<std::mutex> lock(fileMutex);
         fileMap[req.fileid()] = fp;
@@ -630,22 +703,26 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
     LOG_INFO("receive file {} finish", req.fileid());
 
     if (info.groupid == 0) {
+        File file;
+        User user = userModel.query(info.fromid);
+        file.setFromname(user.getName());
+        file.setFromid(info.fromid);
+        file.setToid(info.toid);
+        file.setFilename(info.filename);
+        file.setFilesize(info.filesize);
+        file.setFileid(info.fileid);
+        file.setStatus(0);
+        file.setType(0);
+        file.setGroupid(0);
+        if(!fileModel.insert(file)) {
+            LOG_ERROR("save file {} failed", req.fileid());
+            res.set_err(1);
+            res.set_errmsg("save file info failed");
+            return;
+        }
         auto target = getUserConn(info.toid);
         if (target) sendFile(target, info);
         else {
-            File file;
-            User user = userModel.query(info.fromid);
-            file.setFromname(user.getName());
-            file.setFromid(info.fromid);
-            file.setToid(info.toid);
-            file.setFilename(info.filename);
-            file.setFilesize(info.filesize);
-            file.setFileid(info.fileid);
-            file.setStatus(0);
-            file.setType(0);
-            file.setGroupid(0);
-            fileModel.insert(file);
-
             chat::OfflineFile offline;
             offline.set_fromid(info.fromid);
             offline.set_toid(info.toid);
@@ -665,7 +742,7 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
         File file;
         file.setFromname(user.getName());
         file.setFromid(info.fromid);
-        file.setToid(info.toid);
+        file.setToid(0);
         file.setFilename(info.filename);
         file.setFilesize(info.filesize);
         file.setFileid(info.fileid);
@@ -758,41 +835,20 @@ void ChatService::downloadFile(std::shared_ptr<TcpConnection> conn, const chat::
     }
     
     std::string path = "./files/" + req.fileid();
-    FILE* fp = fopen(path.c_str(), "rb");
-    if (fp == nullptr) {
+    if (!std::filesystem::exists(path)) {
         res.set_err(1);
-        res.set_errmsg("file not exist");
+        res.set_errmsg("file not found on server");
         return;
     }
 
-    chat::DownloadStart start;
-    start.set_fileid(req.fileid());
-    start.set_filename(file.getFilename());
-    start.set_filesize(file.getFilesize());
+    uint64_t filesize = std::filesystem::file_size(path);
+    bool ok = conn->startDownload(file.getFileid(), file.getFilename(), path, filesize);
 
-    std::string data;
-    start.SerializeToString(&data);
-    conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_START_MSG, data));
-
-    char buffer[64 * 1024];
-    uint64_t offset = 0;
-    while(true) {
-        int n = fread(buffer, 1, sizeof(buffer), fp);
-        if (n <= 0) break;
-        chat::DownloadChunk chunk;
-        chunk.set_fileid(req.fileid());
-        chunk.set_data(buffer, n);
-        data.clear();
-        chunk.SerializeToString(&data);
-        conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_CHUNK_MSG, data));
-        offset += n;
+    if (!ok) {
+        res.set_err(1);
+        res.set_errmsg("start download failed");
+        return;
     }
-    fclose(fp);
-    chat::DownloadEnd end;
-    end.set_fileid(req.fileid());
-    data.clear();
-    end.SerializeToString(&data);
-    conn->sendMessage(MessageCodec::encode(chat::DOWNLOAD_END_MSG, data));
     fileModel.updateStatus(req.fileid());
     res.set_err(0);
     res.set_errmsg("download success");
@@ -927,7 +983,7 @@ void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::A
     }
     if (!groupModel.isManager(adminid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you arenot admin");
+        res.set_errmsg("you are not admin");
         return;
     }
     if (!groupReqModel.isApplied(targetid, req.groupid())) {
@@ -1365,6 +1421,11 @@ void ChatService::addBlacklist(std::shared_ptr<TcpConnection> conn, const chat::
         res.set_errmsg("blackid not exist");
         return;
     }
+    if (!userModel.isExist(blackid)) {
+        res.set_err(1);
+        res.set_errmsg("blackid not exist");
+        return;
+    }
     if (!friendModel.isFriend(userid, blackid)) {
         res.set_err(1);
         res.set_errmsg("not friend");
@@ -1393,6 +1454,11 @@ void ChatService::removeBlacklist(std::shared_ptr<TcpConnection> conn, const cha
     }
     int userid = conn->getUserId();
     int blackid = req.blackid();
+    if (!userModel.isExist(blackid)) {
+        res.set_err(1);
+        res.set_errmsg("blackid not exist");
+        return;
+    }
     if (!blacklistModel.isBlacked(userid, blackid)) {
         res.set_err(1);
         res.set_errmsg("not blacked");
@@ -1569,4 +1635,77 @@ void ChatService::resetPassword(std::shared_ptr<TcpConnection> conn, const chat:
     }
     res.set_err(0);
     res.set_errmsg("reset password success");
+}
+
+void ChatService::queryFile(std::shared_ptr<TcpConnection> conn, const chat::QueryFileReq& req, chat::QueryFileRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int userid = conn->getUserId();
+    std::vector<File> files = fileModel.queryOffline(userid);
+    std::vector<Group> groups = groupModel.queryGroups(userid);
+    if (!groups.empty()) {
+        for (auto& g : groups) {
+            std::vector<File> file = fileModel.queryGroupFile(g.getId());
+            files.insert(files.end(), file.begin(), file.end());
+        }
+    }
+    if (files.empty()) {
+        res.set_err(1);
+        res.set_errmsg("query file empty");
+        return;
+    }
+    for (const auto& f : files) {
+        auto* info = res.add_files();
+        info->set_fileid(f.getFileid());
+        info->set_filename(f.getFilename());
+        info->set_filesize(f.getFilesize());
+        info->set_fromid(f.getFromid());
+        info->set_fromname(f.getFromname());
+        info->set_groupid(f.getGroupid());
+    }
+    res.set_err(0);
+    res.set_errmsg("query file success");
+}
+
+void ChatService::checkFriend(std::shared_ptr<TcpConnection> conn, const chat::CheckFriendReq& req, chat::CheckFriendRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int userid = conn->getUserId();
+    int friendid = req.friendid();
+    if (!userModel.isExist(friendid)) {
+        res.set_err(1);
+        res.set_errmsg("friendid not exist");
+        return;
+    }
+    if (!friendModel.isFriend(userid, friendid)) {
+        res.set_err(1);
+        res.set_errmsg("not friend");
+        return;
+    }
+}
+
+void ChatService::checkGroup(std::shared_ptr<TcpConnection> conn, const chat::CheckGroupReq& req, chat::CheckGroupRes& res) {
+    if (conn->getUserId() <= 0) {
+        res.set_err(1);
+        res.set_errmsg("please login first");
+        return;
+    }
+    int userid = conn->getUserId();
+    int groupid = req.groupid();
+    if (!groupModel.isGroupExist(groupid)) {
+        res.set_err(1);
+        res.set_errmsg("group not exist");
+        return;
+    }
+    if (!groupModel.isInGroup(userid, groupid)) {
+        res.set_err(1);
+        res.set_errmsg("you are not in group");
+        return;
+    } 
 }

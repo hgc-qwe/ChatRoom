@@ -453,6 +453,45 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             conn->updateLastActiveTime();
             return "";
         }
+        case chat::QUERY_FILE_MSG: {
+            chat::QueryFileReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("QueryFileReq parse failed");
+                return "";
+            }
+
+            chat::QueryFileRes res;
+            ChatService::instance()->queryFile(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::QUERY_FILE_MSG_ACK, response);
+        }
+        case chat::CHECK_FRIEND_MSG: {
+            chat::CheckFriendReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("CheckFriendReq parse failed");
+                return "";
+            }
+
+            chat::CheckFriendRes res;
+            ChatService::instance()->checkFriend(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::CHECK_FRIEND_MSG_ACK, response);
+        }
+        case chat::CHECK_GROUP_MSG: {
+            chat::CheckGroupReq req;
+            if (!req.ParseFromString(data)) {
+                LOG_ERROR("CheckGroupReq parse failed");
+                return "";
+            }
+
+            chat::CheckGroupRes res;
+            ChatService::instance()->checkGroup(conn, req, res);
+            std::string response;
+            res.SerializeToString(&response);
+            return MessageCodec::encode(chat::CHECK_GROUP_MSG_ACK, response);
+        }
         default: {
             LOG_ERROR("unknown message");
             return "";

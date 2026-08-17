@@ -14,4 +14,8 @@ public:
     bool updateStatus(std::string fileid);
 
     File queryByFileid(std::string fileid);
+
+    std::vector<File> queryFriendFile(const int userid, const int friendid);
+
+    std::vector<File> queryGroupFile(const int groupid);
 };

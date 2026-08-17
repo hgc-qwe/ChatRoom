@@ -3,6 +3,7 @@
 #include "File.h"
 #include "FileModel.h"
 #include "Mysql.h"
+#include "Logger.h"
 
 bool FileModel::insert(File file) {
     std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status, fromname, type, groupid) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
@@ -69,4 +70,58 @@ File FileModel::queryByFileid(std::string fileid) {
         mysql_free_result(res);
     }
     return file;
+}
+
+std::vector<File> FileModel::queryFriendFile(const int userid, const int friendid) {
+    std::string sql = "select * from file where (fromid =" + std::to_string(userid) + " and toid =" + std::to_string(friendid) + ") or (fromid =" + std::to_string(friendid) + " and toid =" + std::to_string(userid) + ")";
+    std::vector<File> files;
+    Mysql mysql;
+    if (!mysql.connect()) return files;
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res) {
+        MYSQL_ROW row;
+        while ((row = mysql_fetch_row(res)) != nullptr) {
+            File file;
+            file.setFileid(row[0]);
+            file.setFromid(std::stoi(row[1]));
+            file.setToid(std::stoi(row[2]));
+            file.setFilename(row[3]);
+            file.setFilesize(std::stoull(row[4]));
+            file.setStatus(std::stoi(row[5]));
+            file.setFromname(row[6]);
+            file.setType(std::stoi(row[7]));
+            file.setGroupid(std::stoi(row[8]));
+            files.push_back(file);
+        }
+        mysql_free_result(res);
+    }
+    return files;
+}
+
+std::vector<File> FileModel::queryGroupFile(const int groupid) {
+    std::string sql = "select * from file where groupid =" + std::to_string(groupid) + ";";
+    std::vector<File> files;
+    Mysql mysql;
+    if (!mysql.connect()) return files;
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res) {
+        MYSQL_ROW row;
+        while ((row = mysql_fetch_row(res)) != nullptr) {
+            File file;
+            file.setFileid(row[0]);
+            file.setFromid(std::stoi(row[1]));
+            file.setToid(std::stoi(row[2]));
+            file.setFilename(row[3]);
+            file.setFilesize(std::stoull(row[4]));
+            file.setStatus(std::stoi(row[5]));
+            file.setFromname(row[6]);
+            file.setType(std::stoi(row[7]));
+            file.setGroupid(std::stoi(row[8]));
+            files.push_back(file);
+        }
+        mysql_free_result(res);
+    }
+    return files;
 }

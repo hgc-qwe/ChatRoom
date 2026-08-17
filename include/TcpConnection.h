@@ -4,11 +4,21 @@
 #include <memory>
 #include <openssl/ssl.h>
 #include <chrono>
+#include <fstream>
 #include "Channel.h"
 #include "Buffer.h"
 
 class EventLoop;
 
+struct DownloadState {
+    bool active = false;
+    std::string fileid;
+    std::string filename;
+    std::string filepath;
+    uint64_t filesize = 0;
+    uint64_t offset = 0;
+    std::ifstream file;
+};
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>{
 public:
     TcpConnection(int fd, EventLoop* loop, SSL_CTX* sslctx);
@@ -46,6 +56,10 @@ public:
     void sendPing();
 
     void handleClose();
+
+    bool startDownload(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize);
+    void sendDownloadChunk();
+    void finishDownload();
 private:
     int fd;
     EventLoop* loop;
@@ -58,6 +72,8 @@ private:
     ConnectionCallback connectionCallback;
     MessageCallback messageCallback;
     CloseCallback closeCallback;
+
+    DownloadState downloadState;
 
     bool tlsEstablished{false};
     bool tlsHandshake();

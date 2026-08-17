@@ -123,7 +123,7 @@ void TcpServer::acceptConnection() {
 
                 while (MessageCodec::decode(buffer, msgid, data)) {
                     auto response = dispatcher.dispatch(conn, msgid, data);
-                    conn->sendMessage(response);
+                    if (!response.empty()) conn->sendMessage(response);
                 } 
             });
 

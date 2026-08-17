@@ -147,6 +147,15 @@ enum MsgTyp {
 
     PING_MSG = 95;
     PONG_MSG = 96;
+
+    QUERY_FILE_MSG = 97;
+    QUERY_FILE_MSG_ACK = 98;
+
+    CHECK_FRIEND_MSG = 99;
+    CHECK_FRIEND_MSG_ACK = 100;
+
+    CHECK_GROUP_MSG = 101;
+    CHECK_GROUP_MSG_ACK = 102;
 }
 
 message OfflineMsg {
@@ -279,6 +288,14 @@ message Group {
     string role = 5;
 }
 
+message FriendFile {
+    int32 fromid = 1;
+    int32 toid = 2;
+    string fileid = 3;
+    string filename = 4;
+    uint64 filesize = 5;
+}
+
 message HistoryMsg {
     int32 fromid = 1;
     int32 toid = 2;
@@ -295,6 +312,7 @@ message HistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
     repeated HistoryMsg msgs = 3;
+    repeated FriendFile files = 4;
 }
 
 message AcceptFriendReq {
@@ -346,6 +364,14 @@ message DeleteFriendRes {
     string errmsg = 2;
 }
 
+message GroupFile {
+    int32 userid = 1;
+    int32 groupid = 2;
+    string fileid = 3;
+    string filename = 4;
+    uint64 filesize = 5;
+}
+
 message GroupHistoryMsg {
     int32 groupid = 1;
     int32 userid = 2;
@@ -361,6 +387,7 @@ message GroupHistoryMsgRes {
     int32 err = 1;
     string errmsg = 2;
     repeated GroupHistoryMsg msgs = 3;
+    repeated GroupFile files = 4;
 }
 
 message OfflineGroupMsg {
@@ -429,6 +456,7 @@ message DownloadStart {
 message DownloadChunk {
     string fileid = 1;
     bytes data = 2;
+    uint64 offset = 3;
 }
 
 message DownloadEnd {
@@ -671,6 +699,43 @@ message VerifyCodeReq {
 }
 
 message VerifyCodeRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message FileNotify {
+    int32 fromid = 1;
+    string fromname = 2;
+    string fileid = 5;
+    string filename = 6;
+    uint64 filesize = 7;
+    int32 groupid = 8;
+}
+
+message QueryFileReq {
+    MsgTyp msgid = 1;
+}
+
+message QueryFileRes {
+    int32 err = 1;
+    string errmsg = 2;
+    repeated FileNotify files = 3;
+}
+
+message CheckFriendReq {
+    int32 friendid = 1;
+}
+
+message CheckFriendRes {
+    int32 err = 1;
+    string errmsg = 2;
+}
+
+message CheckGroupReq {
+    int32 groupid = 1;
+}
+
+message CheckGroupRes {
     int32 err = 1;
     string errmsg = 2;
 }

@@ -96,3 +96,20 @@ bool UserModel::updatePassword(int userid, const std::string& password) {
     }
     return mysql.update(sql);
 }
+
+bool UserModel::isExist(int id) {
+    std::string sql ="select id from user where id = " + std::to_string(id) + ";";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) {
+        return false;
+    }
+    MYSQL_ROW row = mysql_fetch_row(res);
+
+    mysql_free_result(res);
+    return row != nullptr;
+}

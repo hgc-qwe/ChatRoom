@@ -17,4 +17,6 @@ public:
     User queryByEmail(const std::string& email);
 
     bool updatePassword(int userid, const std::string& password);
+
+    bool isExist(int id);
 };

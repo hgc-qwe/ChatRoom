@@ -30,6 +30,8 @@ class ChatService
 public:
     static ChatService* instance();
 
+    std::shared_ptr<TcpConnection> getUserConn(int userid);
+
     void login(std::shared_ptr<TcpConnection> conn, const chat::LoginReq& req, chat::LoginRes& res);
     
     void reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterReq& req, chat::RegisterRes& res);
@@ -106,7 +108,11 @@ public:
 
     void resetPassword(std::shared_ptr<TcpConnection> conn, const chat::ResetPasswordReq& req, chat::ResetPasswordRes& res);
 
-    std::shared_ptr<TcpConnection> getUserConn(int userid);
+    void queryFile(std::shared_ptr<TcpConnection> conn, const chat::QueryFileReq& req, chat::QueryFileRes& res);
+
+    void checkFriend(std::shared_ptr<TcpConnection> conn, const chat::CheckFriendReq& req, chat::CheckFriendRes& res);
+
+    void checkGroup(std::shared_ptr<TcpConnection> conn, const chat::CheckGroupReq& req, chat::CheckGroupRes& res);
 
     void removeUser(int userid);
     void clientClose(int userid);
