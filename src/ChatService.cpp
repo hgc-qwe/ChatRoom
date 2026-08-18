@@ -658,9 +658,9 @@ void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::Fil
         info.path = path;
         fileInfoMap[req.fileid()] = info;
     }
+    conn->setUploading(true);
     //
-    LOG_INFO(
-        "file start: fileid={}, fromid={}, toid={}, groupid={}, filename={}",
+    LOG_INFO("file start: fileid={}, fromid={}, toid={}, groupid={}, filename={}",
         req.fileid(),
         fromid,
         req.toid(),
@@ -699,6 +699,8 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
         fileMap.erase(it);
         info = fileInfoMap[req.fileid()];
         fileInfoMap.erase(req.fileid());
+
+        conn->setUploading(false);
     }
     LOG_INFO("receive file {} finish", req.fileid());
 
@@ -849,6 +851,7 @@ void ChatService::downloadFile(std::shared_ptr<TcpConnection> conn, const chat::
         res.set_errmsg("start download failed");
         return;
     }
+    conn->setDownloading(true);
     fileModel.updateStatus(req.fileid());
     res.set_err(0);
     res.set_errmsg("download success");
@@ -948,7 +951,7 @@ void ChatService::queryGroupreq(std::shared_ptr<TcpConnection> conn, const chat:
     }
     if (!groupModel.isManager(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you arenot admin");
+        res.set_errmsg("you are not admin");
         return;
     }
 
@@ -1686,6 +1689,11 @@ void ChatService::checkFriend(std::shared_ptr<TcpConnection> conn, const chat::C
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
         res.set_errmsg("not friend");
+        return;
+    }
+    if (blacklistModel.isBlacked(userid, friendid) || blacklistModel.isBlacked(friendid, userid)) {
+        res.set_err(1);
+        res.set_errmsg("message blacked");
         return;
     }
 }

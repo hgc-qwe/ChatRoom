@@ -40,6 +40,7 @@ SSL* ssl = nullptr;
 SSL_CTX* sslCtx = nullptr;
 std::vector<std::thread> fileThreads;
 mutex sslWriteMutex;
+bool needSend = true;
 
 bool sendAll(SSL* ssl, const char* data, size_t len) {
     lock_guard<mutex> lock(sslWriteMutex);
@@ -210,7 +211,7 @@ void recvMessage(SSL* ssl) {
             cout << "socket colse or error" << endl;
             break;
         }
-        if (!pfd.revents & POLLIN) continue;
+        if (!(pfd.revents & POLLIN)) continue;
 
         char buffer[64 * 1024] = {0};
         int n = SSL_read(ssl, buffer, sizeof(buffer));
@@ -640,12 +641,14 @@ void recvMessage(SSL* ssl) {
                 res.ParseFromString(body);
 
                 if (res.err() == 1) cout << "err:" << res.err() << " " << res.errmsg() << endl;
+                cout << "groupid:" << res.groupid() << endl;
             }
             else if(msgid == chat::ACCEPT_GROUP_MSG_ACK) {
                 chat::AcceptGroupRes res;
                 res.ParseFromString(body);
 
                 if (res.err() == 1) cout << "err:" << res.err() << " " << res.errmsg() << endl;
+                
             }
         }
     }
@@ -920,6 +923,8 @@ int main(int argc, char* argv[]) {
                 req.set_msg(msg);
                 req.SerializeToString(&data);
                 packet = MessageCodec::encode(chat::ONE_CHAT_MSG, data);
+                needSend = false;
+                sendAll(ssl, packet.data(), packet.size());
             }
         }
         else if(op == 7) {
@@ -990,6 +995,8 @@ int main(int argc, char* argv[]) {
                 req.set_msg(msg);
                 req.SerializeToString(&data);
                 packet = MessageCodec::encode(chat::GROUP_CHAT_MSG, data);
+                needSend = false;
+                sendAll(ssl, packet.data(), packet.size());
             }
         }
         else if(op == 9) {
@@ -1432,7 +1439,7 @@ int main(int argc, char* argv[]) {
         }
         else continue;
 
-        sendAll(ssl, packet.data(), packet.size());
+        if (needSend && !packet.empty()) sendAll(ssl, packet.data(), packet.size());
     }
 
     return 0;

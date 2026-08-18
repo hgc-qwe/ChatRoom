@@ -60,6 +60,10 @@ public:
     bool startDownload(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize);
     void sendDownloadChunk();
     void finishDownload();
+
+    void setUploading(bool value);
+    void setDownloading(bool value);
+    bool isFileTransferring() const;
 private:
     int fd;
     EventLoop* loop;
@@ -77,6 +81,9 @@ private:
 
     bool tlsEstablished{false};
     bool tlsHandshake();
+
+    bool uploading = false;
+    bool downloading = false;
 
     std::chrono::steady_clock::time_point lastActiveTime;
 };

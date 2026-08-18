@@ -136,7 +136,7 @@ bool GroupModel::isGroupExist(int groupid) {
 }
 
 bool GroupModel::isManager(int userid, int groupid) {
-    std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and (grouprole='owner' or grouprole='manager');";
+    std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and (grouprole='owner' or grouprole='admin');";
     Mysql mysql;
     if (!mysql.connect()) {
         return false;

@@ -219,6 +219,7 @@ void TcpConnection::updateLastActiveTime() {
 }
 
 bool TcpConnection::isTimeout() const {
+    if (isFileTransferring()) return false;
     auto now = std::chrono::steady_clock::now();
     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - lastActiveTime).count();
     return seconds > 30;
@@ -257,6 +258,7 @@ bool TcpConnection::startDownload(const std::string& fileid, const std::string& 
     }
 
     downloadState.active = true;
+    setDownloading(true);
 
     chat::DownloadStart start;
     start.set_fileid(fileid);
@@ -308,9 +310,22 @@ void TcpConnection::finishDownload() {
 
     downloadState.file.close();
     downloadState.active = false;
+    setDownloading(false);
     downloadState.fileid.clear();
     downloadState.filename.clear();
     downloadState.filepath.clear();
     downloadState.filesize = 0;
     downloadState.offset = 0;
+}
+
+void TcpConnection::setUploading(bool value) {
+    uploading = value;
+}
+    
+void TcpConnection::setDownloading(bool value) {
+    downloading = value;
+}
+    
+bool TcpConnection::isFileTransferring() const {
+    return uploading || downloading;
 }
