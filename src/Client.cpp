@@ -808,6 +808,11 @@ int main(int argc, char* argv[]) {
 
         string data;
         string packet;
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            continue;
+        }
 
         if(op == 1) {
             chat::LoginReq req;

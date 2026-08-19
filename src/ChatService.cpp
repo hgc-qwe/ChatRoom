@@ -767,9 +767,7 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
             return;
         }
         auto target = getUserConn(info.toid);
-        if (target && target->startFileDelivery(info.fileid, info.filename, info.path, info.filesize, info.toid)) {
-            
-        } else {
+        if (!target) {
             chat::OfflineFile offline;
             offline.set_fromid(info.fromid);
             offline.set_toid(info.toid);

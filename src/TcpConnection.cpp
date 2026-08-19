@@ -124,7 +124,6 @@ void TcpConnection::sendBuffer() {
         int n = SSL_write(ssl, writeBuffer.beginRead(), static_cast<int>(writeBuffer.readableBytes()));
         if (n > 0) {
             writeBuffer.retrieve(n);
-            LOG_INFO("SSL_write fd={}, write={}, remian={}", fd, n, writeBuffer.readableBytes());
             continue;
         } 
         int error = SSL_get_error(ssl, n);
@@ -299,6 +298,7 @@ bool TcpConnection::startFileDelivery(const std::string& fileid, const std::stri
     }
 
     downloadState.active = true;
+    setDownloading(true);
     chat::FileStartReq start;
     start.set_toid(toid);
     start.set_filename(filename);
