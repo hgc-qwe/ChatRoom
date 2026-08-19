@@ -11,4 +11,6 @@ public:
     bool updateStatus(int fromid, int toid, int status);
 
     bool removeAll(int userid);
+
+    bool isApplied(int fromid, int toid);
 };

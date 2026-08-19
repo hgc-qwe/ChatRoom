@@ -280,3 +280,26 @@ std::vector<GroupUser> GroupModel::queryUsers(int groupid) {
     mysql_free_result(res);
     return users;
 }
+
+std::vector<Group> GroupModel::queryGroupId(const int userid) {
+    std::string sql = "select g.id, g.groupname, g.groupdesc from allgroup g inner join groupuser gu on g.id = gu.groupid where gu.userid =" + std::to_string(userid) + " and gu.grouprole in ('owner', 'admin');";
+    Mysql mysql;
+    std::vector<Group> groups;
+    if (!mysql.connect()) {
+        return groups;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res == nullptr) {
+        return groups;
+    }
+    MYSQL_ROW row;
+
+    while ((row = mysql_fetch_row(res)) != nullptr) {
+        Group group(row[1], row[2]);
+        group.setId(atoi(row[0]));
+        groups.push_back(group);
+    }
+    mysql_free_result(res);
+    return groups;
+}

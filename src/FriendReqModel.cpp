@@ -48,3 +48,19 @@ bool FriendReqModel::removeAll(int userid) {
 
     return mysql.update(sql);
 }
+
+bool FriendReqModel::isApplied(int fromid, int toid) {
+    std::string sql = "select * from friend_request where fromid=" + std::to_string(fromid) + " and toid=" + std::to_string(toid) + " and status=0;";
+    Mysql mysql;
+    if (!mysql.connect()) {
+        return false;
+    }
+
+    MYSQL_RES* res = mysql.query(sql);
+    if (res != nullptr) {
+        bool exist = mysql_num_rows(res) > 0;
+        mysql_free_result(res);
+        return exist;
+    }
+    return false;
+}

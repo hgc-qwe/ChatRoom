@@ -156,6 +156,9 @@ enum MsgTyp {
 
     CHECK_GROUP_MSG = 101;
     CHECK_GROUP_MSG_ACK = 102;
+
+    INVITE_NOTIFY_MSG = 103;
+    INVITE_NOTIFY_MSG_ACK = 104;
 }
 
 message OfflineMsg {
@@ -225,6 +228,7 @@ message CreateGroupReq {
     MsgTyp msgid = 1;
     string groupname = 2;
     string groupdesc = 3;
+    int32 friendid = 4;
 }
 
 message CreateGroupRes {
@@ -482,7 +486,7 @@ message ApplyGroupRes {
 }
 
 message QueryGroupReqReq {
-    int32 groupid = 1;
+    MsgTyp msgid = 1;
 }
 
 message GroupRequest {
@@ -738,4 +742,10 @@ message CheckGroupReq {
 message CheckGroupRes {
     int32 err = 1;
     string errmsg = 2;
+}
+
+message InviteNotify {
+    int32 groupid = 1;
+    string groupname = 2;
+    int32 ownerid = 3;
 }

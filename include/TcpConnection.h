@@ -18,6 +18,9 @@ struct DownloadState {
     uint64_t filesize = 0;
     uint64_t offset = 0;
     std::ifstream file;
+    int startMsgId = 0;
+    int chunkMsgId = 0;
+    int endMsgId = 0;
 };
 class TcpConnection : public std::enable_shared_from_this<TcpConnection>{
 public:
@@ -58,6 +61,8 @@ public:
     void handleClose();
 
     bool startDownload(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize);
+    
+    bool startFileDelivery(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize, int toid);
     void sendDownloadChunk();
     void finishDownload();
 

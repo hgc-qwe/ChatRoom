@@ -41,4 +41,6 @@ public:
     bool isAdmin(int userid, int groupid);
 
     std::vector<GroupUser> queryUsers(int groupid);
+
+    std::vector<Group> queryGroupId(const int userid);
 };

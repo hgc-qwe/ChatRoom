@@ -23,22 +23,23 @@
 using namespace std;
 
 int currentUserid = -1;
-std::ofstream recvFile;
-std::string recvFileId;
+ofstream recvFile;
+string recvFileId;
 uint64_t recvFileSize = 0;
-std::ofstream downloadFile;
-std::string downloadFileId;
-std::string downloadFilePath;
+ofstream downloadFile;
+string downloadFileId;
+string downloadFilePath;
+atomic<bool> downloadActive{false};
 bool verifyCodeFinished = false;
 bool verifyCodeSuccess = false;
 bool checkFriendFinished = false;
 bool checkFriendSuccess = false;
 bool checkGroupFinished = false;
 bool checkGroupSuccess = false;
-std::atomic<bool> running{true};
+atomic<bool> running{true};
 SSL* ssl = nullptr;
 SSL_CTX* sslCtx = nullptr;
-std::vector<std::thread> fileThreads;
+vector<std::thread> fileThreads;
 mutex sslWriteMutex;
 bool needSend = true;
 
@@ -141,12 +142,12 @@ void sendFile(SSL* ssl, int toid, int groupid, const string& path) {
     startReq.SerializeToString(&data);
     string packet = MessageCodec::encode(chat::FILE_START_MSG, data);
 
-    sendAll(ssl, packet.data(), packet.size());
+    if (!sendAll(ssl, packet.data(), packet.size())) return;
 
-    const size_t CHUNK_SIZE = 1024 * 1024;
+    
+    const size_t CHUNK_SIZE = 64 * 1024;
 
     char buffer[CHUNK_SIZE];
-    uint64_t offset = 0;
 
     while (ifs) {
         ifs.read(buffer, CHUNK_SIZE);
@@ -161,9 +162,10 @@ void sendFile(SSL* ssl, int toid, int groupid, const string& path) {
         chunkReq.SerializeToString(&data);
         packet = MessageCodec::encode(chat::FILE_CHUNK_MSG, data);
 
-        sendAll(ssl, packet.data(), packet.size());
-
-        offset += len;
+        if (!sendAll(ssl, packet.data(), packet.size())) {
+            cout << "file send failed" << endl;
+            return;
+        }
     }
 
     chat::FileEndReq endReq;
@@ -173,7 +175,10 @@ void sendFile(SSL* ssl, int toid, int groupid, const string& path) {
     endReq.SerializeToString(&data);
     packet = MessageCodec::encode(chat::FILE_END_MSG, data);
 
-    sendAll(ssl, packet.data(), packet.size());
+    if (!sendAll(ssl, packet.data(), packet.size())) {
+        cout << "file end send failed" << endl;
+        return;
+    }
 
     cout << "file send finish" << endl;
 }
@@ -390,7 +395,10 @@ void recvMessage(SSL* ssl) {
             }
             else if(msgid == chat::DOWNLOAD_START_MSG) {
                 chat::DownloadStart start;
-                start.ParseFromString(body);
+                if (!start.ParseFromString(body)) {
+                    cout << "DOWNLOAD_START parse failed" << endl;
+                    continue;
+                }
 
                 cout << "开始下载:" << start.filename() << " size:" << start.filesize() << endl;
 
@@ -399,24 +407,38 @@ void recvMessage(SSL* ssl) {
                 downloadFile.open(downloadFilePath, std::ios::binary);
                 if(downloadFile.is_open()) {
                     downloadFileId = start.fileid();
+                    downloadActive = true;
                     cout << "保存到:" << downloadFilePath << endl;
                 } else cout << "open download file failed" << endl;
             }
             else if(msgid == chat::DOWNLOAD_CHUNK_MSG) {
                 chat::DownloadChunk chunk;
-                chunk.ParseFromString(body);
+                if (!chunk.ParseFromString(body)) {
+                    cout << "DOWNLOAD_CHUNK parse failed" << endl;
+                    continue;
+                }
 
                 if(downloadFile.is_open() && chunk.fileid() == downloadFileId) {
                     downloadFile.write( chunk.data().data(), chunk.data().size());
                 }
+                if (!downloadFile) {
+                    cout << "write download file failed" << endl;
+                    downloadFile.close();
+                    downloadActive = false;
+                }
             }
             else if(msgid == chat::DOWNLOAD_END_MSG) {
                 chat::DownloadEnd end;
-                end.ParseFromString(body);
+                if (!end.ParseFromString(body)) {
+                    cout << "DOWNLOAD_END parse failed" << endl;
+                    continue;
+                }
 
                 if(downloadFile.is_open() && end.fileid() == downloadFileId) {
                     downloadFile.close();
                     cout << "下载完成:" << downloadFilePath << endl;
+                    downloadActive = false;
+                    downloadFileId.clear();
                 }
             }
             else if(msgid == chat::CANCEL_ACCOUNT_MSG_ACK) {
@@ -649,6 +671,12 @@ void recvMessage(SSL* ssl) {
 
                 if (res.err() == 1) cout << "err:" << res.err() << " " << res.errmsg() << endl;
                 
+            }
+            else if(msgid == chat::INVITE_NOTIFY_MSG) {
+                chat::InviteNotify notify;
+                notify.ParseFromString(body);
+
+                cout << "你已被拉进群聊：" << "ownerid:" << notify.ownerid() << " groupid:" << notify.groupid() << " groupname:" << notify.groupname() << endl;
             }
         }
     }
@@ -894,30 +922,17 @@ int main(int argc, char* argv[]) {
 
 
             bool quitChat = false;
+            cout << "msg(Enter发送，/quit退出):" << endl;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             while (true) {
                 string msg;
-                string line;
+                getline(cin, msg);
 
-                cout << "msg(/send发送，/quit退出):" << endl;
-                while (true) {
-                    getline(cin, line);
-                    if (line == "/send") {
-                        break;
-                    }
-                    if (line == "/quit") {
-                        quitChat = true;
-                        break;
-                    }
-                    msg += line;
-                    msg += '\n';
-                }
+                if (msg == "/quit") quitChat = true;
                 if (quitChat) break;
                 if (msg.empty()) {
-                    cout << "msg empty" << endl;
                     continue;
                 }
-                if (!msg.empty() && msg.back() == '\n') msg.pop_back();
 
                 req.set_toid(toid);
                 req.set_msg(msg);
@@ -966,30 +981,17 @@ int main(int argc, char* argv[]) {
             cout << "可以群聊，请继续输入消息" << endl;
 
             bool quitChat = false;
+            cout << "msg(Enter发送，/quit退出):" << endl;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             while (true) {
                 string msg;
-                string line;
-
-                cout << "msg(/send发送，/quit退出):" << endl;
-                while (true) {
-                    getline(cin, line);
-                    if (line == "/send") {
-                        break;
-                    }
-                    if (line == "/quit") {
-                        quitChat = true;
-                        break;
-                    }
-                    msg += line;
-                    msg += '\n';
-                }
+                getline(cin, msg);
+                
+                if (msg == "/quit") quitChat = true;
                 if (quitChat) break;
                 if (msg.empty()) {
-                    cout << "msg empty" << endl;
                     continue;
                 }
-                if (!msg.empty() && msg.back() == '\n') msg.pop_back();
 
                 req.set_groupid(groupid);
                 req.set_msg(msg);
@@ -1048,6 +1050,10 @@ int main(int argc, char* argv[]) {
         else if(op == 11) {
             if(currentUserid == -1) {
                 cout << "please login first" << endl;
+                continue;
+            }
+            if (downloadActive) {
+                cout << "当前正在下载文件，请等待下载完成" << endl;
                 continue;
             }
             queryFile();
@@ -1127,12 +1133,8 @@ int main(int argc, char* argv[]) {
         }
         else if(op == 15) {
             chat::QueryGroupReqReq req;
-            int groupid;
-
-            cout<<"groupid:";
-            cin>>groupid;
-
-            req.set_groupid(groupid);
+          
+            req.set_msgid(chat::QUERY_GROUP_REQ_MSG);
             req.SerializeToString(&data);
             packet = MessageCodec::encode(chat::QUERY_GROUP_REQ_MSG, data);
         }
@@ -1426,13 +1428,18 @@ int main(int argc, char* argv[]) {
             chat::CreateGroupReq req;
             string groupname = "";
             string groupdesc = "";
+            int friendid;
             cout << "groupname:";
             cin >> groupname;
             cout << "groupdesc:";
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             getline(cin, groupdesc);
+            cout << "friendid:";
+            cin >> friendid;
+
             req.set_groupname(groupname);
             req.set_groupdesc(groupdesc);
+            req.set_friendid(friendid);
 
             req.SerializeToString(&data);
             packet = MessageCodec::encode(chat::CREATE_GROUP_MSG, data);

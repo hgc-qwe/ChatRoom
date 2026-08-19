@@ -152,8 +152,10 @@ void TcpConnection::sendBuffer() {
             channel->disableWriting();
             return;
         }
+        channel->enableWriting();
+        return;
     }
-    if (writeBuffer.readableBytes() == 0 && !downloadState.active) channel->disableWriting();
+    channel->disableWriting();
 }
 
 Buffer& TcpConnection::getReadBuffer() {
@@ -249,6 +251,9 @@ bool TcpConnection::startDownload(const std::string& fileid, const std::string& 
     downloadState.filepath = filepath;
     downloadState.filesize = filesize;
     downloadState.offset = 0;
+    downloadState.startMsgId = chat::DOWNLOAD_START_MSG;
+    downloadState.chunkMsgId = chat::DOWNLOAD_CHUNK_MSG;
+    downloadState.endMsgId = chat::DOWNLOAD_END_MSG;
 
     downloadState.file.open(filepath, std::ios::binary);
 
@@ -273,6 +278,39 @@ bool TcpConnection::startDownload(const std::string& fileid, const std::string& 
     return true;
 }
 
+bool TcpConnection::startFileDelivery(const std::string& fileid, const std::string& filename, const std::string& filepath, uint64_t filesize, int toid) {
+    if (downloadState.active) {
+        LOG_ERROR("connection already has a file transfer");
+        return false;
+    }
+
+    downloadState.fileid = fileid;
+    downloadState.filename = filename;
+    downloadState.filepath = filepath;
+    downloadState.filesize = filesize;
+    downloadState.offset = 0;
+    downloadState.startMsgId = chat::FILE_START_MSG;
+    downloadState.chunkMsgId = chat::FILE_CHUNK_MSG;
+    downloadState.endMsgId = chat::FILE_END_MSG;
+    downloadState.file.open(filepath, std::ios::binary);
+    if (!downloadState.file.is_open()) {
+        LOG_ERROR("open file delivery failed: {}", filepath);
+        return false;
+    }
+
+    downloadState.active = true;
+    chat::FileStartReq start;
+    start.set_toid(toid);
+    start.set_filename(filename);
+    start.set_filesize(filesize);
+    start.set_fileid(fileid);
+    std::string data;
+    start.SerializeToString(&data);
+    writeBuffer.append(MessageCodec::encode(downloadState.startMsgId, data));
+    channel->enableWriting();
+    return true;
+}
+
 void TcpConnection::sendDownloadChunk() {
     if (!downloadState.active) return;
 
@@ -285,28 +323,40 @@ void TcpConnection::sendDownloadChunk() {
         finishDownload();
         return;
     }
-    chat::DownloadChunk chunk;
-    chunk.set_fileid(downloadState.fileid);
-    chunk.set_data(buf, n);
-    chunk.set_offset(downloadState.offset);
+    if (downloadState.chunkMsgId == chat::FILE_CHUNK_MSG) {
+        chat::FileChunkReq chunk;
+        chunk.set_fileid(downloadState.fileid);
+        chunk.set_data(buf, n);
+        std::string body;
+        chunk.SerializeToString(&body);
+        writeBuffer.append(MessageCodec::encode(downloadState.chunkMsgId, body));
+    } else {
+        chat::DownloadChunk chunk;
+        chunk.set_fileid(downloadState.fileid);
+        chunk.set_data(buf, n);
+        chunk.set_offset(downloadState.offset);
 
-    std::string body;
-    chunk.SerializeToString(&body);
-    std::string packet = MessageCodec::encode(chat::DOWNLOAD_CHUNK_MSG, body);
-
-    writeBuffer.append(packet);
+        std::string body;
+        chunk.SerializeToString(&body);
+        writeBuffer.append(MessageCodec::encode(downloadState.chunkMsgId, body));
+    }
     downloadState.offset += n;
 }
 
 void TcpConnection::finishDownload() {
     if (!downloadState.active) return;
 
-    chat::DownloadEnd end;
-    end.set_fileid(downloadState.fileid);
-
     std::string data;
-    end.SerializeToString(&data);
-    writeBuffer.append(MessageCodec::encode(chat::DOWNLOAD_END_MSG, data));
+    if (downloadState.endMsgId == chat::FILE_END_MSG) {
+        chat::FileEndReq end;
+        end.set_fileid(downloadState.fileid);
+        end.SerializeToString(&data);
+    } else {
+        chat::DownloadEnd end;
+        end.set_fileid(downloadState.fileid);
+        end.SerializeToString(&data);
+    }
+    writeBuffer.append(MessageCodec::encode(downloadState.endMsgId, data));
 
     downloadState.file.close();
     downloadState.active = false;
@@ -316,6 +366,9 @@ void TcpConnection::finishDownload() {
     downloadState.filepath.clear();
     downloadState.filesize = 0;
     downloadState.offset = 0;
+    downloadState.startMsgId = 0;
+    downloadState.chunkMsgId = 0;
+    downloadState.endMsgId = 0;
 }
 
 void TcpConnection::setUploading(bool value) {

@@ -7,7 +7,8 @@
 int main(int argc, char* argv[]) {
     Logger::init();
 
-   std::string ip = "127.0.0.1";
+   
+   std::string ip = "0.0.0.0";
    int port = 8000;
 
    if (argc >= 2) ip = argv[1];

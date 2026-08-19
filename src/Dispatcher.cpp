@@ -189,9 +189,8 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             }
             chat::FileChunkRes res;
             ChatService::instance()->fileChunk(conn, req, res);
-            std::string response;
-            res.SerializeToString(&response);
-            return MessageCodec::encode(chat::FILE_CHUNK_MSG_ACK, response);
+            
+            return "";
         }
         case chat::FILE_END_MSG: {
             chat::FileEndReq req;
