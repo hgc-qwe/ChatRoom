@@ -43,6 +43,22 @@ vector<std::thread> fileThreads;
 mutex sslWriteMutex;
 bool needSend = true;
 
+std::string makeDownloadPath(const string& filename) {
+    namespace fs = filesystem;
+
+    const fs::path directory{"./clientDownload"};
+    fs::create_directories(directory);
+
+    fs::path name = fs::path(filename).filename();
+    if (name.empty()) name = "download";
+
+    fs::path candidate = directory / name;
+    for (unsigned int index = 1; fs::exists(candidate); ++index) {
+        candidate = directory / (name.stem().string() + " (" + to_string(index) + ")" + name.extension().string());
+    }
+    return candidate.string();
+}
+
 bool sendAll(SSL* ssl, const char* data, size_t len) {
     lock_guard<mutex> lock(sslWriteMutex);
 
@@ -366,8 +382,7 @@ void recvMessage(SSL* ssl) {
 
                 cout << "收到文件:" << req.filename() << " size:" << req.filesize() << " fileid:" << req.fileid() << endl;
 
-                std::filesystem::create_directory("./clientDownload");
-                std::string path = "./clientDownload/" + req.filename();
+                std::string path = makeDownloadPath(req.filename());
 
                 recvFile.open(path, std::ios::binary);
                 if(recvFile.is_open()) {
@@ -402,8 +417,7 @@ void recvMessage(SSL* ssl) {
 
                 cout << "开始下载:" << start.filename() << " size:" << start.filesize() << endl;
 
-                std::filesystem::create_directory("./clientDownload");
-                downloadFilePath = "./clientDownload/" + start.filename();
+                downloadFilePath = makeDownloadPath(start.filename());
                 downloadFile.open(downloadFilePath, std::ios::binary);
                 if(downloadFile.is_open()) {
                     downloadFileId = start.fileid();
