@@ -1555,8 +1555,23 @@ struct InviteNotifyDefaultTypeInternal {
   };
 };
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 InviteNotifyDefaultTypeInternal _InviteNotify_default_instance_;
+PROTOBUF_CONSTEXPR LeaveNotify::LeaveNotify(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.username_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
+  , /*decltype(_impl_.userid_)*/0
+  , /*decltype(_impl_.groupid_)*/0
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct LeaveNotifyDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR LeaveNotifyDefaultTypeInternal()
+      : _instance(::_pbi::ConstantInitialized{}) {}
+  ~LeaveNotifyDefaultTypeInternal() {}
+  union {
+    LeaveNotify _instance;
+  };
+};
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LeaveNotifyDefaultTypeInternal _LeaveNotify_default_instance_;
 }  // namespace chat
-static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[105];
+static ::_pb::Metadata file_level_metadata_proto_2fchat_2eproto[106];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_proto_2fchat_2eproto[1];
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_proto_2fchat_2eproto = nullptr;
 
@@ -2465,6 +2480,15 @@ const uint32_t TableStruct_proto_2fchat_2eproto::offsets[] PROTOBUF_SECTION_VARI
   PROTOBUF_FIELD_OFFSET(::chat::InviteNotify, _impl_.groupid_),
   PROTOBUF_FIELD_OFFSET(::chat::InviteNotify, _impl_.groupname_),
   PROTOBUF_FIELD_OFFSET(::chat::InviteNotify, _impl_.ownerid_),
+  ~0u,  // no _has_bits_
+  PROTOBUF_FIELD_OFFSET(::chat::LeaveNotify, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  ~0u,  // no _inlined_string_donated_
+  PROTOBUF_FIELD_OFFSET(::chat::LeaveNotify, _impl_.userid_),
+  PROTOBUF_FIELD_OFFSET(::chat::LeaveNotify, _impl_.username_),
+  PROTOBUF_FIELD_OFFSET(::chat::LeaveNotify, _impl_.groupid_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::chat::OfflineMsg)},
@@ -2572,6 +2596,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 880, -1, -1, sizeof(::chat::CheckGroupReq)},
   { 887, -1, -1, sizeof(::chat::CheckGroupRes)},
   { 895, -1, -1, sizeof(::chat::InviteNotify)},
+  { 904, -1, -1, sizeof(::chat::LeaveNotify)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -2680,6 +2705,7 @@ static const ::_pb::Message* const file_default_instances[] = {
   &::chat::_CheckGroupReq_default_instance_._instance,
   &::chat::_CheckGroupRes_default_instance_._instance,
   &::chat::_InviteNotify_default_instance_._instance,
+  &::chat::_LeaveNotify_default_instance_._instance,
 };
 
 const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -2853,77 +2879,80 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "\022\017\n\007groupid\030\001 \001(\005\",\n\rCheckGroupRes\022\013\n\003er"
   "r\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"C\n\014InviteNotify\022"
   "\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001(\t\022\017\n\007o"
-  "wnerid\030\003 \001(\005*\377\023\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000"
-  "\022\r\n\tLOGIN_MSG\020\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007RE"
-  "G_MSG\020\003\022\017\n\013REG_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_M"
-  "SG\020\005\022\026\n\022ADD_FRIEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT"
-  "_MSG\020\007\022\024\n\020ONE_CHAT_MSG_ACK\020\010\022\024\n\020CREATE_G"
-  "ROUP_MSG\020\t\022\030\n\024CREATE_GROUP_MSG_ACK\020\n\022\021\n\r"
-  "ADD_GROUP_MSG\020\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022"
-  "\n\016GROUP_CHAT_MSG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK"
-  "\020\016\022\016\n\nLOGOUT_MSG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017"
-  "\n\013HISTORY_MSG\020\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025\n\021"
-  "FRIEND_NOTIFY_MSG\020\023\022\031\n\025FRIEND_NOTIFY_MSG"
-  "_ACK\020\024\022\030\n\024QUERY_FRIEND_REQ_MSG\020\025\022\034\n\030QUER"
-  "Y_FRIEND_REQ_MSG_ACK\020\026\022\025\n\021ACCEPT_FRIEND_"
-  "MSG\020\027\022\031\n\025ACCEPT_FRIEND_MSG_ACK\020\030\022\034\n\030FRIE"
-  "ND_ACCEPT_NOTIFY_MSG\020\031\022 \n\034FRIEND_ACCEPT_"
-  "NOTIFY_MSG_ACK\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033\022\030"
-  "\n\024QUERY_FRIEND_MSG_ACK\020\034\022\025\n\021DELETE_FRIEN"
-  "D_MSG\020\035\022\031\n\025DELETE_FRIEND_MSG_ACK\020\036\022\025\n\021GR"
-  "OUP_HISTORY_MSG\020\037\022\031\n\025GROUP_HISTORY_MSG_A"
-  "CK\020 \022\022\n\016FILE_START_MSG\020!\022\026\n\022FILE_START_M"
-  "SG_ACK\020\"\022\022\n\016FILE_CHUNK_MSG\020#\022\026\n\022FILE_CHU"
-  "NK_MSG_ACK\020$\022\020\n\014FILE_END_MSG\020%\022\024\n\020FILE_E"
-  "ND_MSG_ACK\020&\022\025\n\021DOWNLOAD_FILE_MSG\020\'\022\031\n\025D"
-  "OWNLOAD_FILE_MSG_ACK\020(\022\026\n\022DOWNLOAD_START"
-  "_MSG\020)\022\032\n\026DOWNLOAD_START_MSG_ACK\020*\022\026\n\022DO"
-  "WNLOAD_CHUNK_MSG\020+\022\032\n\026DOWNLOAD_CHUNK_MSG"
-  "_ACK\020,\022\024\n\020DOWNLOAD_END_MSG\020-\022\030\n\024DOWNLOAD"
-  "_END_MSG_ACK\020.\022\026\n\022CANCEL_ACCOUNT_MSG\020/\022\032"
-  "\n\026CANCEL_ACCOUNT_MSG_ACK\0200\022\023\n\017APPLY_GROU"
-  "P_MSG\0201\022\027\n\023APPLY_GROUP_MSG_ACK\0202\022\027\n\023QUER"
-  "Y_GROUP_REQ_MSG\0203\022\033\n\027QUERY_GROUP_REQ_MSG"
-  "_ACK\0204\022\024\n\020ACCEPT_GROUP_MSG\0205\022\030\n\024ACCEPT_G"
-  "ROUP_MSG_ACK\0206\022\024\n\020GROUP_NOTIFY_MSG\0207\022\030\n\024"
-  "GROUP_NOTIFY_MSG_ACK\0208\022\033\n\027GROUP_ACCEPT_N"
-  "OTIFY_MSG\0209\022\037\n\033GROUP_ACCEPT_NOTIFY_MSG_A"
-  "CK\020:\022\023\n\017QUERY_GROUP_MSG\020;\022\027\n\023QUERY_GROUP"
-  "_MSG_ACK\020<\022\023\n\017LEAVE_GROUP_MSG\020=\022\027\n\023LEAVE"
-  "_GROUP_MSG_ACK\020>\022\026\n\022TRANSFER_OWNER_MSG\020\?"
-  "\022\032\n\026TRANSFER_OWNER_MSG_ACK\020@\022\026\n\022DISSOLVE"
-  "_GROUP_MSG\020A\022\032\n\026DISSOLVE_GROUP_MSG_ACK\020B"
-  "\022\030\n\024QUERY_GROUP_USER_MSG\020C\022\034\n\030QUERY_GROU"
-  "P_USER_MSG_ACK\020D\022\027\n\023SET_GROUP_ADMIN_MSG\020"
-  "E\022\033\n\027SET_GROUP_ADMIN_MSG_ACK\020F\022\032\n\026REMOVE"
-  "_GROUP_ADMIN_MSG\020G\022\036\n\032REMOVE_GROUP_ADMIN"
-  "_MSG_ACK\020H\022\031\n\025REMOVE_GROUP_USER_MSG\020I\022\035\n"
-  "\031REMOVE_GROUP_USER_MSG_ACK\020J\022 \n\034REMOVE_G"
-  "ROUP_USER_NOTIFY_MSG\020K\022$\n REMOVE_GROUP_U"
-  "SER_NOTIFY_MSG_ACK\020L\022\024\n\020REFUSE_GROUP_MSG"
-  "\020M\022\030\n\024REFUSE_GROUP_MSG_ACK\020N\022\033\n\027REFUSE_G"
-  "ROUP_NOTIFY_MSG\020O\022\037\n\033REFUSE_GROUP_NOTIFY"
-  "_MSG_ACK\020P\022\031\n\025GROUP_FILE_NOTIFY_MSG\020Q\022\035\n"
-  "\031GROUP_FILE_NOTIFY_MSG_ACK\020R\022\025\n\021BLACKLIS"
-  "T_ADD_MSG\020S\022\031\n\025BLACKLIST_ADD_MSG_ACK\020T\022\030"
-  "\n\024BLACKLIST_REMOVE_MSG\020U\022\034\n\030BLACKLIST_RE"
-  "MOVE_MSG_ACK\020V\022\021\n\rSEND_CODE_MSG\020W\022\025\n\021SEN"
-  "D_CODE_MSG_ACK\020X\022\022\n\016CODE_LOGIN_MSG\020Y\022\026\n\022"
-  "CODE_LOGIN_MSG_ACK\020Z\022\026\n\022RESET_PASSWORD_M"
-  "SG\020[\022\032\n\026RESET_PASSWORD_MSG_ACK\020\\\022\023\n\017VERI"
-  "FY_CODE_MSG\020]\022\027\n\023VERIFY_CODE_MSG_ACK\020^\022\014"
-  "\n\010PING_MSG\020_\022\014\n\010PONG_MSG\020`\022\022\n\016QUERY_FILE"
-  "_MSG\020a\022\026\n\022QUERY_FILE_MSG_ACK\020b\022\024\n\020CHECK_"
-  "FRIEND_MSG\020c\022\030\n\024CHECK_FRIEND_MSG_ACK\020d\022\023"
-  "\n\017CHECK_GROUP_MSG\020e\022\027\n\023CHECK_GROUP_MSG_A"
-  "CK\020f\022\025\n\021INVITE_NOTIFY_MSG\020g\022\031\n\025INVITE_NO"
-  "TIFY_MSG_ACK\020hb\006proto3"
+  "wnerid\030\003 \001(\005\"@\n\013LeaveNotify\022\016\n\006userid\030\001 "
+  "\001(\005\022\020\n\010username\030\002 \001(\t\022\017\n\007groupid\030\003 \001(\005*\257"
+  "\024\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020"
+  "\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG"
+  "_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FR"
+  "IEND_MSG_ACK\020\006\022\020\n\014ONE_CHAT_MSG\020\007\022\024\n\020ONE_"
+  "CHAT_MSG_ACK\020\010\022\024\n\020CREATE_GROUP_MSG\020\t\022\030\n\024"
+  "CREATE_GROUP_MSG_ACK\020\n\022\021\n\rADD_GROUP_MSG\020"
+  "\013\022\025\n\021ADD_GROUP_MSG_ACK\020\014\022\022\n\016GROUP_CHAT_M"
+  "SG\020\r\022\026\n\022GROUP_CHAT_MSG_ACK\020\016\022\016\n\nLOGOUT_M"
+  "SG\020\017\022\022\n\016LOGOUT_MSG_ACK\020\020\022\017\n\013HISTORY_MSG\020"
+  "\021\022\023\n\017HISTORY_MSG_ACK\020\022\022\025\n\021FRIEND_NOTIFY_"
+  "MSG\020\023\022\031\n\025FRIEND_NOTIFY_MSG_ACK\020\024\022\030\n\024QUER"
+  "Y_FRIEND_REQ_MSG\020\025\022\034\n\030QUERY_FRIEND_REQ_M"
+  "SG_ACK\020\026\022\025\n\021ACCEPT_FRIEND_MSG\020\027\022\031\n\025ACCEP"
+  "T_FRIEND_MSG_ACK\020\030\022\034\n\030FRIEND_ACCEPT_NOTI"
+  "FY_MSG\020\031\022 \n\034FRIEND_ACCEPT_NOTIFY_MSG_ACK"
+  "\020\032\022\024\n\020QUERY_FRIEND_MSG\020\033\022\030\n\024QUERY_FRIEND"
+  "_MSG_ACK\020\034\022\025\n\021DELETE_FRIEND_MSG\020\035\022\031\n\025DEL"
+  "ETE_FRIEND_MSG_ACK\020\036\022\025\n\021GROUP_HISTORY_MS"
+  "G\020\037\022\031\n\025GROUP_HISTORY_MSG_ACK\020 \022\022\n\016FILE_S"
+  "TART_MSG\020!\022\026\n\022FILE_START_MSG_ACK\020\"\022\022\n\016FI"
+  "LE_CHUNK_MSG\020#\022\026\n\022FILE_CHUNK_MSG_ACK\020$\022\020"
+  "\n\014FILE_END_MSG\020%\022\024\n\020FILE_END_MSG_ACK\020&\022\025"
+  "\n\021DOWNLOAD_FILE_MSG\020\'\022\031\n\025DOWNLOAD_FILE_M"
+  "SG_ACK\020(\022\026\n\022DOWNLOAD_START_MSG\020)\022\032\n\026DOWN"
+  "LOAD_START_MSG_ACK\020*\022\026\n\022DOWNLOAD_CHUNK_M"
+  "SG\020+\022\032\n\026DOWNLOAD_CHUNK_MSG_ACK\020,\022\024\n\020DOWN"
+  "LOAD_END_MSG\020-\022\030\n\024DOWNLOAD_END_MSG_ACK\020."
+  "\022\026\n\022CANCEL_ACCOUNT_MSG\020/\022\032\n\026CANCEL_ACCOU"
+  "NT_MSG_ACK\0200\022\023\n\017APPLY_GROUP_MSG\0201\022\027\n\023APP"
+  "LY_GROUP_MSG_ACK\0202\022\027\n\023QUERY_GROUP_REQ_MS"
+  "G\0203\022\033\n\027QUERY_GROUP_REQ_MSG_ACK\0204\022\024\n\020ACCE"
+  "PT_GROUP_MSG\0205\022\030\n\024ACCEPT_GROUP_MSG_ACK\0206"
+  "\022\024\n\020GROUP_NOTIFY_MSG\0207\022\030\n\024GROUP_NOTIFY_M"
+  "SG_ACK\0208\022\033\n\027GROUP_ACCEPT_NOTIFY_MSG\0209\022\037\n"
+  "\033GROUP_ACCEPT_NOTIFY_MSG_ACK\020:\022\023\n\017QUERY_"
+  "GROUP_MSG\020;\022\027\n\023QUERY_GROUP_MSG_ACK\020<\022\023\n\017"
+  "LEAVE_GROUP_MSG\020=\022\027\n\023LEAVE_GROUP_MSG_ACK"
+  "\020>\022\026\n\022TRANSFER_OWNER_MSG\020\?\022\032\n\026TRANSFER_O"
+  "WNER_MSG_ACK\020@\022\026\n\022DISSOLVE_GROUP_MSG\020A\022\032"
+  "\n\026DISSOLVE_GROUP_MSG_ACK\020B\022\030\n\024QUERY_GROU"
+  "P_USER_MSG\020C\022\034\n\030QUERY_GROUP_USER_MSG_ACK"
+  "\020D\022\027\n\023SET_GROUP_ADMIN_MSG\020E\022\033\n\027SET_GROUP"
+  "_ADMIN_MSG_ACK\020F\022\032\n\026REMOVE_GROUP_ADMIN_M"
+  "SG\020G\022\036\n\032REMOVE_GROUP_ADMIN_MSG_ACK\020H\022\031\n\025"
+  "REMOVE_GROUP_USER_MSG\020I\022\035\n\031REMOVE_GROUP_"
+  "USER_MSG_ACK\020J\022 \n\034REMOVE_GROUP_USER_NOTI"
+  "FY_MSG\020K\022$\n REMOVE_GROUP_USER_NOTIFY_MSG"
+  "_ACK\020L\022\024\n\020REFUSE_GROUP_MSG\020M\022\030\n\024REFUSE_G"
+  "ROUP_MSG_ACK\020N\022\033\n\027REFUSE_GROUP_NOTIFY_MS"
+  "G\020O\022\037\n\033REFUSE_GROUP_NOTIFY_MSG_ACK\020P\022\031\n\025"
+  "GROUP_FILE_NOTIFY_MSG\020Q\022\035\n\031GROUP_FILE_NO"
+  "TIFY_MSG_ACK\020R\022\025\n\021BLACKLIST_ADD_MSG\020S\022\031\n"
+  "\025BLACKLIST_ADD_MSG_ACK\020T\022\030\n\024BLACKLIST_RE"
+  "MOVE_MSG\020U\022\034\n\030BLACKLIST_REMOVE_MSG_ACK\020V"
+  "\022\021\n\rSEND_CODE_MSG\020W\022\025\n\021SEND_CODE_MSG_ACK"
+  "\020X\022\022\n\016CODE_LOGIN_MSG\020Y\022\026\n\022CODE_LOGIN_MSG"
+  "_ACK\020Z\022\026\n\022RESET_PASSWORD_MSG\020[\022\032\n\026RESET_"
+  "PASSWORD_MSG_ACK\020\\\022\023\n\017VERIFY_CODE_MSG\020]\022"
+  "\027\n\023VERIFY_CODE_MSG_ACK\020^\022\014\n\010PING_MSG\020_\022\014"
+  "\n\010PONG_MSG\020`\022\022\n\016QUERY_FILE_MSG\020a\022\026\n\022QUER"
+  "Y_FILE_MSG_ACK\020b\022\024\n\020CHECK_FRIEND_MSG\020c\022\030"
+  "\n\024CHECK_FRIEND_MSG_ACK\020d\022\023\n\017CHECK_GROUP_"
+  "MSG\020e\022\027\n\023CHECK_GROUP_MSG_ACK\020f\022\025\n\021INVITE"
+  "_NOTIFY_MSG\020g\022\031\n\025INVITE_NOTIFY_MSG_ACK\020h"
+  "\022\024\n\020LEAVE_NOTIFY_MSG\020i\022\030\n\024LEAVE_NOTIFY_M"
+  "SG_ACK\020jb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 9382, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 9496, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
-    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 105,
+    &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 106,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
     file_level_metadata_proto_2fchat_2eproto, file_level_enum_descriptors_proto_2fchat_2eproto,
     file_level_service_descriptors_proto_2fchat_2eproto,
@@ -3046,6 +3075,8 @@ bool MsgTyp_IsValid(int value) {
     case 102:
     case 103:
     case 104:
+    case 105:
+    case 106:
       return true;
     default:
       return false;
@@ -29488,6 +29519,269 @@ void InviteNotify::InternalSwap(InviteNotify* other) {
       file_level_metadata_proto_2fchat_2eproto[104]);
 }
 
+// ===================================================================
+
+class LeaveNotify::_Internal {
+ public:
+};
+
+LeaveNotify::LeaveNotify(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                         bool is_message_owned)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
+  SharedCtor(arena, is_message_owned);
+  // @@protoc_insertion_point(arena_constructor:chat.LeaveNotify)
+}
+LeaveNotify::LeaveNotify(const LeaveNotify& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  LeaveNotify* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.username_){}
+    , decltype(_impl_.userid_){}
+    , decltype(_impl_.groupid_){}
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_username().empty()) {
+    _this->_impl_.username_.Set(from._internal_username(), 
+      _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.userid_, &from._impl_.userid_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.groupid_) -
+    reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.groupid_));
+  // @@protoc_insertion_point(copy_constructor:chat.LeaveNotify)
+}
+
+inline void LeaveNotify::SharedCtor(
+    ::_pb::Arena* arena, bool is_message_owned) {
+  (void)arena;
+  (void)is_message_owned;
+  new (&_impl_) Impl_{
+      decltype(_impl_.username_){}
+    , decltype(_impl_.userid_){0}
+    , decltype(_impl_.groupid_){0}
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.username_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+    _impl_.username_.Set("", GetArenaForAllocation());
+  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+LeaveNotify::~LeaveNotify() {
+  // @@protoc_insertion_point(destructor:chat.LeaveNotify)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void LeaveNotify::SharedDtor() {
+  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.username_.Destroy();
+}
+
+void LeaveNotify::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void LeaveNotify::Clear() {
+// @@protoc_insertion_point(message_clear_start:chat.LeaveNotify)
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.username_.ClearToEmpty();
+  ::memset(&_impl_.userid_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.groupid_) -
+      reinterpret_cast<char*>(&_impl_.userid_)) + sizeof(_impl_.groupid_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* LeaveNotify::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // int32 userid = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
+          _impl_.userid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // string username = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_username();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "chat.LeaveNotify.username"));
+        } else
+          goto handle_unusual;
+        continue;
+      // int32 groupid = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.groupid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+uint8_t* LeaveNotify::_InternalSerialize(
+    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:chat.LeaveNotify)
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(1, this->_internal_userid(), target);
+  }
+
+  // string username = 2;
+  if (!this->_internal_username().empty()) {
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+      this->_internal_username().data(), static_cast<int>(this->_internal_username().length()),
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
+      "chat.LeaveNotify.username");
+    target = stream->WriteStringMaybeAliased(
+        2, this->_internal_username(), target);
+  }
+
+  // int32 groupid = 3;
+  if (this->_internal_groupid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_groupid(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:chat.LeaveNotify)
+  return target;
+}
+
+size_t LeaveNotify::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:chat.LeaveNotify)
+  size_t total_size = 0;
+
+  uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string username = 2;
+  if (!this->_internal_username().empty()) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+        this->_internal_username());
+  }
+
+  // int32 userid = 1;
+  if (this->_internal_userid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_userid());
+  }
+
+  // int32 groupid = 3;
+  if (this->_internal_groupid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_groupid());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData LeaveNotify::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    LeaveNotify::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*LeaveNotify::GetClassData() const { return &_class_data_; }
+
+
+void LeaveNotify::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<LeaveNotify*>(&to_msg);
+  auto& from = static_cast<const LeaveNotify&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:chat.LeaveNotify)
+  GOOGLE_DCHECK_NE(&from, _this);
+  uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_username().empty()) {
+    _this->_internal_set_username(from._internal_username());
+  }
+  if (from._internal_userid() != 0) {
+    _this->_internal_set_userid(from._internal_userid());
+  }
+  if (from._internal_groupid() != 0) {
+    _this->_internal_set_groupid(from._internal_groupid());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void LeaveNotify::CopyFrom(const LeaveNotify& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:chat.LeaveNotify)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool LeaveNotify::IsInitialized() const {
+  return true;
+}
+
+void LeaveNotify::InternalSwap(LeaveNotify* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
+      &_impl_.username_, lhs_arena,
+      &other->_impl_.username_, rhs_arena
+  );
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(LeaveNotify, _impl_.groupid_)
+      + sizeof(LeaveNotify::_impl_.groupid_)
+      - PROTOBUF_FIELD_OFFSET(LeaveNotify, _impl_.userid_)>(
+          reinterpret_cast<char*>(&_impl_.userid_),
+          reinterpret_cast<char*>(&other->_impl_.userid_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata LeaveNotify::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_proto_2fchat_2eproto_getter, &descriptor_table_proto_2fchat_2eproto_once,
+      file_level_metadata_proto_2fchat_2eproto[105]);
+}
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace chat
 PROTOBUF_NAMESPACE_OPEN
@@ -29910,6 +30204,10 @@ Arena::CreateMaybeMessage< ::chat::CheckGroupRes >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::chat::InviteNotify*
 Arena::CreateMaybeMessage< ::chat::InviteNotify >(Arena* arena) {
   return Arena::CreateMessageInternal< ::chat::InviteNotify >(arena);
+}
+template<> PROTOBUF_NOINLINE ::chat::LeaveNotify*
+Arena::CreateMaybeMessage< ::chat::LeaveNotify >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::chat::LeaveNotify >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

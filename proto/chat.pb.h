@@ -232,6 +232,9 @@ extern LeaveGroupReqDefaultTypeInternal _LeaveGroupReq_default_instance_;
 class LeaveGroupRes;
 struct LeaveGroupResDefaultTypeInternal;
 extern LeaveGroupResDefaultTypeInternal _LeaveGroupRes_default_instance_;
+class LeaveNotify;
+struct LeaveNotifyDefaultTypeInternal;
+extern LeaveNotifyDefaultTypeInternal _LeaveNotify_default_instance_;
 class LoginReq;
 struct LoginReqDefaultTypeInternal;
 extern LoginReqDefaultTypeInternal _LoginReq_default_instance_;
@@ -425,6 +428,7 @@ template<> ::chat::HistoryMsgRes* Arena::CreateMaybeMessage<::chat::HistoryMsgRe
 template<> ::chat::InviteNotify* Arena::CreateMaybeMessage<::chat::InviteNotify>(Arena*);
 template<> ::chat::LeaveGroupReq* Arena::CreateMaybeMessage<::chat::LeaveGroupReq>(Arena*);
 template<> ::chat::LeaveGroupRes* Arena::CreateMaybeMessage<::chat::LeaveGroupRes>(Arena*);
+template<> ::chat::LeaveNotify* Arena::CreateMaybeMessage<::chat::LeaveNotify>(Arena*);
 template<> ::chat::LoginReq* Arena::CreateMaybeMessage<::chat::LoginReq>(Arena*);
 template<> ::chat::LoginRes* Arena::CreateMaybeMessage<::chat::LoginRes>(Arena*);
 template<> ::chat::LogoutReq* Arena::CreateMaybeMessage<::chat::LogoutReq>(Arena*);
@@ -577,12 +581,14 @@ enum MsgTyp : int {
   CHECK_GROUP_MSG_ACK = 102,
   INVITE_NOTIFY_MSG = 103,
   INVITE_NOTIFY_MSG_ACK = 104,
+  LEAVE_NOTIFY_MSG = 105,
+  LEAVE_NOTIFY_MSG_ACK = 106,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = INVITE_NOTIFY_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = LEAVE_NOTIFY_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();
@@ -18744,6 +18750,181 @@ class InviteNotify final :
   union { Impl_ _impl_; };
   friend struct ::TableStruct_proto_2fchat_2eproto;
 };
+// -------------------------------------------------------------------
+
+class LeaveNotify final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:chat.LeaveNotify) */ {
+ public:
+  inline LeaveNotify() : LeaveNotify(nullptr) {}
+  ~LeaveNotify() override;
+  explicit PROTOBUF_CONSTEXPR LeaveNotify(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  LeaveNotify(const LeaveNotify& from);
+  LeaveNotify(LeaveNotify&& from) noexcept
+    : LeaveNotify() {
+    *this = ::std::move(from);
+  }
+
+  inline LeaveNotify& operator=(const LeaveNotify& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline LeaveNotify& operator=(LeaveNotify&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const LeaveNotify& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const LeaveNotify* internal_default_instance() {
+    return reinterpret_cast<const LeaveNotify*>(
+               &_LeaveNotify_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    105;
+
+  friend void swap(LeaveNotify& a, LeaveNotify& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(LeaveNotify* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(LeaveNotify* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  LeaveNotify* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LeaveNotify>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const LeaveNotify& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const LeaveNotify& from) {
+    LeaveNotify::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(LeaveNotify* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "chat.LeaveNotify";
+  }
+  protected:
+  explicit LeaveNotify(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUsernameFieldNumber = 2,
+    kUseridFieldNumber = 1,
+    kGroupidFieldNumber = 3,
+  };
+  // string username = 2;
+  void clear_username();
+  const std::string& username() const;
+  template <typename ArgT0 = const std::string&, typename... ArgT>
+  void set_username(ArgT0&& arg0, ArgT... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* username);
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(const std::string& value);
+  std::string* _internal_mutable_username();
+  public:
+
+  // int32 userid = 1;
+  void clear_userid();
+  int32_t userid() const;
+  void set_userid(int32_t value);
+  private:
+  int32_t _internal_userid() const;
+  void _internal_set_userid(int32_t value);
+  public:
+
+  // int32 groupid = 3;
+  void clear_groupid();
+  int32_t groupid() const;
+  void set_groupid(int32_t value);
+  private:
+  int32_t _internal_groupid() const;
+  void _internal_set_groupid(int32_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:chat.LeaveNotify)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr username_;
+    int32_t userid_;
+    int32_t groupid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_proto_2fchat_2eproto;
+};
 // ===================================================================
 
 
@@ -28531,9 +28712,105 @@ inline void InviteNotify::set_ownerid(int32_t value) {
   // @@protoc_insertion_point(field_set:chat.InviteNotify.ownerid)
 }
 
+// -------------------------------------------------------------------
+
+// LeaveNotify
+
+// int32 userid = 1;
+inline void LeaveNotify::clear_userid() {
+  _impl_.userid_ = 0;
+}
+inline int32_t LeaveNotify::_internal_userid() const {
+  return _impl_.userid_;
+}
+inline int32_t LeaveNotify::userid() const {
+  // @@protoc_insertion_point(field_get:chat.LeaveNotify.userid)
+  return _internal_userid();
+}
+inline void LeaveNotify::_internal_set_userid(int32_t value) {
+  
+  _impl_.userid_ = value;
+}
+inline void LeaveNotify::set_userid(int32_t value) {
+  _internal_set_userid(value);
+  // @@protoc_insertion_point(field_set:chat.LeaveNotify.userid)
+}
+
+// string username = 2;
+inline void LeaveNotify::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& LeaveNotify::username() const {
+  // @@protoc_insertion_point(field_get:chat.LeaveNotify.username)
+  return _internal_username();
+}
+template <typename ArgT0, typename... ArgT>
+inline PROTOBUF_ALWAYS_INLINE
+void LeaveNotify::set_username(ArgT0&& arg0, ArgT... args) {
+ 
+ _impl_.username_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:chat.LeaveNotify.username)
+}
+inline std::string* LeaveNotify::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:chat.LeaveNotify.username)
+  return _s;
+}
+inline const std::string& LeaveNotify::_internal_username() const {
+  return _impl_.username_.Get();
+}
+inline void LeaveNotify::_internal_set_username(const std::string& value) {
+  
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* LeaveNotify::_internal_mutable_username() {
+  
+  return _impl_.username_.Mutable(GetArenaForAllocation());
+}
+inline std::string* LeaveNotify::release_username() {
+  // @@protoc_insertion_point(field_release:chat.LeaveNotify.username)
+  return _impl_.username_.Release();
+}
+inline void LeaveNotify::set_allocated_username(std::string* username) {
+  if (username != nullptr) {
+    
+  } else {
+    
+  }
+  _impl_.username_.SetAllocated(username, GetArenaForAllocation());
+#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (_impl_.username_.IsDefault()) {
+    _impl_.username_.Set("", GetArenaForAllocation());
+  }
+#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:chat.LeaveNotify.username)
+}
+
+// int32 groupid = 3;
+inline void LeaveNotify::clear_groupid() {
+  _impl_.groupid_ = 0;
+}
+inline int32_t LeaveNotify::_internal_groupid() const {
+  return _impl_.groupid_;
+}
+inline int32_t LeaveNotify::groupid() const {
+  // @@protoc_insertion_point(field_get:chat.LeaveNotify.groupid)
+  return _internal_groupid();
+}
+inline void LeaveNotify::_internal_set_groupid(int32_t value) {
+  
+  _impl_.groupid_ = value;
+}
+inline void LeaveNotify::set_groupid(int32_t value) {
+  _internal_set_groupid(value);
+  // @@protoc_insertion_point(field_set:chat.LeaveNotify.groupid)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

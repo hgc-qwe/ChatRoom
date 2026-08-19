@@ -1127,6 +1127,22 @@ void ChatService::leaveGroup(std::shared_ptr<TcpConnection> conn, const chat::Le
         res.set_err(0);
         res.set_errmsg("leave group success");
         LOG_INFO("user {} leave group {}", userid, req.groupid());
+
+        auto managers = groupModel.queryManagers(req.groupid());
+        User user = userModel.query(userid);
+        for (auto& manager : managers) {
+            auto target = getUserConn(manager.getId());
+            if (target) {
+                chat::LeaveNotify notify;
+                notify.set_userid(userid);
+                notify.set_username(user.getName());
+                notify.set_groupid(req.groupid());
+
+                std::string data;
+                notify.SerializeToString(&data);
+                target->sendMessage(MessageCodec::encode(chat::LEAVE_NOTIFY_MSG, data));
+            }
+        }
     } else {
         res.set_err(1);
         res.set_errmsg("leave group failed");

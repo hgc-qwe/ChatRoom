@@ -342,14 +342,14 @@ void recvMessage(SSL* ssl) {
                     continue;
                 }
 
-                cout << "收到消息:" << "from=" << notify.fromname() << " fromid=" << notify.fromid() << " msg:" << endl;
+                cout << notify.fromname() << ": " << endl;
                 cout << notify.msg() << endl;
             }
             else if(msgid == chat::GROUP_CHAT_MSG) {
                 chat::GroupChatNotify notify;
                 notify.ParseFromString(body);
 
-                cout << "group " << notify.groupid() << " " << "收到消息:" << "from=" << notify.username() << " fromid=" << notify.userid() << " msg:" << endl;
+                cout << "group " << notify.groupid() << " " << notify.username() << ": " << endl;
                 cout << notify.msg() << endl;
             }
             else if(msgid == chat::GROUP_HISTORY_MSG_ACK) {
@@ -677,6 +677,12 @@ void recvMessage(SSL* ssl) {
                 notify.ParseFromString(body);
 
                 cout << "你已被拉进群聊：" << "ownerid:" << notify.ownerid() << " groupid:" << notify.groupid() << " groupname:" << notify.groupname() << endl;
+            }
+            else if(msgid == chat::LEAVE_NOTIFY_MSG) {
+                chat::LeaveNotify notify;
+                notify.ParseFromString(body);
+
+                cout << notify.username() << " id:" << notify.userid() << " 已退出群聊groupid:" << notify.groupid() << endl;
             }
         }
     }
