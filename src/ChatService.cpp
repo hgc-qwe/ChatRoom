@@ -703,14 +703,6 @@ void ChatService::fileStart(std::shared_ptr<TcpConnection> conn, const chat::Fil
         fileInfoMap[req.fileid()] = info;
     }
     conn->setUploading(true);
-    //
-    LOG_INFO("file start: fileid={}, fromid={}, toid={}, groupid={}, filename={}",
-        req.fileid(),
-        fromid,
-        req.toid(),
-        req.groupid(),
-        req.filename()
-    );
     LOG_INFO("start receive file {} size {}", req.filename(), req.filesize());
     res.set_err(0);
     res.set_errmsg("start success");

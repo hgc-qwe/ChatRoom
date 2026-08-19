@@ -216,7 +216,7 @@ bool TcpConnection::tlsHandshake() {
 
 void TcpConnection::updateLastActiveTime() {
     lastActiveTime = std::chrono::steady_clock::now();
-    std::cout << "[Heartbeat] update pong fd = " << fd << std::endl;
+    // std::cout << "[Heartbeat] update pong fd = " << fd << std::endl;
 }
 
 bool TcpConnection::isTimeout() const {

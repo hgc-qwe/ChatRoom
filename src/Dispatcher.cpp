@@ -448,7 +448,7 @@ std::string Dispatcher::dispatch(std::shared_ptr<TcpConnection> conn, int msgid,
             return MessageCodec::encode(chat::RESET_PASSWORD_MSG_ACK, response);
         }
         case chat::PONG_MSG: {
-            std::cout << "[Heartbeat] recv PONG fd = " << conn->getFd() << std::endl;
+            // std::cout << "[Heartbeat] recv PONG fd = " << conn->getFd() << std::endl;
             conn->updateLastActiveTime();
             return "";
         }
