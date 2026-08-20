@@ -29,6 +29,9 @@ uint64_t recvFileSize = 0;
 ofstream downloadFile;
 string downloadFileId;
 string downloadFilePath;
+uint64_t downloadReceivedSize = 0;
+uint64_t downloadTotalSize = 0;
+unsigned int nextDownloadProgress = 10;
 atomic<bool> downloadActive{false};
 bool verifyCodeFinished = false;
 bool verifyCodeSuccess = false;
@@ -416,6 +419,9 @@ void recvMessage(SSL* ssl) {
                 downloadFile.open(downloadFilePath, std::ios::binary);
                 if(downloadFile.is_open()) {
                     downloadFileId = start.fileid();
+                    downloadReceivedSize = 0;
+                    downloadTotalSize = start.filesize();
+                    nextDownloadProgress = 10;
                     downloadActive = true;
                     cout << "保存到:" << downloadFilePath << endl;
                 } else cout << "open download file failed" << endl;
@@ -429,6 +435,14 @@ void recvMessage(SSL* ssl) {
 
                 if(downloadFile.is_open() && chunk.fileid() == downloadFileId) {
                     downloadFile.write( chunk.data().data(), chunk.data().size());
+                    if (downloadFile) {
+                        downloadReceivedSize += chunk.data().size();
+                        const unsigned int progress = downloadTotalSize == 0 ? 100 : static_cast<unsigned int>(min<uint64_t>(100, downloadReceivedSize * 100 / downloadTotalSize));
+                        while (nextDownloadProgress <= progress) {
+                            cout << "下载进度: " << nextDownloadProgress << "%" << endl;
+                            nextDownloadProgress += 10;
+                        }
+                    }
                 }
                 if (!downloadFile) {
                     cout << "write download file failed" << endl;
@@ -448,6 +462,9 @@ void recvMessage(SSL* ssl) {
                     cout << "下载完成:" << downloadFilePath << endl;
                     downloadActive = false;
                     downloadFileId.clear();
+                    downloadReceivedSize = 0;
+                    downloadTotalSize = 0;
+                    nextDownloadProgress = 10;
                 }
             }
             else if(msgid == chat::CANCEL_ACCOUNT_MSG_ACK) {
