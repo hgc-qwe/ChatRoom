@@ -27,11 +27,11 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
         user.setState("online");
         if (!userModel.updateState(user)) {
             res.set_err(1);
-            res.set_errmsg("update state failed");
+            res.set_errmsg("更新用户状态失败");
             LOG_ERROR("user {} update state failed", req.id());
         } else {
             res.set_err(0);
-            res.set_errmsg("login success");
+            res.set_errmsg("登录成功");
             LOG_INFO("user {} login success", req.id());
             addUserConn(conn, req.id());
             redis.set("user:state:" + std::to_string(req.id()), "online");
@@ -151,7 +151,7 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
         }
     } else {
         res.set_err(1);
-        res.set_errmsg("login failed");
+        res.set_errmsg("登录失败");
         LOG_WARN("user {} login failed", req.id());
     }
 }
@@ -159,7 +159,7 @@ void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginRe
 void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterReq& req, chat::RegisterRes& res) {
     if (req.name().empty() || req.password().empty()) {
         res.set_err(1);
-        res.set_errmsg("register failed");
+        res.set_errmsg("注册失败");
         LOG_WARN("register failed name = {}", req.name());
         return;
     }
@@ -167,7 +167,7 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
     std::string verifiedKey;
     if (req.email().empty()) {
         res.set_err(1);
-        res.set_errmsg("email empty");
+        res.set_errmsg("邮箱为空");
         return;
     }
     verifiedKey = "verified:email:" + req.email() + ":1";
@@ -189,7 +189,7 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
     User exist = userModel.queryByEmail(req.email());
     if (exist.getId() != -1) {
         res.set_err(1);
-        res.set_errmsg("account exists");
+        res.set_errmsg("用户已存在，注册失败");
         return;
     }
 
@@ -203,11 +203,11 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
         redis.del(verifiedKey);
         res.set_err(0);
         res.set_userid(user.getId());
-        res.set_errmsg("register success");
+        res.set_errmsg("注册成功");
         LOG_INFO("register success userid = {}", user.getId());
     } else {
         res.set_err(1);
-        res.set_errmsg("register failed");
+        res.set_errmsg("注册失败");
         LOG_WARN("register failed name = {}", req.name());
     }
 }
@@ -215,7 +215,7 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
 void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::AddFriendReq& req, chat::AddFriendRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int fromid = conn->getUserId();
@@ -223,23 +223,23 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
 
     if (fromid == toid) {
         res.set_err(1);
-        res.set_errmsg("cannot add yourself");
+        res.set_errmsg("不能添加你自己");
         return;
     }
     if (!userModel.isExist(toid)) {
         res.set_err(1);
-        res.set_errmsg("toid not exist");
+        res.set_errmsg("toid不存在");
         return;
     }
     if (friendModel.isFriend(fromid, toid)) {
         res.set_err(1);
-        res.set_errmsg("you are friends");
+        res.set_errmsg("你们已互为好友，不得再次添加");
         return;
     }
 
     if (friendReqModel.insert(fromid, toid)) {
         res.set_err(0);
-        res.set_errmsg("add friend request success");
+        res.set_errmsg("好友申请成功");
         
         auto target = getUserConn(toid);
         if (target) {
@@ -255,7 +255,7 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
         }
     } else {
         res.set_err(1);
-        res.set_errmsg("add friend request failed");
+        res.set_errmsg("好友申请失败");
         LOG_WARN("user {} add friend {} failed", fromid, toid);
     }
 }
@@ -263,7 +263,7 @@ void ChatService::addFriend(std::shared_ptr<TcpConnection> conn, const chat::Add
 void ChatService::queryFriend(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReq& req, chat::QueryFriendRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -282,46 +282,46 @@ void ChatService::queryFriend(std::shared_ptr<TcpConnection> conn, const chat::Q
         }
     }
     res.set_err(0);
-    res.set_errmsg("query friends success");
+    res.set_errmsg("查询好友成功");
     LOG_INFO("user {} query friends", userid);
 }
 
 void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::AcceptFriendReq& req, chat::AcceptFriendRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
     if (!userModel.isExist(friendid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("you are friends");
+        res.set_errmsg("你们已互为好友，不得同意申请");
         return;
     }
     if (!friendReqModel.isApplied(friendid, userid)) {
         res.set_err(1);
-        res.set_errmsg("application not exist");
+        res.set_errmsg("申请不存在");
         return;
     }
 
     if (!friendReqModel.updateStatus(friendid, userid, 1)) {
         res.set_err(1);
-        res.set_errmsg("accept failed");
+        res.set_errmsg("同意申请失败");
         return;
     }
     if (!friendModel.insert(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("accpet failed");
+        res.set_errmsg("同意申请失败");
         return;
     }
     res.set_err(0);
-    res.set_errmsg("accept success");
+    res.set_errmsg("同意申请成功");
     auto target = getUserConn(friendid);
     if (target) {
         User user = userModel.query(userid);
@@ -339,7 +339,7 @@ void ChatService::acceptFriend(std::shared_ptr<TcpConnection> conn, const chat::
 void ChatService::queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat::QueryFriendReqReq& req, chat::QueryFriendReqRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -352,26 +352,26 @@ void ChatService::queryFriendreq(std::shared_ptr<TcpConnection> conn, const chat
         item->set_username(user.getName());
     }
     res.set_err(0);
-    res.set_errmsg("query success");
+    res.set_errmsg("查询好友申请成功");
     LOG_INFO("user {} query friend requests", userid);
 }
 
 void ChatService::deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::DeleteFriendReq& req, chat::DeleteFriendRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
     if (!userModel.isExist(friendid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
 
@@ -379,37 +379,37 @@ void ChatService::deleteFriend(std::shared_ptr<TcpConnection> conn, const chat::
     bool ret2 = friendModel.remove(friendid, userid);
     if (ret1 && ret2) {
         res.set_err(0);
-        res.set_errmsg("delete friend success");
+        res.set_errmsg("删除好友成功");
         LOG_INFO("user {} delete friend requests", userid);
     } else {
         res.set_err(1);
-        res.set_errmsg("delete friend failed");
+        res.set_errmsg("删除好友失败");
     }
 }
 
 void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::HistoryMsgReq& req, chat::HistoryMsgRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
     if (!userModel.isExist(friendid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
     
     std::vector<Message> message  = messageModel.queryHistory(userid, friendid);
     if (message.empty()) {
         res.set_err(1);
-        res.set_errmsg("no message");
+        res.set_errmsg("没有消息");
         return;
     }
     for (auto& msg : message) {
@@ -422,7 +422,7 @@ void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const cha
     std::vector<File> file = fileModel.queryFriendFile(userid, friendid);
     if (file.empty()) {
         res.set_err(1);
-        res.set_errmsg("no file");
+        res.set_errmsg("没有文件");
         return;
     }
     for (auto& f : file) {
@@ -434,14 +434,14 @@ void ChatService::queryHistoryMsg(std::shared_ptr<TcpConnection> conn, const cha
         item->set_toid(f.getToid());
     }
     res.set_err(0);
-    res.set_errmsg("query history success");
+    res.set_errmsg("查询好友聊天记录成功");
     LOG_INFO("query user {} and user {} history message", userid, friendid);
 }
 
 void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneChatReq& req, chat::OneChatRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int fromid = conn->getUserId();
@@ -450,22 +450,22 @@ void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneCh
     
     if (fromid == toid) {
         res.set_err(1);
-        res.set_errmsg("cannot chat with yourself");
+        res.set_errmsg("不能和你自己聊天");
         return;
     }
     if (!userModel.isExist(toid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (!friendModel.isFriend(fromid, toid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
     if (blacklistModel.isBlacked(fromid, toid) || blacklistModel.isBlacked(toid, fromid)) {
         res.set_err(1);
-        res.set_errmsg("message blacked");
+        res.set_errmsg("拉黑状态");
         return;
     }
     auto targetConn = getUserConn(req.toid());
@@ -510,35 +510,35 @@ void ChatService::oneChat(std::shared_ptr<TcpConnection> conn, const chat::OneCh
 void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::CreateGroupReq& req, chat::CreateGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
     if (userid == friendid) {
         res.set_err(1);
-        res.set_errmsg("cannot invite yourself");
+        res.set_errmsg("不能邀请你自己");
         return;
     }
     if (!userModel.isExist(friendid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
     if (blacklistModel.isBlacked(userid, friendid) || blacklistModel.isBlacked(friendid, userid)) {
         res.set_err(1);
-        res.set_errmsg("message blacked");
+        res.set_errmsg("拉黑状态");
         return;
     }
     
     if (req.groupname().empty() || req.groupdesc().empty()) {
         res.set_err(1);
-        res.set_errmsg("createGroup failed");
+        res.set_errmsg("建群失败");
         LOG_WARN("user {} create group failed", userid);
     } else {
         Group group(req.groupname(), req.groupdesc());
@@ -546,7 +546,7 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
             if(groupModel.addGroup(userid, group.getId(), "owner") && groupModel.addGroup(friendid, group.getId(), "normal")) {
                 res.set_groupid(group.getId());
                 res.set_err(0);
-                res.set_errmsg("createGroup success");
+                res.set_errmsg("建群成功");
                 LOG_INFO("user {} create group {} success", userid, group.getId());
                 auto target = getUserConn(friendid);
                 if (target) {
@@ -563,12 +563,12 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
                 }
             } else {
                 res.set_err(1);
-                res.set_errmsg("createGroup failed");
+                res.set_errmsg("建群失败");
                 LOG_WARN("user {} create group failed", userid);
             }
         } else {
             res.set_err(1);
-            res.set_errmsg("createGroup failed");
+            res.set_errmsg("建群失败");
             LOG_WARN("user {} create group failed", userid);
         }
     }
@@ -577,7 +577,7 @@ void ChatService::createGroup(std::shared_ptr<TcpConnection> conn, const chat::C
 void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::GroupChatReq& req, chat::GroupChatRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -585,12 +585,12 @@ void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::Gro
     
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群聊不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     } 
     if(!groupMessageModel.insert(req.groupid(), userid, req.msg(), user.getName())) {
@@ -636,18 +636,18 @@ void ChatService::groupChat(std::shared_ptr<TcpConnection> conn, const chat::Gro
 void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, const chat::GroupHistoryMsgReq& req, chat::GroupHistoryMsgRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群聊不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     } 
 
@@ -662,7 +662,7 @@ void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, cons
     std::vector<File> file = fileModel.queryGroupFile(req.groupid());
     if (file.empty()) {
         res.set_err(1);
-        res.set_errmsg("no file");
+        res.set_errmsg("没有文件");
         return;
     }
     for (auto& f : file) {
@@ -674,7 +674,7 @@ void ChatService::queryGroupHistoryMsg(std::shared_ptr<TcpConnection> conn, cons
         item->set_userid(f.getFromid());
     }
     res.set_err(0);
-    res.set_errmsg("query group history success");
+    res.set_errmsg("查询群聊记录成功");
     LOG_INFO("query group {} history message", req.groupid());
 }
 
@@ -876,7 +876,7 @@ void ChatService::downloadFile(std::shared_ptr<TcpConnection> conn, const chat::
 void ChatService::logout(std::shared_ptr<TcpConnection> conn, const chat::LogoutReq& req, chat::LogoutRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -927,7 +927,7 @@ void ChatService::clientClose(int userid) {
 void ChatService::cancelAccount(std::shared_ptr<TcpConnection> conn, const chat::CancelAccountReq& req, chat::CancelAccountRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -935,7 +935,7 @@ void ChatService::cancelAccount(std::shared_ptr<TcpConnection> conn, const chat:
     User user = userModel.query(userid);
     if (user.getId() == -1) {
         res.set_err(1);
-        res.set_errmsg("user not exist");
+        res.set_errmsg("用户不存在");
         return;
     }
     friendModel.removeAll(userid);
@@ -956,7 +956,7 @@ void ChatService::cancelAccount(std::shared_ptr<TcpConnection> conn, const chat:
 void ChatService::queryGroupreq(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReqReq& req, chat::QueryGroupReqRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -973,14 +973,14 @@ void ChatService::queryGroupreq(std::shared_ptr<TcpConnection> conn, const chat:
         }
     }
     res.set_err(0);
-    res.set_errmsg("query success");
+    res.set_errmsg("查询群申请成功");
     LOG_INFO("user {} query group requests", userid);
 }
 
 void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::AcceptGroupReq& req, chat::AcceptGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int adminid = conn->getUserId();
@@ -988,17 +988,17 @@ void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::A
 
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群不存在");
         return;
     }
     if (!groupModel.isManager(adminid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not admin");
+        res.set_errmsg("你不是管理员");
         return;
     }
     if (!groupReqModel.isApplied(targetid, req.groupid())) {
     res.set_err(1);
-    res.set_errmsg("application not exist");
+    res.set_errmsg("申请不存在");
     return;
     }
 
@@ -1010,7 +1010,7 @@ void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::A
 
     if (!groupReqModel.update(req.groupid(), targetid, 1)) {
         res.set_err(1);
-        res.set_errmsg("accept failed");
+        res.set_errmsg("同意申请失败");
         return;
     }
 
@@ -1025,14 +1025,14 @@ void ChatService::acceptGroup(std::shared_ptr<TcpConnection> conn, const chat::A
         target->sendMessage(MessageCodec::encode(chat::GROUP_ACCEPT_NOTIFY_MSG, data));
     }
     res.set_err(0);
-    res.set_errmsg("accept success");
+    res.set_errmsg("同意申请成功");
     LOG_INFO("admin {} accept user {} join group {}", adminid, targetid, req.groupid());
 }
 
 void ChatService::queryGroup(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupReq& req, chat::QueryGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -1046,41 +1046,41 @@ void ChatService::queryGroup(std::shared_ptr<TcpConnection> conn, const chat::Qu
         item->set_role(groupModel.queryRole(userid, g.getId()));
     }
     res.set_err(0);
-    res.set_errmsg("query groups success");
+    res.set_errmsg("查询群组成功");
     LOG_INFO("user {} query groups", userid);
 }
 
 void ChatService::applyGroup(std::shared_ptr<TcpConnection> conn, const chat::ApplyGroupReq& req, chat::ApplyGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are in group");
+        res.set_errmsg("你在群里");
         return;
     }
     if (groupReqModel.isApplied(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you applied");
+        res.set_errmsg("已申请，无法再申请");
         return;
     }
     
     if (!groupReqModel.insert(req.groupid(), userid)) {
         res.set_err(1);
-        res.set_errmsg("apply failed");
+        res.set_errmsg("申请失败");
         return;
     }
     res.set_err(0);
-    res.set_errmsg("apply group success");
+    res.set_errmsg("申请群组成功");
 
     auto managers = groupModel.queryManagers(req.groupid());
     User user = userModel.query(userid);
@@ -1105,29 +1105,29 @@ void ChatService::applyGroup(std::shared_ptr<TcpConnection> conn, const chat::Ap
 void ChatService::leaveGroup(std::shared_ptr<TcpConnection> conn, const chat::LeaveGroupReq& req, chat::LeaveGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     if (groupModel.isOwner(userid, req.groupid())) {
         res.set_err(2);
-        res.set_errmsg("please transfer owner or dissolve group");
+        res.set_errmsg("请转让群主 或 解散群");
         return;
     }
     if (groupModel.leaveGroup(userid, req.groupid())) {
         res.set_err(0);
-        res.set_errmsg("leave group success");
+        res.set_errmsg("退群成功");
         LOG_INFO("user {} leave group {}", userid, req.groupid());
 
         auto managers = groupModel.queryManagers(req.groupid());
@@ -1147,14 +1147,14 @@ void ChatService::leaveGroup(std::shared_ptr<TcpConnection> conn, const chat::Le
         }
     } else {
         res.set_err(1);
-        res.set_errmsg("leave group failed");
+        res.set_errmsg("退群失败");
     }
 }
 
 void ChatService::transferOwner(std::shared_ptr<TcpConnection> conn, const chat::TransferOwnerReq& req, chat::TransferOwnerRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int oldownerid = conn->getUserId();
@@ -1162,57 +1162,57 @@ void ChatService::transferOwner(std::shared_ptr<TcpConnection> conn, const chat:
         if (groupModel.isInGroup(req.newownerid(), req.groupid())) {
             if (groupModel.updateRole(oldownerid, req.groupid(), "normal") && groupModel.updateRole(req.newownerid(), req.groupid(), "owner")) {
                 res.set_err(0);
-                res.set_errmsg("transfer owner success");
+                res.set_errmsg("转让群主成功");
                 LOG_INFO("oldowner {} transfer newowner {} success", oldownerid, req.newownerid());
                 return;
             }
         }
     }
     res.set_err(1);
-    res.set_errmsg("transfer owner failed");
+    res.set_errmsg("转让群主失败");
 }
 
 void ChatService::dissolveGroup(std::shared_ptr<TcpConnection> conn, const chat::DissolveGroupReq& req, chat::DissolveGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     if (groupModel.isOwner(userid, req.groupid())) {
         if (groupModel.removeGroup(req.groupid())) {
             res.set_err(0);
-            res.set_errmsg("dissolve group success");
+            res.set_errmsg("解散群成功");
             LOG_INFO("owner {} dissolve group {} success", userid, req.groupid());
             return;
         }
     }
     res.set_err(1);
-    res.set_errmsg("dissolve group failed");
+    res.set_errmsg("解散群失败");
 }
 
 void ChatService::queryGroupUsers(std::shared_ptr<TcpConnection> conn, const chat::QueryGroupUserReq& req, chat::QueryGroupUserRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     auto users = groupModel.queryUsers(req.groupid());
@@ -1223,118 +1223,118 @@ void ChatService::queryGroupUsers(std::shared_ptr<TcpConnection> conn, const cha
         item->set_role(user.getRole());
     }
     res.set_err(0);
-    res.set_errmsg("query success");
+    res.set_errmsg("查询群组成员成功");
     LOG_INFO("user {} query group {} users", userid, req.groupid());
 }
 
 void ChatService::setGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::SetGroupAdminReq& req, chat::SetGroupAdminRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     if (!groupModel.isOwner(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not owner");
+        res.set_errmsg("你不是群主");
         return;
     }
     if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("target is not in group");
+        res.set_errmsg("目标用户不在群里");
         return;
     }
     if (groupModel.isManager(req.targetid(), req.groupid())) {
         res.set_err(0);
-        res.set_errmsg("target are not normal");
+        res.set_errmsg("目标用户不是普通成员");
         return;
     }
     if (groupModel.updateRole(req.targetid(), req.groupid(), "admin")) {
         res.set_err(0);
-        res.set_errmsg("set group admin success");
+        res.set_errmsg("设置管理员成功");
         LOG_INFO("owner {} set group {} admin {}", userid, req.groupid(), req.targetid());
         return;
     }
     res.set_err(1);
-    res.set_errmsg("set group admin failed");
+    res.set_errmsg("设置管理员失败");
 }
 
 void ChatService::removeGroupAdmin(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupAdminReq& req, chat::RemoveGroupAdminRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     if (!groupModel.isOwner(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not owner");
+        res.set_errmsg("你不是群主");
         return;
     }
     if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("target is not in group");
+        res.set_errmsg("目标用户不在群里");
         return;
     }
     if (!groupModel.isAdmin(req.targetid(), req.groupid())) {
         res.set_err(0);
-        res.set_errmsg("target are not admin");
+        res.set_errmsg("目标用户不是管理员");
         return;
     }
     if (groupModel.updateRole(req.targetid(), req.groupid(), "normal")) {
         res.set_err(0);
-        res.set_errmsg("remove group admin success");
+        res.set_errmsg("删除管理员成功");
         LOG_INFO("owner {} remove group {} admin {}", userid, req.groupid(), req.targetid());
         return;
     }
     res.set_err(1);
-    res.set_errmsg("remove group admin failed");
+    res.set_errmsg("删除管理员失败");
 }
 
 void ChatService::removeGroupUser(std::shared_ptr<TcpConnection> conn, const chat::RemoveGroupUserReq& req, chat::RemoveGroupUserRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     }
     if (!groupModel.isInGroup(req.targetid(), req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("target is not in group");
+        res.set_errmsg("目标用户不在群里");
         return;
     }
     std::string role = groupModel.queryRole(userid, req.groupid());
     if (role == "normal") {
         res.set_err(1);
-        res.set_errmsg("you cannot remove users");
+        res.set_errmsg("你不是管理员，无法移除成员");
         return;
     } else if (role == "admin") {
         if (groupModel.isManager(req.targetid(), req.groupid())) {
             res.set_err(1);
-            res.set_errmsg("you cannot remove owner or admin");
+            res.set_errmsg("你是管理员，只能移除普通成员");
             return;
         } else {
             if (groupModel.removeUser(req.targetid(), req.groupid())) {
@@ -1349,17 +1349,17 @@ void ChatService::removeGroupUser(std::shared_ptr<TcpConnection> conn, const cha
                     target->sendMessage(MessageCodec::encode(chat::REMOVE_GROUP_USER_NOTIFY_MSG, data));
                 }
                 res.set_err(0);
-                res.set_errmsg("remove user success");
+                res.set_errmsg("移除成员成功");
                 LOG_INFO("admin {} remove user {}", userid, req.targetid());
                 return;
             }
             res.set_err(1);
-            res.set_errmsg("remove user failed");
+            res.set_errmsg("移除成员失败");
         }
     } else {
         if (userid == req.targetid()) {
             res.set_err(1);
-            res.set_errmsg("you cannot remove yourself");
+            res.set_errmsg("你不能移除你自己");
             return;
         }
         if (groupModel.removeUser(req.targetid(), req.groupid())) {
@@ -1374,45 +1374,45 @@ void ChatService::removeGroupUser(std::shared_ptr<TcpConnection> conn, const cha
                 target->sendMessage(MessageCodec::encode(chat::REMOVE_GROUP_USER_NOTIFY_MSG, data));
             }
             res.set_err(0);
-            res.set_errmsg("remove user success");
+            res.set_errmsg("移除成员成功");
             LOG_INFO("owner {} remove user {}", userid, req.targetid());
             return;
         }
         res.set_err(1);
-        res.set_errmsg("remove user failed");
+        res.set_errmsg("移除成员失败");
     }
 }
 
 void ChatService::refuseGroup(std::shared_ptr<TcpConnection> conn, const chat::RefuseGroupReq& req, chat::RefuseGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int adminid = conn->getUserId();
     if (!groupModel.isGroupExist(req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (!groupModel.isManager(adminid, req.groupid())) {
         res.set_err(1);
-        res.set_errmsg("you arenot admin");
+        res.set_errmsg("你不是管理员");
         return;
     }
     if (!groupReqModel.isApplied(req.targetid(), req.groupid())) {
     res.set_err(1);
-    res.set_errmsg("application not exist");
+    res.set_errmsg("申请不存在");
     return;
     }
     if (!groupReqModel.update(req.groupid(), req.targetid(), 2)) {
         res.set_err(1);
-        res.set_errmsg("refuse failed");
+        res.set_errmsg("拒绝申请失败");
         return;
     }
 
     res.set_err(0);
-    res.set_errmsg("refuse success");
+    res.set_errmsg("拒绝申请成功");
 
     auto target = getUserConn(req.targetid());
     if (target) {
@@ -1431,73 +1431,73 @@ void ChatService::refuseGroup(std::shared_ptr<TcpConnection> conn, const chat::R
 void ChatService::addBlacklist(std::shared_ptr<TcpConnection> conn, const chat::BlacklistAddReq& req, chat::BlacklistAddRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     if (userid == req.blackid()) {
         res.set_err(1);
-        res.set_errmsg("you cannot black yourself");
+        res.set_errmsg("你不能拉黑你自己");
         return;
     }
     int blackid = req.blackid();
     User user = userModel.query(blackid);
     if (user.getId() != blackid) {
         res.set_err(1);
-        res.set_errmsg("blackid not exist");
+        res.set_errmsg("目标用户不存在");
         return;
     }
     if (!userModel.isExist(blackid)) {
         res.set_err(1);
-        res.set_errmsg("blackid not exist");
+        res.set_errmsg("目标用户不存在");
         return;
     }
     if (!friendModel.isFriend(userid, blackid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
     if (blacklistModel.isBlacked(userid, blackid)) {
         res.set_err(1);
-        res.set_errmsg("have blacked");
+        res.set_errmsg("已拉黑，不得再拉黑");
         return;
     }
     if (blacklistModel.insert(userid, blackid)) {
         res.set_err(0);
-        res.set_errmsg("black success");
+        res.set_errmsg("拉黑成功");
         LOG_INFO("user {} black friend {}", userid, blackid);
         return;
     }
     res.set_err(1);
-    res.set_errmsg("black failed");
+    res.set_errmsg("拉黑失败");
 }
 
 void ChatService::removeBlacklist(std::shared_ptr<TcpConnection> conn, const chat::BlacklistRemoveReq& req, chat::BlacklistRemoveRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int blackid = req.blackid();
     if (!userModel.isExist(blackid)) {
         res.set_err(1);
-        res.set_errmsg("blackid not exist");
+        res.set_errmsg("目标用户不存在");
         return;
     }
     if (!blacklistModel.isBlacked(userid, blackid)) {
         res.set_err(1);
-        res.set_errmsg("not blacked");
+        res.set_errmsg("没有拉黑该用户");
         return;
     }
     if (blacklistModel.remove(userid, blackid)) {
         res.set_err(0);
-        res.set_errmsg("remove black success");
+        res.set_errmsg("移出黑名单成功");
         LOG_INFO("user {} remove black friend {}", userid, blackid);
         return;
     }
     res.set_err(1);
-    res.set_errmsg("remove black failed");
+    res.set_errmsg("移除黑名单失败");
 }
 
 void ChatService::sendCode(std::shared_ptr<TcpConnection> conn, const chat::SendCodeReq& req, chat::SendCodeRes& res) {
@@ -1505,7 +1505,7 @@ void ChatService::sendCode(std::shared_ptr<TcpConnection> conn, const chat::Send
 
     if (req.email().empty()) {
         res.set_err(1);
-        res.set_errmsg("email empty");
+        res.set_errmsg("邮箱为空");
         return;
     }
     key = "verify:email:" + req.email();
@@ -1541,7 +1541,7 @@ void ChatService::sendCode(std::shared_ptr<TcpConnection> conn, const chat::Send
 void ChatService::codeLogin(std::shared_ptr<TcpConnection> conn, const chat::CodeLoginReq& req, chat::CodeLoginRes& res) {
     if (req.email().empty()) {
         res.set_err(1);
-        res.set_errmsg("email empty");
+        res.set_errmsg("邮箱为空");
         return;
     }
         
@@ -1564,14 +1564,14 @@ void ChatService::codeLogin(std::shared_ptr<TcpConnection> conn, const chat::Cod
     User user = userModel.queryByEmail(req.email());
     if (user.getId() == -1) {
         res.set_err(1);
-        res.set_errmsg("account not exist");
+        res.set_errmsg("用户不存在");
         return;
     }
 
     user.setState("online");
     if (!userModel.updateState(user)) {
         res.set_err(1);
-        res.set_errmsg("login failed");
+        res.set_errmsg("登录失败");
         return;
     }
 
@@ -1579,7 +1579,7 @@ void ChatService::codeLogin(std::shared_ptr<TcpConnection> conn, const chat::Cod
     conn->setUserId(user.getId());
     
     res.set_err(0);
-    res.set_errmsg("login success");
+    res.set_errmsg("登录成功");
     res.set_userid(user.getId());
     res.set_name(user.getName());
 }
@@ -1587,7 +1587,7 @@ void ChatService::codeLogin(std::shared_ptr<TcpConnection> conn, const chat::Cod
 void ChatService::verifyCode(std::shared_ptr<TcpConnection> conn, const chat::VerifyCodeReq& req, chat::VerifyCodeRes& res) {
     if (req.email().empty()) {
         res.set_err(1);
-        res.set_errmsg("email empty");
+        res.set_errmsg("邮箱为空");
         return;
     }
     std::string key = "verify:email:" + req.email();
@@ -1651,22 +1651,22 @@ void ChatService::resetPassword(std::shared_ptr<TcpConnection> conn, const chat:
     User user = userModel.queryByEmail(req.email());
     if (user.getId() == -1) {
         res.set_err(1);
-        res.set_errmsg("account not exist");
+        res.set_errmsg("用户不存在");
         return;
     }
     if (!userModel.updatePassword(user.getId(), req.newpassword())) {
         res.set_err(1);
-        res.set_errmsg("reset password failed");
+        res.set_errmsg("重置密码失败");
         return;
     }
     res.set_err(0);
-    res.set_errmsg("reset password success");
+    res.set_errmsg("重置密码成功");
 }
 
 void ChatService::queryFile(std::shared_ptr<TcpConnection> conn, const chat::QueryFileReq& req, chat::QueryFileRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
@@ -1699,24 +1699,24 @@ void ChatService::queryFile(std::shared_ptr<TcpConnection> conn, const chat::Que
 void ChatService::checkFriend(std::shared_ptr<TcpConnection> conn, const chat::CheckFriendReq& req, chat::CheckFriendRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int friendid = req.friendid();
     if (!userModel.isExist(friendid)) {
         res.set_err(1);
-        res.set_errmsg("friendid not exist");
+        res.set_errmsg("friendid不存在");
         return;
     }
     if (!friendModel.isFriend(userid, friendid)) {
         res.set_err(1);
-        res.set_errmsg("not friend");
+        res.set_errmsg("不是好友");
         return;
     }
     if (blacklistModel.isBlacked(userid, friendid) || blacklistModel.isBlacked(friendid, userid)) {
         res.set_err(1);
-        res.set_errmsg("message blacked");
+        res.set_errmsg("拉黑状态");
         return;
     }
 }
@@ -1724,19 +1724,19 @@ void ChatService::checkFriend(std::shared_ptr<TcpConnection> conn, const chat::C
 void ChatService::checkGroup(std::shared_ptr<TcpConnection> conn, const chat::CheckGroupReq& req, chat::CheckGroupRes& res) {
     if (conn->getUserId() <= 0) {
         res.set_err(1);
-        res.set_errmsg("please login first");
+        res.set_errmsg("请先登录");
         return;
     }
     int userid = conn->getUserId();
     int groupid = req.groupid();
     if (!groupModel.isGroupExist(groupid)) {
         res.set_err(1);
-        res.set_errmsg("group not exist");
+        res.set_errmsg("群组不存在");
         return;
     }
     if (!groupModel.isInGroup(userid, groupid)) {
         res.set_err(1);
-        res.set_errmsg("you are not in group");
+        res.set_errmsg("你不在群里");
         return;
     } 
 }
