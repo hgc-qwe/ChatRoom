@@ -162,6 +162,9 @@ enum MsgTyp {
 
     LEAVE_NOTIFY_MSG = 105;
     LEAVE_NOTIFY_MSG_ACK = 106;
+
+    FILE_NOTIFY_MSG = 107;
+    FILE_NOTIFY_MSG_ACK = 108;
 }
 
 message OfflineMsg {

@@ -759,7 +759,19 @@ void ChatService::fileEnd(std::shared_ptr<TcpConnection> conn, const chat::FileE
             return;
         }
         auto target = getUserConn(info.toid);
-        if (!target) {
+        if (target) {
+            chat::FileNotify notify;
+            notify.set_fromid(info.fromid);
+            notify.set_fromname(user.getName());
+            notify.set_groupid(0);
+            notify.set_fileid(info.fileid);
+            notify.set_filename(info.filename);
+            notify.set_filesize(info.filesize);
+
+            std::string data;
+            notify.SerializeToString(&data);
+            target->sendMessage(MessageCodec::encode(chat::FILE_NOTIFY_MSG, data));
+        } else {
             chat::OfflineFile offline;
             offline.set_fromid(info.fromid);
             offline.set_toid(info.toid);

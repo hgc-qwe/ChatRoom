@@ -583,12 +583,14 @@ enum MsgTyp : int {
   INVITE_NOTIFY_MSG_ACK = 104,
   LEAVE_NOTIFY_MSG = 105,
   LEAVE_NOTIFY_MSG_ACK = 106,
+  FILE_NOTIFY_MSG = 107,
+  FILE_NOTIFY_MSG_ACK = 108,
   MsgTyp_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
   MsgTyp_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
 };
 bool MsgTyp_IsValid(int value);
 constexpr MsgTyp MsgTyp_MIN = UNKNOWN_MSG;
-constexpr MsgTyp MsgTyp_MAX = LEAVE_NOTIFY_MSG_ACK;
+constexpr MsgTyp MsgTyp_MAX = FILE_NOTIFY_MSG_ACK;
 constexpr int MsgTyp_ARRAYSIZE = MsgTyp_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* MsgTyp_descriptor();

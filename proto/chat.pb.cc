@@ -2880,7 +2880,7 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "r\030\001 \001(\005\022\016\n\006errmsg\030\002 \001(\t\"C\n\014InviteNotify\022"
   "\017\n\007groupid\030\001 \001(\005\022\021\n\tgroupname\030\002 \001(\t\022\017\n\007o"
   "wnerid\030\003 \001(\005\"@\n\013LeaveNotify\022\016\n\006userid\030\001 "
-  "\001(\005\022\020\n\010username\030\002 \001(\t\022\017\n\007groupid\030\003 \001(\005*\257"
+  "\001(\005\022\020\n\010username\030\002 \001(\t\022\017\n\007groupid\030\003 \001(\005*\335"
   "\024\n\006MsgTyp\022\017\n\013UNKNOWN_MSG\020\000\022\r\n\tLOGIN_MSG\020"
   "\001\022\021\n\rLOGIN_MSG_ACK\020\002\022\013\n\007REG_MSG\020\003\022\017\n\013REG"
   "_MSG_ACK\020\004\022\022\n\016ADD_FRIEND_MSG\020\005\022\026\n\022ADD_FR"
@@ -2946,11 +2946,12 @@ const char descriptor_table_protodef_proto_2fchat_2eproto[] PROTOBUF_SECTION_VAR
   "MSG\020e\022\027\n\023CHECK_GROUP_MSG_ACK\020f\022\025\n\021INVITE"
   "_NOTIFY_MSG\020g\022\031\n\025INVITE_NOTIFY_MSG_ACK\020h"
   "\022\024\n\020LEAVE_NOTIFY_MSG\020i\022\030\n\024LEAVE_NOTIFY_M"
-  "SG_ACK\020jb\006proto3"
+  "SG_ACK\020j\022\023\n\017FILE_NOTIFY_MSG\020k\022\027\n\023FILE_NO"
+  "TIFY_MSG_ACK\020lb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_proto_2fchat_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_proto_2fchat_2eproto = {
-    false, false, 9496, descriptor_table_protodef_proto_2fchat_2eproto,
+    false, false, 9542, descriptor_table_protodef_proto_2fchat_2eproto,
     "proto/chat.proto",
     &descriptor_table_proto_2fchat_2eproto_once, nullptr, 0, 106,
     schemas, file_default_instances, TableStruct_proto_2fchat_2eproto::offsets,
@@ -3077,6 +3078,8 @@ bool MsgTyp_IsValid(int value) {
     case 104:
     case 105:
     case 106:
+    case 107:
+    case 108:
       return true;
     default:
       return false;

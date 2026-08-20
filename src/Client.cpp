@@ -54,7 +54,7 @@ std::string makeDownloadPath(const string& filename) {
 
     fs::path candidate = directory / name;
     for (unsigned int index = 1; fs::exists(candidate); ++index) {
-        candidate = directory / (name.stem().string() + " (" + to_string(index) + ")" + name.extension().string());
+        candidate = directory / (name.stem().string() + "(" + to_string(index) + ")" + name.extension().string());
     }
     return candidate.string();
 }
@@ -379,17 +379,13 @@ void recvMessage(SSL* ssl) {
             else if(msgid == chat::FILE_START_MSG) {
                 chat::FileStartReq req;
                 req.ParseFromString(body);
-
-                cout << "收到文件:" << req.filename() << " size:" << req.filesize() << " fileid:" << req.fileid() << endl;
-
                 std::string path = makeDownloadPath(req.filename());
 
                 recvFile.open(path, std::ios::binary);
                 if(recvFile.is_open()) {
                     recvFileId = req.fileid();
-                    recvFileSize = req.filesize();
-                    cout << "开始接收文件:" << path << endl;
-                } else cout << "open recv file failed" << endl;
+                    recvFileSize = req.filesize();                  
+                }
             }
             else if(msgid == chat::FILE_CHUNK_MSG) {
                 chat::FileChunkReq req;
@@ -405,7 +401,6 @@ void recvMessage(SSL* ssl) {
 
                 if(recvFile.is_open() && req.fileid() == recvFileId) {
                     recvFile.close();
-                    cout << "文件接收完成" <<endl;
                 }
             }
             else if(msgid == chat::DOWNLOAD_START_MSG) {
@@ -697,6 +692,22 @@ void recvMessage(SSL* ssl) {
                 notify.ParseFromString(body);
 
                 cout << notify.username() << " id:" << notify.userid() << " 已退出群聊groupid:" << notify.groupid() << endl;
+            }
+            else if (msgid == chat::FILE_NOTIFY_MSG) {
+                chat::FileNotify notify;
+                if (!notify.ParseFromString(body)) {
+                    cout << "FileNotify parse failed" << endl;
+                    continue;
+                }
+
+                cout << "\n========== 收到私聊文件 ==========" << endl;
+                cout << "发送者: " << notify.fromname()
+                    << " (userid=" << notify.fromid() << ")" << endl;
+                cout << "文件名: " << notify.filename() << endl;
+                cout << "文件大小: " << notify.filesize() << " bytes" << endl;
+                cout << "fileid: " << notify.fileid() << endl;
+                cout << "请输入 11 并使用 fileid 下载" << endl;
+                cout << "==================================" << endl;
             }
         }
     }
