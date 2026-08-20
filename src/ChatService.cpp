@@ -1497,7 +1497,7 @@ void ChatService::removeBlacklist(std::shared_ptr<TcpConnection> conn, const cha
         return;
     }
     res.set_err(1);
-    res.set_errmsg("移除黑名单失败");
+    res.set_errmsg("移出黑名单失败");
 }
 
 void ChatService::sendCode(std::shared_ptr<TcpConnection> conn, const chat::SendCodeReq& req, chat::SendCodeRes& res) {
