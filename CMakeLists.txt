@@ -56,6 +56,7 @@ add_executable(
     src/User.cpp
     src/Group.cpp
     src/Mysql.cpp
+    src/MysqlPool.cpp
     src/Redis.cpp
     src/EmailSender.cpp
 

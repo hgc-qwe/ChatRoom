@@ -3,21 +3,22 @@
 #include "File.h"
 #include "FileModel.h"
 #include "Mysql.h"
+#include "MysqlPool.h"
 #include "Logger.h"
 
 bool FileModel::insert(File file) {
     std::string sql = "insert into file(fileid, fromid, toid, filename, filesize, status, fromname, type, groupid) values('" + file.getFileid() + "'," + std::to_string(file.getFromid()) + "," + 
         std::to_string(file.getToid()) + ",'" + file.getFilename() + "'," + std::to_string(file.getFilesize()) + "," + std::to_string(file.getStatus()) + ",'" + file.getFromname() + "'," + std::to_string(file.getType()) + "," + std::to_string(file.getGroupid()) + ");";
-    Mysql mysql;
-    if (!mysql.connect()) return false;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return false;
     return mysql.update(sql);
 }
 
 std::vector<File> FileModel::queryOffline(int userid) {
     std::string sql = "select * from file where toid=" + std::to_string(userid) + " and status = 0 and type = 0;";
     std::vector<File> files;
-    Mysql mysql;
-    if (!mysql.connect()) return files;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return files;
 
     MYSQL_RES* res = mysql.query(sql);
     if (res) {
@@ -42,16 +43,16 @@ std::vector<File> FileModel::queryOffline(int userid) {
 
 bool FileModel::updateStatus(std::string fileid) {
     std::string sql = "update file set status = 1 where fileid ='" + fileid + "';";
-    Mysql mysql;
-    if (!mysql.connect()) return false;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return false;
     return mysql.update(sql);
 }
 
 File FileModel::queryByFileid(std::string fileid) {
     std::string sql = "select * from file where fileid='" + fileid + "';";
     File file;
-    Mysql mysql;
-    if (!mysql.connect()) return file;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return file;
 
     MYSQL_RES* res = mysql.query(sql);
     if (res) {
@@ -75,8 +76,8 @@ File FileModel::queryByFileid(std::string fileid) {
 std::vector<File> FileModel::queryFriendFile(const int userid, const int friendid) {
     std::string sql = "select * from file where (fromid =" + std::to_string(userid) + " and toid =" + std::to_string(friendid) + ") or (fromid =" + std::to_string(friendid) + " and toid =" + std::to_string(userid) + ")";
     std::vector<File> files;
-    Mysql mysql;
-    if (!mysql.connect()) return files;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return files;
 
     MYSQL_RES* res = mysql.query(sql);
     if (res) {
@@ -102,8 +103,8 @@ std::vector<File> FileModel::queryFriendFile(const int userid, const int friendi
 std::vector<File> FileModel::queryGroupFile(const int groupid) {
     std::string sql = "select * from file where groupid =" + std::to_string(groupid) + ";";
     std::vector<File> files;
-    Mysql mysql;
-    if (!mysql.connect()) return files;
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return files;
 
     MYSQL_RES* res = mysql.query(sql);
     if (res) {

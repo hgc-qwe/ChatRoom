@@ -2,6 +2,7 @@
 #include <string>
 #include "TcpServer.h"
 #include "Logger.h"
+#include "MysqlPool.h"
 
 
 int main(int argc, char* argv[]) {
@@ -24,6 +25,11 @@ int main(int argc, char* argv[]) {
     }
    
    std::cout << "server address: " << ip << ":" << port << std::endl;
+
+   if (!MysqlPool::instance()->init(16)) {
+        LOG_ERROR("mysql pool init failed");
+        return -1;
+    }
 
    TcpServer server(ip, port);
     if(!server.init()) {

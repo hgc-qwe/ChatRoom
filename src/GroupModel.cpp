@@ -1,13 +1,14 @@
 #include <iostream>
 #include <string>
 #include "Mysql.h"
+#include "MysqlPool.h"
 #include "Group.h"
 #include "GroupModel.h"
 
 bool GroupModel::createGroup(Group &group) {
     std::string sql = "insert into allgroup (groupname, groupdesc) values ('" + group.getName() + "','" + group.getDesc() + "');";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     if (mysql.update(sql)) {
@@ -19,8 +20,8 @@ bool GroupModel::createGroup(Group &group) {
 
 bool GroupModel::addGroup(int userid, int groupid, std::string role) {
     std::string sql = "insert into groupuser (userid, groupid, grouprole) values (" + std::to_string(userid) + "," + std::to_string(groupid) + ",'" + role + "');";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -28,9 +29,9 @@ bool GroupModel::addGroup(int userid, int groupid, std::string role) {
 
 std::vector<Group> GroupModel::queryGroups(int userid) {
     std::string sql = "select g.id, g.groupname, g.groupdesc from allgroup g inner join groupuser gu on g.id = gu.groupid where gu.userid =" + std::to_string(userid) + ";";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<Group> groups;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return groups;
     }
 
@@ -51,9 +52,9 @@ std::vector<Group> GroupModel::queryGroups(int userid) {
 
 std::vector<int> GroupModel::queryGroupUsers(int userid, int groupid) {
     std::string sql = "select u.id from user u inner join groupuser gu on u.id = gu.userid where gu.groupid =" + std::to_string(groupid) + " and gu.userid !=" + std::to_string(userid) + ";";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<int> usersid;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return usersid;
     }
 
@@ -72,8 +73,8 @@ std::vector<int> GroupModel::queryGroupUsers(int userid, int groupid) {
 
 bool GroupModel::removeAll(int userid) {
     std::string sql ="delete from groupuser where userid="+ std::to_string(userid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -82,9 +83,9 @@ bool GroupModel::removeAll(int userid) {
 
 std::vector<User> GroupModel::queryManagers(int groupid) {
     std::string sql = "select userid from groupuser where groupid =" + std::to_string(groupid) + " and (grouprole = 'owner' or grouprole = 'admin');";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<User> users;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return users;
     }
 
@@ -105,8 +106,8 @@ std::vector<User> GroupModel::queryManagers(int groupid) {
 
 bool GroupModel::isInGroup(int userid, int groupid) {
     std::string sql ="select * from groupuser where userid="+ std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -121,8 +122,8 @@ bool GroupModel::isInGroup(int userid, int groupid) {
 
 bool GroupModel::isGroupExist(int groupid) {
     std::string sql ="select * from groupuser where groupid="+ std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -137,8 +138,8 @@ bool GroupModel::isGroupExist(int groupid) {
 
 bool GroupModel::isManager(int userid, int groupid) {
     std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and (grouprole='owner' or grouprole='admin');";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -155,8 +156,8 @@ Group GroupModel::query(int groupid) {
     Group group;
     std::string sql = "select id, groupname, groupdesc from allgroup where id=" + std::to_string(groupid) + ";";
 
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return group;
     }
 
@@ -174,8 +175,8 @@ Group GroupModel::query(int groupid) {
 
 std::string GroupModel::queryRole(int userid, int groupid) {
     std::string sql = "select grouprole from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) return "";
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return "";
 
     MYSQL_RES* res = mysql.query(sql);
     if(res == nullptr) return "";
@@ -190,8 +191,8 @@ std::string GroupModel::queryRole(int userid, int groupid) {
 
 bool GroupModel::leaveGroup(int userid, int groupid) {
     std::string sql = "delete from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -199,8 +200,8 @@ bool GroupModel::leaveGroup(int userid, int groupid) {
 
 bool GroupModel::removeUser(int userid, int groupid) {
     std::string sql = "delete from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -208,16 +209,16 @@ bool GroupModel::removeUser(int userid, int groupid) {
 
 bool GroupModel::updateRole(int userid, int groupid, const std::string& role) {
     std::string sql = "update groupuser set grouprole='" + role + "' where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
 }
 
 bool GroupModel::removeGroup(int groupid) {
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -229,8 +230,8 @@ bool GroupModel::removeGroup(int groupid) {
 
 bool GroupModel::isOwner(int userid, int groupid) {
     std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and grouprole='owner';";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     MYSQL_RES* res = mysql.query(sql);
@@ -244,8 +245,8 @@ bool GroupModel::isOwner(int userid, int groupid) {
 
 bool GroupModel::isAdmin(int userid, int groupid) {
     std::string sql = "select * from groupuser where userid=" + std::to_string(userid) + " and groupid=" + std::to_string(groupid) + " and grouprole='admin';";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     MYSQL_RES* res = mysql.query(sql);
@@ -259,9 +260,9 @@ bool GroupModel::isAdmin(int userid, int groupid) {
 
 std::vector<GroupUser> GroupModel::queryUsers(int groupid) {
     std::string sql = "select u.id,u.name,gu.grouprole from groupuser gu inner join user u on gu.userid=u.id where gu.groupid=" + std::to_string(groupid) + ";";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<GroupUser> users;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return users;
     }
 
@@ -283,9 +284,9 @@ std::vector<GroupUser> GroupModel::queryUsers(int groupid) {
 
 std::vector<Group> GroupModel::queryGroupId(const int userid) {
     std::string sql = "select g.id, g.groupname, g.groupdesc from allgroup g inner join groupuser gu on g.id = gu.groupid where gu.userid =" + std::to_string(userid) + " and gu.grouprole in ('owner', 'admin');";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<Group> groups;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return groups;
     }
 

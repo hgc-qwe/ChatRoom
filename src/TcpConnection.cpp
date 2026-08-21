@@ -54,7 +54,11 @@ bool TcpConnection::sendMessage(const std::string& msg) {
     auto self = shared_from_this();
     loop->runInLoop([self, msg]() {
         self->writeBuffer.append(msg);
-        self->channel->enableWriting();
+        if (self->tlsEstablished && self->writeBuffer.readableBytes() == msg.size()) {
+            self->sendBuffer();
+        } else {
+            self->channel->enableWriting();
+        }
     });
     return true;
 }

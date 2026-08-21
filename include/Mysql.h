@@ -18,5 +18,9 @@ public:
 
     MYSQL* getcon();
 
+    bool ping();
+
+    std::string escape(const std::string& str);
+
     ~Mysql();
 };

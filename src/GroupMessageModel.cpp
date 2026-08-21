@@ -1,24 +1,25 @@
 #include <vector>
 #include <string>
 #include "Mysql.h"
+#include "MysqlPool.h"
 #include "GroupMessage.h"
 #include "GroupMessageModel.h"
 
 bool GroupMessageModel::insert(int groupid, int userid, std::string msg, std::string username) {
-    std::string sql = "insert into group_message (groupid, userid, msg, username) values (" 
-         + std::to_string(groupid) + "," + std::to_string(userid) + ",'" + msg + "','" + username + "');";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
+    std::string sql = "insert into group_message (groupid, userid, msg, username) values ("
+         + std::to_string(groupid) + "," + std::to_string(userid) + ",'" + mysql.escape(msg) + "','" + mysql.escape(username) + "');";
     return mysql.update(sql);
 }
 
 std::vector<GroupMessage> GroupMessageModel::query(int groupid) {
     std::string sql = "select * from group_message where groupid=" + std::to_string(groupid) + " order by sendtime;";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<GroupMessage> msgs;
-    if (!mysql.connect()) return msgs;
+    if (!mysql) return msgs;
     MYSQL_RES* res = mysql.query(sql);
     if (res == nullptr) return msgs;
 

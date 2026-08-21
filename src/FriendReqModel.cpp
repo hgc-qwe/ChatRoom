@@ -3,11 +3,12 @@
 #include "FriendReqModel.h"
 #include "FriendRequest.h"
 #include "Mysql.h"
+#include "MysqlPool.h"
 
 bool FriendReqModel::insert(int fromid, int toid) {
     std::string sql = "insert into friend_request(fromid, toid) values(" + std::to_string(fromid) + "," + std::to_string(toid) + ");";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -15,9 +16,9 @@ bool FriendReqModel::insert(int fromid, int toid) {
 
 std::vector<FriendRequest> FriendReqModel::query(int userid) {
     std::string sql = "select fromid from friend_request where toid=" + std::to_string(userid) + " and status=0;";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<FriendRequest> requests;
-    if (!mysql.connect()) return requests;
+    if (!mysql) return requests;
     MYSQL_RES* res = mysql.query(sql);
     if (res == nullptr) return requests;
 
@@ -32,8 +33,8 @@ std::vector<FriendRequest> FriendReqModel::query(int userid) {
 
 bool FriendReqModel::updateStatus(int fromid, int toid, int status) {
     std::string sql = "update friend_request set status=" + std::to_string(status) + " where fromid=" + std::to_string(fromid) + " and toid=" + std::to_string(toid) + ";";
-    Mysql mysql;
-    if (! mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -41,8 +42,8 @@ bool FriendReqModel::updateStatus(int fromid, int toid, int status) {
 
 bool FriendReqModel::removeAll(int userid) {
     std::string sql ="delete from friend_request where fromid="+ std::to_string(userid) + " or toid=" + std::to_string(userid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -51,8 +52,8 @@ bool FriendReqModel::removeAll(int userid) {
 
 bool FriendReqModel::isApplied(int fromid, int toid) {
     std::string sql = "select * from friend_request where fromid=" + std::to_string(fromid) + " and toid=" + std::to_string(toid) + " and status=0;";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 

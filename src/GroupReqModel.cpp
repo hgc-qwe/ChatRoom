@@ -2,12 +2,13 @@
 #include <iostream>
 #include "GroupReqModel.h"
 #include "Mysql.h"
+#include "MysqlPool.h"
 #include "GroupRequest.h"
 
 bool GroupReqModel::insert(int groupid, int userid) {
     std::string sql = "insert into group_request(groupid, userid) values(" + std::to_string(groupid) + "," + std::to_string(userid) + ");";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     
@@ -16,9 +17,9 @@ bool GroupReqModel::insert(int groupid, int userid) {
 
 std::vector<GroupRequest> GroupReqModel::query(int groupid) {
     std::string sql = "select groupid, userid from group_request where groupid=" + std::to_string(groupid) + " and status=0;";
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     std::vector<GroupRequest> requests;
-    if (!mysql.connect()) return requests;
+    if (!mysql) return requests;
     MYSQL_RES* res = mysql.query(sql);
     if (res == nullptr) return requests;
 
@@ -34,8 +35,8 @@ std::vector<GroupRequest> GroupReqModel::query(int groupid) {
 
 bool GroupReqModel::update(int groupid, int userid, int status) {
     std::string sql = "update group_request set status=" + std::to_string(status) + " where groupid=" + std::to_string(groupid) + " and userid=" + std::to_string(userid) + ";";
-    Mysql mysql;
-    if (! mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -43,8 +44,8 @@ bool GroupReqModel::update(int groupid, int userid, int status) {
 
 bool GroupReqModel::remove(int groupid, int userid) {
     std::string sql ="delete from group_request where groupid="+ std::to_string(groupid) + " and userid=" + std::to_string(userid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -53,8 +54,8 @@ bool GroupReqModel::remove(int groupid, int userid) {
 
 bool GroupReqModel::removeAll(int userid) {
     std::string sql ="delete from group_request where userid="+ std::to_string(userid) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -63,8 +64,8 @@ bool GroupReqModel::removeAll(int userid) {
 
 bool GroupReqModel::isApplied(int userid, int groupid) {
     std::string sql = "select * from group_request where groupid=" + std::to_string(groupid) + " and userid=" + std::to_string(userid) + " and status=0;";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 

@@ -3,12 +3,13 @@
 #include <mysql/mysql.h>
 #include "UserModel.h"
 #include "Mysql.h"
+#include "MysqlPool.h"
 
 bool UserModel::insert(User& user) {
     std::string sql = "insert into user (name, password, state, email) values ('" 
          + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "','" + user.getEmail() + "');";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     if (mysql.update(sql)) {
@@ -20,9 +21,9 @@ bool UserModel::insert(User& user) {
 
 User UserModel::query(int userid) {
     std::string sql = "select * from user where id=" + std::to_string(userid);
-    Mysql mysql;
+    auto mysql = MysqlPool::instance()->acquire();
     User user;
-    if (!mysql.connect()) {
+    if (!mysql) {
         return user;
     }
 
@@ -44,16 +45,16 @@ User UserModel::query(int userid) {
 
 bool UserModel::updateState(User user) {
     std::string sql = "update user set state='" + user.getState() + "' where id=" + std::to_string(user.getId()) + ";";
-    Mysql mysql;
-    if (! mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
 }
 
 bool UserModel::restState() {
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
@@ -63,35 +64,36 @@ bool UserModel::restState() {
 
 bool UserModel::remove(int userid) {
     std::string sql = "delete from user where id=" + std::to_string(userid) + ";";
-    Mysql mysql;
-    if (! mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
 }
 
 User UserModel::queryByEmail(const std::string& email) {
-    std::string sql = "select id, name from user where email='" + email +"';";
-    Mysql mysql;
-    if (!mysql.connect()) return User();
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) return User();
 
+    std::string sql = "select id, name from user where email='" + mysql.escape(email) + "';";
     MYSQL_RES* res = mysql.query(sql);
-    if (res) {
-        MYSQL_ROW row = mysql_fetch_row(res);
-        if (row) {
-            User user;
-            user.setId(atoi(row[0]));
-            user.setName(row[1]);
-            return user;
-        }
+    if (res == nullptr) return User();
+
+    User user;
+    MYSQL_ROW row = mysql_fetch_row(res);
+    if (row) {
+        user.setId(atoi(row[0]));
+        user.setName(row[1] ? row[1] : "");
     }
-    return User();
+    
+    mysql_free_result(res);
+    return user;
 }
 
 bool UserModel::updatePassword(int userid, const std::string& password) {
     std::string sql = "update user set password='" + password + "' where id=" + std::to_string(userid) + ";";
-    Mysql mysql;
-    if (! mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
     return mysql.update(sql);
@@ -99,8 +101,8 @@ bool UserModel::updatePassword(int userid, const std::string& password) {
 
 bool UserModel::isExist(int id) {
     std::string sql ="select id from user where id = " + std::to_string(id) + ";";
-    Mysql mysql;
-    if (!mysql.connect()) {
+    auto mysql = MysqlPool::instance()->acquire();
+    if (!mysql) {
         return false;
     }
 
