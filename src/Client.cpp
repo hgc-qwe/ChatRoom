@@ -44,7 +44,6 @@ SSL* ssl = nullptr;
 SSL_CTX* sslCtx = nullptr;
 vector<std::thread> fileThreads;
 mutex sslWriteMutex;
-bool needSend = true;
 
 std::string makeDownloadPath(const string& filename) {
     namespace fs = filesystem;
@@ -836,6 +835,7 @@ int main(int argc, char* argv[]) {
 
         string data;
         string packet;
+        bool needSend = true;
         if (cin.fail()) {
             cin.clear();
             cin.ignore(1000, '\n');
