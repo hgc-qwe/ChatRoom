@@ -23,7 +23,7 @@ ChatService* ChatService::instance() {
 
 void ChatService::login(std::shared_ptr<TcpConnection> conn, const chat::LoginReq& req, chat::LoginRes& res) {
     User user = userModel.query(req.id());
-    if (user.getId() == req.id() && user.getPassword() == req.password() && user.getState() == "offline") {
+    if (user.getId() == req.id() && verifyPassword(req.password(), user.getPassword()) && user.getState() == "offline") {
         user.setState("online");
         if (!userModel.updateState(user)) {
             res.set_err(1);
@@ -193,9 +193,17 @@ void ChatService::reg(std::shared_ptr<TcpConnection> conn, const chat::RegisterR
         return;
     }
 
+    std::string hashed = hashPassword(req.password());
+    if (hashed.empty()) {
+        res.set_err(1);
+        res.set_errmsg("注册失败");
+        LOG_ERROR("hashPassword failed during registration");
+        return;
+    }
+
     User user;
     user.setName(req.name());
-    user.setPassword(req.password());
+    user.setPassword(hashed);
     user.setState("offline");
     user.setEmail(req.email());
 
@@ -1654,7 +1662,14 @@ void ChatService::resetPassword(std::shared_ptr<TcpConnection> conn, const chat:
         res.set_errmsg("用户不存在");
         return;
     }
-    if (!userModel.updatePassword(user.getId(), req.newpassword())) {
+    std::string hashed = hashPassword(req.newpassword());
+    if (hashed.empty()) {
+        res.set_err(1);
+        res.set_errmsg("重置密码失败");
+        LOG_ERROR("hashPassword failed during password reset");
+        return;
+    }
+    if (!userModel.updatePassword(user.getId(), hashed)) {
         res.set_err(1);
         res.set_errmsg("重置密码失败");
         return;

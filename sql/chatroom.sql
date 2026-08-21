@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `state` varchar(20) DEFAULT 'offline',
   `email` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`id`),

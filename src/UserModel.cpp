@@ -6,12 +6,11 @@
 #include "MysqlPool.h"
 
 bool UserModel::insert(User& user) {
-    std::string sql = "insert into user (name, password, state, email) values ('" 
-         + user.getName() + "','" + user.getPassword() + "','" + user.getState() + "','" + user.getEmail() + "');";
     auto mysql = MysqlPool::instance()->acquire();
     if (!mysql) {
         return false;
     }
+    std::string sql = "insert into user (name, password, state, email) values ('" + mysql.escape(user.getName()) + "','" + mysql.escape(user.getPassword()) + "','" + mysql.escape(user.getState()) + "','" + mysql.escape(user.getEmail()) + "');";
     if (mysql.update(sql)) {
         user.setId(mysql_insert_id(mysql.getcon()));
         return true;
@@ -91,11 +90,11 @@ User UserModel::queryByEmail(const std::string& email) {
 }
 
 bool UserModel::updatePassword(int userid, const std::string& password) {
-    std::string sql = "update user set password='" + password + "' where id=" + std::to_string(userid) + ";";
     auto mysql = MysqlPool::instance()->acquire();
     if (!mysql) {
         return false;
     }
+    std::string sql = "update user set password='" + mysql.escape(password) + "' where id=" + std::to_string(userid) + ";";
     return mysql.update(sql);
 }
 
